@@ -9,6 +9,10 @@ function VoidType() {
 	AbstractType.call(this);
 }
 
+VoidType.prototype.toString = function () {
+	return 'void';
+};
+
 VoidType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType);
 };
@@ -20,6 +24,10 @@ function UnknownType() {
 	AbstractType.call(this);
 }
 
+UnknownType.prototype.toString = function () {
+	return 'unknown';
+};
+
 UnknownType.prototype.isSubTypeOf = function () {
 	return true;
 };
@@ -30,6 +38,10 @@ UnknownType.INSTANCE = new UnknownType();
 function BooleanType() {
 	AbstractType.call(this);
 }
+
+BooleanType.prototype.toString = function () {
+	return 'bool';
+};
 
 BooleanType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
@@ -45,6 +57,10 @@ function FloatType() {
 	AbstractType.call(this);
 }
 
+FloatType.prototype.toString = function () {
+	return 'float';
+};
+
 FloatType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
 		type.is(FloatType) ||
@@ -58,6 +74,10 @@ FloatType.INSTANCE = new FloatType();
 function IntegerType() {
 	AbstractType.call(this);
 }
+
+IntegerType.prototype.toString = function () {
+	return 'int';
+};
 
 IntegerType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
@@ -74,6 +94,10 @@ function StringType() {
 	AbstractType.call(this);
 }
 
+StringType.prototype.toString = function () {
+	return 'string';
+};
+
 StringType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
 		type.is(StringType) ||
@@ -87,6 +111,10 @@ StringType.INSTANCE = new StringType();
 function RegexType() {
 	AbstractType.call(this);
 }
+
+RegexType.prototype.toString = function () {
+	return 'regex';
+};
 
 RegexType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
@@ -103,6 +131,10 @@ function ArrayType(subType) {
 	this.subType = subType;
 }
 
+ArrayType.prototype.toString = function () {
+	return this.subType + '*';
+};
+
 ArrayType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
 		type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
@@ -114,6 +146,10 @@ function ObjectType(context) {
 	AbstractType.call(this);
 	this.context = context;
 }
+
+ObjectType.prototype.toString = function () {
+	// TODO
+};
 
 ObjectType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
@@ -129,6 +165,10 @@ function NullableType(subType) {
 	this.subType = subType;
 }
 
+NullableType.prototype.toString = function () {
+	return this.subType + '?';
+};
+
 NullableType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
 		type.is(NullableType) &&
@@ -141,6 +181,10 @@ function LambdaType(left, right) {
 	this.left = left;
 	this.right = right;
 }
+
+LambdaType.prototype.toString = function () {
+	return this.left + ' -> ' + this.right;
+};
 
 LambdaType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
