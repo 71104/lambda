@@ -11,8 +11,3 @@ function SyntaxError() {
 function TypeError() {
 	return Error.call(this, 'type error');
 }
-
-
-function RuntimeError() {
-	return Error.call(this, 'runtime error');
-}

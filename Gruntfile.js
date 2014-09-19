@@ -10,7 +10,8 @@ module.exports = function (grunt) {
 					'src/Errors.js',
 					'src/Context.js',
 					'src/Types.js',
-					'src/AST.js'
+					'src/AST.js',
+					'src/Lexer.js'
 				],
 				dest: 'bin/lambda.js'
 			}

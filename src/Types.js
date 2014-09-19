@@ -134,3 +134,16 @@ NullableType.prototype.isSubTypeOf = function (type) {
 		type.is(NullableType) &&
 		this.subType.isSubTypeOf(type.subType);
 };
+
+
+function LambdaType(left, right) {
+	AbstractType.call(this);
+	this.left = left;
+	this.right = right;
+}
+
+LambdaType.prototype.isSubTypeOf = function (type) {
+	return type.is(VoidType) ||
+		type.is(LambdaType) && type.left.isSubTypeOf(this.left) && this.right.isSubTypeOf(type.right) ||
+		type.is(NullableType) && this.isSubTypeOf(type.subType);
+};
