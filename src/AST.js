@@ -76,17 +76,38 @@ FixNode.prototype.getType = function () {
 FixNode.INSTANCE = new FixNode();
 
 
-function LetNode(name, expression, body) {
+function LetNode(names, expression, body) {
 	AbstractNode.call(this);
-	this.name = name;
+	this.names = names;
 	this.expression = expression;
 	this.body = body;
 }
 
-LetNode.prototype.getType = function (context) {
-	return context.augment(this.name, this.expression.getType(context), function (context) {
-		return this.body.getType(context);
-	}, this);
+LetNode.prototype.getType = function (rootContext) {
+	var names = this.names;
+	var expression = this.expression;
+	var body = this.body;
+	return (function augment(context, index) {
+		if (index < names.length - 1) {
+			var type;
+			if (context.has(names[index])) {
+				type = context.top(names[index]);
+				if (type.is(ObjectType)) {
+					return augment(type.context, index + 1);
+				}
+			}
+			type = new ObjectType(new Context());
+			return context.augment(names[index], type, function () {
+				return augment(type.context, index + 1);
+			});
+		} else if (index < names.length) {
+			return context.augment(names[index], expression.getType(rootContext), function () {
+				return body.getType(rootContext);
+			});
+		} else {
+			throw new InternalError();
+		}
+	}(rootContext, 0));
 };
 
 
