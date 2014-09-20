@@ -5,6 +5,21 @@ AbstractType.prototype.is = function (Class) {
 };
 
 
+function NullType() {
+	AbstractType.call(this);
+}
+
+NullType.prototype.toString = function () {
+	return 'null';
+};
+
+NullType.prototype.isSubTypeOf = function (type) {
+	return type.is(VoidType) ||
+		type.is(NullType) ||
+		type.is(NullableType);
+};
+
+
 function VoidType() {
 	AbstractType.call(this);
 }
@@ -171,6 +186,7 @@ NullableType.prototype.toString = function () {
 
 NullableType.prototype.isSubTypeOf = function (type) {
 	return type.is(VoidType) ||
+		type.is(NullType) ||
 		type.is(NullableType) &&
 		this.subType.isSubTypeOf(type.subType);
 };
