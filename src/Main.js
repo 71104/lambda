@@ -3,7 +3,7 @@ if (process.argv.length > 2) {
 	var input = fs.readFileSync(process.argv[2], 'ascii');
 	try {
 		var ast = (new Parser(input)).parse();
-		console.log(ast.getType(new Context()));
+		console.log(ast.getType(new Context()).toString());
 	} catch (e) {
 		console.error(e.message);
 		console.error(e.stack);
@@ -13,7 +13,7 @@ if (process.argv.length > 2) {
 		eval: function (input, context, fileName, callback) {
 			try {
 				var ast = (new Parser(input)).parse();
-				console.log(ast.getType(new Context()));
+				console.log(ast.getType(new Context()).toString());
 			} catch (e) {
 				callback(e);
 			}
