@@ -51,8 +51,10 @@ function Parser(input) {
 				});
 				switch (lexer.getCurrent()) {
 				case 'comma':
+					lexer.next();
 					return new LetNode(names, expression, parseLetPartial(terminators));
 				case 'keyword:in':
+					lexer.next();
 					return new LetNode(names, expression, parseApplication(terminators));
 				default:
 					throw new SyntaxError();
@@ -180,20 +182,28 @@ function Parser(input) {
 	function parsePrimitiveType() {
 		switch (lexer.getCurrent()) {
 		case 'keyword:null':
+			lexer.next();
 			return NullType.INSTANCE;
 		case 'keyword:void':
+			lexer.next();
 			return VoidType.INSTANCE;
 		case 'keyword:unknown':
+			lexer.next();
 			return UnknownType.INSTANCE;
 		case 'keyword:bool':
+			lexer.next();
 			return BooleanType.INSTANCE;
 		case 'keyword:int':
+			lexer.next();
 			return IntegerType.INSTANCE;
 		case 'keyword:float':
+			lexer.next();
 			return FloatType.INSTANCE;
 		case 'keyword:string':
+			lexer.next();
 			return StringType.INSTANCE;
 		case 'keyword:regex':
+			lexer.next();
 			return RegexType.INSTANCE;
 		case 'left':
 			lexer.next();
@@ -241,7 +251,6 @@ function Parser(input) {
 				if (lexer.getCurrent() !== 'right') {
 					throw new SyntaxError();
 				}
-				lexer.next();
 				return node;
 			default:
 				throw new SyntaxError();
