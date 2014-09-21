@@ -48,8 +48,12 @@ function Lexer(input) {
 			return token = 'string';
 		} else if (match(/^(\!\=|<\=|>\=|\*\*)/)) {
 			return token = 'symbol';
-		} else if (match(/^(<|>|\+|\-|\*|\/|\%|\~|\&|\||\^)/)) {
+		} else if (match(/^(<|>|\+|\-|\/|\%|\~|\&|\||\^)/)) {
 			return token = 'symbol';
+		} else if (match(/^\*/)) {
+			return token = 'asterisk';
+		} else if (match(/^\?/)) {
+			return token = 'questionmark';
 		} else if (match(/^\=/)) {
 			return token = 'equal';
 		} else if (/^$/.test(input)) {

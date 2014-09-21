@@ -213,3 +213,17 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 		type.is(LambdaType) && type.left.isSubTypeOf(this.left) && this.right.isSubTypeOf(type.right) ||
 		type.is(NullableType) && this.isSubTypeOf(type.subType);
 };
+
+
+function VariableType(name) {
+	AbstractType.call(this);
+	this.name = name;
+}
+
+VariableType.prototype.toString = function () {
+	return this.name;
+};
+
+VariableType.prototype.isSubTypeOf = function () {
+	// TODO
+};
