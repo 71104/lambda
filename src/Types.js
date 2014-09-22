@@ -227,3 +227,18 @@ VariableType.prototype.toString = function () {
 VariableType.prototype.isSubTypeOf = function () {
 	// TODO
 };
+
+
+function PolimorphicType(name, subType) {
+	AbstractType.call(this);
+	this.name = name;
+	this.subType = subType;
+}
+
+PolimorphicType.prototype.toString = function () {
+	// TODO
+};
+
+PolimorphicType.prototype.isSubTypeOf = function () {
+	// TODO
+};

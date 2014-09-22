@@ -37,8 +37,14 @@ function LambdaNode(name, type, body) {
 	this.body = body;
 }
 
-LambdaNode.prototype.getType = function () {
-	// TODO
+LambdaNode.prototype.getType = function (context) {
+	return context.augment(this.name, this.type, function (context) {
+		if (this.type.is(VariableType)) {
+			return new PolimorphicType(this.name, new LambdaType(this.type, this.body.getType(context)));
+		} else {
+			return new LambdaType(this.type, this.body.getType(context));
+		}
+	}, this);
 };
 
 
