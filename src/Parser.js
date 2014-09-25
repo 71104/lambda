@@ -154,7 +154,7 @@ function Parser(input) {
 	}
 
 	function parseArrowType(terminators) {
-		var left = parseCompoundType();
+		var left = parseArrayType();
 		if (terminators.hasOwnProperty(lexer.getCurrent())) {
 			return left;
 		} else if (lexer.getCurrent() !== 'arrow') {
@@ -165,18 +165,13 @@ function Parser(input) {
 		}
 	}
 
-	function parseCompoundType() {
-		return (function compound(type) {
-			if (lexer.getCurrent() === 'asterisk') {
-				lexer.next();
-				return compound(new ArrayType(type));
-			} else if (lexer.getCurrent() === 'questionmark') {
-				lexer.next();
-				return compound(new NullableType(type));
-			} else {
-				return type;
-			}
-		}(parsePrimitiveType()));
+	function parseArrayType() {
+		var type = parsePrimitiveType();
+		while (lexer.getCurrent() === 'asterisk') {
+			lexer.next();
+			type = new ArrayType(type);
+		}
+		return type;
 	}
 
 	function parsePrimitiveType() {

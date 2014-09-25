@@ -52,8 +52,6 @@ function Lexer(input) {
 			return token = 'symbol';
 		} else if (match(/^\*/)) {
 			return token = 'asterisk';
-		} else if (match(/^\?/)) {
-			return token = 'questionmark';
 		} else if (match(/^\=/)) {
 			return token = 'equal';
 		} else if (/^$/.test(input)) {
