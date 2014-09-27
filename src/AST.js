@@ -165,3 +165,66 @@ IfNode.prototype.getType = function (context) {
 		throw new TypeError();
 	}
 };
+
+
+function ThrowNode(expression) {
+	AbstractNode.call(this);
+	this.expression = expression;
+}
+
+ThrowNode.prototype.getType = function () {
+	// TODO
+};
+
+
+function TryCatchNode(tryExpression, catchExpression) {
+	AbstractNode.call(this);
+	this.tryExpression = tryExpression;
+	this.catchExpression = catchExpression;
+}
+
+TryCatchNode.prototype.getType = function (context) {
+	var tryExpression = tryExpression.getType(context);
+	var catchExpression = catchExpression.getType(context);
+	if (catchExpression.isSubTypeOf(tryExpression)) {
+		return tryExpression;
+	} else if (tryExpression.isSubTypeOf(catchExpression)) {
+		return catchExpression;
+	} else {
+		throw new TypeError();
+	}
+};
+
+
+function TryFinallyNode(tryExpression, finallyExpression) {
+	AbstractNode.call(this);
+	this.tryExpression = tryExpression;
+	this.finallyExpression = finallyExpression;
+}
+
+TryFinallyNode.prototype.getType = function (context) {
+	var type = this.tryExpression.getType(context);
+	this.finallyExpression.getType(context);
+	return type;
+};
+
+
+function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) {
+	AbstractNode.call(this);
+	this.tryExpression = tryExpression;
+	this.catchExpression = catchExpression;
+	this.finallyExpression = finallyExpression;
+}
+
+TryCatchFinallyNode.prototype.getType = function (context) {
+	var tryExpression = tryExpression.getType(context);
+	var catchExpression = catchExpression.getType(context);
+	this.finallyExpression.getType(context);
+	if (catchExpression.isSubTypeOf(tryExpression)) {
+		return tryExpression;
+	} else if (tryExpression.isSubTypeOf(catchExpression)) {
+		return catchExpression;
+	} else {
+		throw new TypeError();
+	}
+};
