@@ -77,12 +77,6 @@ function Parser(input) {
 			case 'equal':
 			case 'asterisk':
 				return new VariableNode(lexer.getLabel());
-			case 'point':
-				lexer.next();
-				if (lexer.getCurrent() !== 'identifier') {
-					throw new SyntaxError();
-				}
-				return new ProjectionNode(lexer.getLabel());
 			case 'left':
 				lexer.next();
 				var node = parseClass3({

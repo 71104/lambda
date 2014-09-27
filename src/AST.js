@@ -71,25 +71,6 @@ FieldAccessNode.prototype.evaluate = function (context) {
 };
 
 
-function ProjectionNode(name) {
-	AbstractNode.call(this);
-	this.name = name;
-}
-
-ProjectionNode.prototype = Object.create(AbstractNode.prototype);
-
-ProjectionNode.prototype.getType = function () {
-	// TODO
-};
-
-ProjectionNode.prototype.evaluate = function () {
-	var name = this.name;
-	return function (object) {
-		return object[name];
-	};
-};
-
-
 function SubscriptNode(expression, index) {
 	AbstractNode.call(this);
 	this.expression = expression;
