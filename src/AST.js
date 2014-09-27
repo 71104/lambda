@@ -15,6 +15,10 @@ LiteralNode.prototype.getType = function () {
 	return this.type;
 };
 
+LiteralNode.prototype.evaluate = function () {
+	return this.value;
+};
+
 
 function VariableNode(name) {
 	AbstractNode.call(this);
@@ -26,6 +30,14 @@ VariableNode.prototype.getType = function (context) {
 		return context.top(this.name);
 	} else {
 		return UnknownType.INSTANCE;
+	}
+};
+
+VariableNode.prototype.evaluate = function (context) {
+	if (context.has(this.name)) {
+		return context.top(this.name);
+	} else {
+		// TODO
 	}
 };
 
@@ -45,6 +57,10 @@ FieldAccessNode.prototype.getType = function (context) {
 	}
 };
 
+FieldAccessNode.prototype.evaluate = function (context) {
+	return this.left.evaluate(context)[this.name];
+};
+
 
 function ProjectionNode(name) {
 	AbstractNode.call(this);
@@ -53,6 +69,13 @@ function ProjectionNode(name) {
 
 ProjectionNode.prototype.getType = function () {
 	// TODO
+};
+
+ProjectionNode.prototype.evaluate = function () {
+	var name = this.name;
+	return function (object) {
+		return object[name];
+	};
 };
 
 
@@ -71,6 +94,16 @@ LambdaNode.prototype.getType = function (context) {
 			return new LambdaType(this.type, this.body.getType(context));
 		}
 	}, this);
+};
+
+LambdaNode.prototype.evaluate = function (context) {
+	var name = this.name;
+	var body = this.body;
+	return function (value) {
+		return context.augment(name, value, function (context) {
+			return body.evaluate(context);
+		});
+	};
 };
 
 
@@ -96,6 +129,10 @@ ApplicationNode.prototype.getType = function (context) {
 	}
 };
 
+ApplicationNode.prototype.evaluate = function () {
+	// TODO
+};
+
 
 function FixNode() {
 	AbstractNode.call(this);
@@ -103,6 +140,20 @@ function FixNode() {
 
 FixNode.prototype.getType = function () {
 	// TODO
+};
+
+FixNode.prototype.evaluate = function () {
+	return function (f) {
+		(function (x) {
+			return f(function (v) {
+				return x(x)(v);
+			});
+		})(function (x) {
+			return f(function (v) {
+				return x(x)(v);
+			});
+		});
+	};
 };
 
 FixNode.INSTANCE = new FixNode();
@@ -142,6 +193,10 @@ LetNode.prototype.getType = function (rootContext) {
 	}(rootContext, 0));
 };
 
+LetNode.prototype.evaluate = function () {
+	// TODO
+};
+
 
 function IfNode(condition, thenExpression, elseExpression) {
 	AbstractNode.call(this);
@@ -166,6 +221,14 @@ IfNode.prototype.getType = function (context) {
 	}
 };
 
+IfNode.prototype.evaluate = function (context) {
+	if (this.condition.evaluate(context)) {
+		return this.thenExpression.evaluate(context);
+	} else {
+		return this.elseExpression.evaluate(context);
+	}
+};
+
 
 function ThrowNode(expression) {
 	AbstractNode.call(this);
@@ -174,6 +237,10 @@ function ThrowNode(expression) {
 
 ThrowNode.prototype.getType = function () {
 	// TODO
+};
+
+ThrowNode.prototype.evaluate = function (context) {
+	throw this.expression.evaluate(context);
 };
 
 
@@ -195,6 +262,14 @@ TryCatchNode.prototype.getType = function (context) {
 	}
 };
 
+TryCatchNode.prototype.evaluate = function (context) {
+	try {
+		return this.tryExpression.evaluate(context);
+	} catch (e) {
+		return this.catchExpression.evaluate(context);
+	}
+};
+
 
 function TryFinallyNode(tryExpression, finallyExpression) {
 	AbstractNode.call(this);
@@ -206,6 +281,14 @@ TryFinallyNode.prototype.getType = function (context) {
 	var type = this.tryExpression.getType(context);
 	this.finallyExpression.getType(context);
 	return type;
+};
+
+TryFinallyNode.prototype.evaluate = function (context) {
+	try {
+		return this.tryExpression.evaluate(context);
+	} finally {
+		this.finallyExpression.evaluate(context);
+	}
 };
 
 
@@ -226,5 +309,15 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 		return catchExpression;
 	} else {
 		throw new TypeError();
+	}
+};
+
+TryCatchFinallyNode.prototype.evaluate = function (context) {
+	try {
+		return this.tryExpression.evaluate(context);
+	} catch (e) {
+		return this.catchExpression.evaluate(context);
+	} finally {
+		this.finallyExpression.evaluate(context);
 	}
 };
