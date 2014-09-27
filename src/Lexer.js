@@ -77,12 +77,4 @@ function Lexer(input) {
 	this.getLabel = function () {
 		return label;
 	};
-
-	this.expect = function (expectedToken, expectedLabel) {
-		if (token !== expectedToken || expectedLabel && label !== expectedLabel) {
-			throw new SyntaxError();
-		}
-		next();
-		return this;
-	};
 }
