@@ -85,6 +85,27 @@ function Parser(input) {
 		}
 	}
 
+	function parseThrow(terminators) {
+		lexer.next();
+		return new ThrowNode(parseApplication(terminators));
+	}
+
+	function parseTry(terminators) {
+		lexer.next();
+		var tryExpression = parseApplication({
+			'keyword:catch': true,
+			'keyword:finally': true
+		});
+		switch (lexer.getCurrent()) {
+		case 'keyword:catch':
+			// TODO
+		case 'keyword:finally':
+			return new TryFinallyNode(tryExpression, parseApplication(terminators));
+		default:
+			throw new SyntaxError();
+		}
+	}
+
 	function parseLambdaOrValue(terminators) {
 		if (lexer.getCurrent() !== 'identifier') {
 			return parseValue();
