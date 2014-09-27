@@ -123,13 +123,16 @@ function LambdaNode(name, type, body) {
 LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
 LambdaNode.prototype.getType = function (context) {
-	return context.augment(this.name, this.type, function (context) {
-		if (this.type.is(VariableType)) {
-			return new PolimorphicType(this.name, new LambdaType(this.type, this.body.getType(context)));
-		} else {
+	if (this.type) {
+		return context.augment(this.name, this.type, function (context) {
 			return new LambdaType(this.type, this.body.getType(context));
-		}
-	}, this);
+		}, this);
+	} else {
+		var left = new VariableType(this.name);
+		return context.augment(this.name, left, function (context) {
+			return new PolimorphicType(this.name, new LambdaType(left, this.body.getType(context)));
+		}, this);
+	}
 };
 
 LambdaNode.prototype.evaluate = function (context) {

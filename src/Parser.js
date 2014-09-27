@@ -1,6 +1,60 @@
 function Parser(input) {
 	var lexer = new Lexer(input);
 
+	function parseBasicType() {
+		var type = (function () {
+			switch (lexer.getCurrent()) {
+			case 'keyword:null':
+				return NullType.INSTANCE;
+			case 'keyword:void':
+				return VoidType.INSTANCE;
+			case 'keyword:unknown':
+				return UnknownType.INSTANCE;
+			case 'keyword:bool':
+				return BooleanType.INSTANCE;
+			case 'keyword:int':
+				return IntegerType.INSTANCE;
+			case 'keyword:float':
+				return FloatType.INSTANCE;
+			case 'keyword:string':
+				return StringType.INSTANCE;
+			case 'keyword:regex':
+				return RegexType.INSTANCE;
+			case 'identifier':
+				return new VariableType(lexer.getLabel());
+			case 'left':
+				lexer.next();
+				var type = parseType();
+				if (lexer.getCurrent() !== 'right') {
+					throw new SyntaxError();
+				}
+				return type;
+			default:
+				throw new SyntaxError();
+			}
+		}());
+		lexer.next();
+		return type;
+	}
+
+	function parseArrayType() {
+		var type = parseBasicType();
+		while (lexer.getCurrent() === 'asterisk') {
+			type = new ArrayType(type);
+			lexer.next();
+		}
+		return type;
+	}
+
+	function parseType() {
+		var left = parseArrayType();
+		if (lexer.getCurrent() !== 'arrow') {
+			return left;
+		} else {
+			return new LambdaType(left, parseType());
+		}
+	}
+
 	function parseClass0() {
 		var node = (function () {
 			switch (lexer.getCurrent()) {
@@ -99,8 +153,54 @@ function Parser(input) {
 		}
 	}
 
-	function parseLambda() {
-		// TODO
+	function parseLambda(terminators) {
+		var name = lexer.getLabel();
+		switch (lexer.next()) {
+		case 'colon':
+			lexer.next();
+			var type = parseType();
+			if (lexer.getCurrent() !== 'comma') {
+				throw new SyntaxError();
+			}
+			return new LambdaNode(name, type, parseLambdaPartial(terminators));
+		case 'comma':
+			lexer.next();
+			return new LambdaNode(name, null, parseLambdaPartial(terminators));
+		case 'arrow':
+			lexer.next();
+			return new LambdaNode(name, null, parseClass3(terminators));
+		default:
+			var node = new VariableNode(name);
+			while (!terminators.hasOwnProperty(lexer.getCurrent())) {
+				node = new ApplicationNode(parseClass1());
+			}
+			return node;
+		}
+	}
+
+	function parseLambdaPartial(terminators) {
+		if (lexer.getCurrent() !== 'identifier') {
+			throw new SyntaxError();
+		} else {
+			var name = lexer.getLabel();
+			switch (lexer.next()) {
+			case 'colon':
+				lexer.next();
+				var type = parseType();
+				if (lexer.getCurrent() !== 'comma') {
+					throw new SyntaxError();
+				}
+				return new LambdaNode(name, type, parseLambdaPartial(terminators));
+			case 'comma':
+				lexer.next();
+				return new LambdaNode(name, null, parseLambdaPartial(terminators));
+			case 'arrow':
+				lexer.next();
+				return new LambdaNode(name, null, parseClass3(terminators));
+			default:
+				throw new SyntaxError();
+			}
+		}
 	}
 
 	function parseLet(terminators) {
