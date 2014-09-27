@@ -30,6 +30,32 @@ VariableNode.prototype.getType = function (context) {
 };
 
 
+function FieldAccessNode(left, name) {
+	AbstractNode.call(this);
+	this.left = left;
+	this.name = name;
+}
+
+FieldAccessNode.prototype.getType = function (context) {
+	var left = this.left.getType(context);
+	if (left.is(ObjectType) && left.context.has(this.name)) {
+		return left.context.top(this.name);
+	} else {
+		throw new TypeError();
+	}
+};
+
+
+function ProjectionNode(name) {
+	AbstractNode.call(this);
+	this.name = name;
+}
+
+ProjectionNode.prototype.getType = function () {
+	// TODO
+};
+
+
 function LambdaNode(name, type, body) {
 	AbstractNode.call(this);
 	this.name = name;

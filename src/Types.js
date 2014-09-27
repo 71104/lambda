@@ -152,6 +152,7 @@ function ObjectType(context) {
 
 ObjectType.prototype.toString = function () {
 	// TODO
+	return 'object';
 };
 
 ObjectType.prototype.isSubTypeOf = function (type) {
