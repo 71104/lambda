@@ -9,6 +9,8 @@ function NullType() {
 	AbstractType.call(this);
 }
 
+NullType.prototype = Object.create(AbstractType.prototype);
+
 NullType.prototype.toString = function () {
 	return 'null';
 };
@@ -22,6 +24,8 @@ NullType.prototype.isSubTypeOf = function (type) {
 function VoidType() {
 	AbstractType.call(this);
 }
+
+VoidType.prototype = Object.create(AbstractType.prototype);
 
 VoidType.prototype.toString = function () {
 	return 'void';
@@ -38,6 +42,8 @@ function UnknownType() {
 	AbstractType.call(this);
 }
 
+UnknownType.prototype = Object.create(AbstractType.prototype);
+
 UnknownType.prototype.toString = function () {
 	return 'unknown';
 };
@@ -52,6 +58,8 @@ UnknownType.INSTANCE = new UnknownType();
 function BooleanType() {
 	AbstractType.call(this);
 }
+
+BooleanType.prototype = Object.create(AbstractType.prototype);
 
 BooleanType.prototype.toString = function () {
 	return 'bool';
@@ -69,6 +77,8 @@ function FloatType() {
 	AbstractType.call(this);
 }
 
+FloatType.prototype = Object.create(AbstractType.prototype);
+
 FloatType.prototype.toString = function () {
 	return 'float';
 };
@@ -84,6 +94,8 @@ FloatType.INSTANCE = new FloatType();
 function IntegerType() {
 	AbstractType.call(this);
 }
+
+IntegerType.prototype = Object.create(AbstractType.prototype);
 
 IntegerType.prototype.toString = function () {
 	return 'int';
@@ -102,6 +114,8 @@ function StringType() {
 	AbstractType.call(this);
 }
 
+StringType.prototype = Object.create(AbstractType.prototype);
+
 StringType.prototype.toString = function () {
 	return 'string';
 };
@@ -117,6 +131,8 @@ StringType.INSTANCE = new StringType();
 function RegexType() {
 	AbstractType.call(this);
 }
+
+RegexType.prototype = Object.create(AbstractType.prototype);
 
 RegexType.prototype.toString = function () {
 	return 'regex';
@@ -135,6 +151,8 @@ function ArrayType(subType) {
 	this.subType = subType;
 }
 
+ArrayType.prototype = Object.create(AbstractType.prototype);
+
 ArrayType.prototype.toString = function () {
 	return this.subType + '*';
 };
@@ -149,6 +167,8 @@ function ObjectType(context) {
 	AbstractType.call(this);
 	this.context = context;
 }
+
+ObjectType.prototype = Object.create(AbstractType.prototype);
 
 ObjectType.prototype.toString = function () {
 	// TODO
@@ -168,6 +188,8 @@ function LambdaType(left, right) {
 	this.left = left;
 	this.right = right;
 }
+
+LambdaType.prototype = Object.create(AbstractType.prototype);
 
 LambdaType.prototype.toString = function () {
 	var argumentTypes = [];
@@ -192,6 +214,8 @@ function VariableType(name) {
 	this.name = name;
 }
 
+VariableType.prototype = Object.create(AbstractType.prototype);
+
 VariableType.prototype.toString = function () {
 	return this.name;
 };
@@ -206,6 +230,8 @@ function PolimorphicType(name, subType) {
 	this.name = name;
 	this.subType = subType;
 }
+
+PolimorphicType.prototype = Object.create(AbstractType.prototype);
 
 PolimorphicType.prototype.toString = function () {
 	// TODO

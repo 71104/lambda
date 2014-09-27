@@ -11,6 +11,8 @@ function LiteralNode(type, value) {
 	this.value = value;
 }
 
+LiteralNode.prototype = Object.create(AbstractNode.prototype);
+
 LiteralNode.prototype.getType = function () {
 	return this.type;
 };
@@ -24,6 +26,8 @@ function VariableNode(name) {
 	AbstractNode.call(this);
 	this.name = name;
 }
+
+VariableNode.prototype = Object.create(AbstractNode.prototype);
 
 VariableNode.prototype.getType = function (context) {
 	if (context.has(this.name)) {
@@ -51,6 +55,8 @@ function FieldAccessNode(left, name) {
 	this.name = name;
 }
 
+FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
+
 FieldAccessNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	if (left.is(ObjectType) && left.context.has(this.name)) {
@@ -70,6 +76,8 @@ function ProjectionNode(name) {
 	this.name = name;
 }
 
+ProjectionNode.prototype = Object.create(AbstractNode.prototype);
+
 ProjectionNode.prototype.getType = function () {
 	// TODO
 };
@@ -87,6 +95,8 @@ function SubscriptNode(expression, index) {
 	this.expression = expression;
 	this.index = index;
 }
+
+SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 
 SubscriptNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
@@ -109,6 +119,8 @@ function LambdaNode(name, type, body) {
 	this.type = type;
 	this.body = body;
 }
+
+LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
 LambdaNode.prototype.getType = function (context) {
 	return context.augment(this.name, this.type, function (context) {
@@ -137,6 +149,8 @@ function ApplicationNode(left, right) {
 	this.right = right;
 }
 
+ApplicationNode.prototype = Object.create(AbstractNode.prototype);
+
 ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	if (left.is(LambdaType)) {
@@ -161,6 +175,8 @@ ApplicationNode.prototype.evaluate = function (context) {
 function FixNode() {
 	AbstractNode.call(this);
 }
+
+FixNode.prototype = Object.create(AbstractNode.prototype);
 
 FixNode.prototype.getType = function () {
 	// TODO
@@ -189,6 +205,8 @@ function LetNode(names, expression, body) {
 	this.expression = expression;
 	this.body = body;
 }
+
+LetNode.prototype = Object.create(AbstractNode.prototype);
 
 LetNode.prototype.getType = function (rootContext) {
 	var names = this.names;
@@ -229,6 +247,8 @@ function IfNode(condition, thenExpression, elseExpression) {
 	this.elseExpression = elseExpression;
 }
 
+IfNode.prototype = Object.create(AbstractNode.prototype);
+
 IfNode.prototype.getType = function (context) {
 	if (this.condition.getType(context).is(BooleanType)) {
 		var type1 = this.thenExpression.getType(context);
@@ -259,6 +279,8 @@ function ThrowNode(expression) {
 	this.expression = expression;
 }
 
+ThrowNode.prototype = Object.create(AbstractNode.prototype);
+
 ThrowNode.prototype.getType = function () {
 	// TODO
 };
@@ -273,6 +295,8 @@ function TryCatchNode(tryExpression, catchExpression) {
 	this.tryExpression = tryExpression;
 	this.catchExpression = catchExpression;
 }
+
+TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
 TryCatchNode.prototype.getType = function (context) {
 	var tryExpression = tryExpression.getType(context);
@@ -301,6 +325,8 @@ function TryFinallyNode(tryExpression, finallyExpression) {
 	this.finallyExpression = finallyExpression;
 }
 
+TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
+
 TryFinallyNode.prototype.getType = function (context) {
 	var type = this.tryExpression.getType(context);
 	this.finallyExpression.getType(context);
@@ -322,6 +348,8 @@ function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) 
 	this.catchExpression = catchExpression;
 	this.finallyExpression = finallyExpression;
 }
+
+TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
 TryCatchFinallyNode.prototype.getType = function (context) {
 	var tryExpression = tryExpression.getType(context);
