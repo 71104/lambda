@@ -13,7 +13,9 @@ if (process.argv.length > 2) {
 		eval: function (input, context, fileName, callback) {
 			try {
 				var ast = (new Parser(input)).parse();
-				console.log(ast.getType(new Context()).toString());
+				var type = ast.getType(new Context());
+				var value = ast.evaluate(new Context());
+				callback(JSON.stringify(value) + ': ' + type);
 			} catch (e) {
 				callback(e);
 			}
