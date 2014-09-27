@@ -130,7 +130,7 @@ LambdaNode.prototype.getType = function (context) {
 	} else {
 		var left = new VariableType(this.name);
 		return context.augment(this.name, left, function (context) {
-			return new PolimorphicType(this.name, new LambdaType(left, this.body.getType(context)));
+			return new PolymorphicType(this.name, new LambdaType(left, this.body.getType(context)));
 		}, this);
 	}
 };

@@ -225,18 +225,18 @@ VariableType.prototype.isSubTypeOf = function () {
 };
 
 
-function PolimorphicType(name, subType) {
+function PolymorphicType(name, subType) {
 	AbstractType.call(this);
 	this.name = name;
 	this.subType = subType;
 }
 
-PolimorphicType.prototype = Object.create(AbstractType.prototype);
+PolymorphicType.prototype = Object.create(AbstractType.prototype);
 
-PolimorphicType.prototype.toString = function () {
+PolymorphicType.prototype.toString = function () {
 	// TODO
 };
 
-PolimorphicType.prototype.isSubTypeOf = function () {
+PolymorphicType.prototype.isSubTypeOf = function () {
 	// TODO
 };
