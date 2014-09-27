@@ -37,7 +37,10 @@ VariableNode.prototype.evaluate = function (context) {
 	if (context.has(this.name)) {
 		return context.top(this.name);
 	} else {
-		// TODO
+		var name = this.name;
+		return (function () {
+			return this[name];
+		}());
 	}
 };
 
@@ -129,8 +132,8 @@ ApplicationNode.prototype.getType = function (context) {
 	}
 };
 
-ApplicationNode.prototype.evaluate = function () {
-	// TODO
+ApplicationNode.prototype.evaluate = function (context) {
+	return this.left.evaluate(context)(this.right.evaluate(context));
 };
 
 
