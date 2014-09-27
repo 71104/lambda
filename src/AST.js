@@ -82,6 +82,27 @@ ProjectionNode.prototype.evaluate = function () {
 };
 
 
+function SubscriptNode(expression, index) {
+	AbstractNode.call(this);
+	this.expression = expression;
+	this.index = index;
+}
+
+SubscriptNode.prototype.getType = function (context) {
+	var expression = this.expression.getType(context);
+	var index = this.index.getType(context);
+	if (expression.is(ArrayType) && index.is(IntegerType)) {
+		return expression.subType;
+	} else {
+		throw new TypeError();
+	}
+};
+
+SubscriptNode.prototype.evaluate = function (context) {
+	return this.expression.evaluate(context)[this.index.evaluate(context)];
+};
+
+
 function LambdaNode(name, type, body) {
 	AbstractNode.call(this);
 	this.name = name;

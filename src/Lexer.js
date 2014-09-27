@@ -31,6 +31,10 @@ function Lexer(input) {
 			return token = 'left';
 		} else if (match(/^\)/)) {
 			return token = 'right';
+		} else if (match(/^\[/)) {
+			return token = 'left-square';
+		} else if (match(/^\]/)) {
+			return token = 'right-square';
 		} else if (match(/^[0-9]+\.[0-9]+\b/)) {
 			label = parseFloat(label);
 			return token = 'float';

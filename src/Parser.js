@@ -48,12 +48,30 @@ function Parser(input) {
 
 	function parseClass1() {
 		var node = parseClass0();
-		while (lexer.getCurrent() === 'point') {
-			lexer.next();
-			node = new FieldAccessNode(node, lexer.getLabel());
-			lexer.next();
+		while (true) {
+			switch (lexer.getCurrent()) {
+			case 'point':
+				if (lexer.next() !== 'identifier') {
+					throw new SyntaxError();
+				}
+				node = new FieldAccessNode(node, lexer.getLabel());
+				lexer.next();
+				break;
+			case 'left-square':
+				lexer.next();
+				var index = parseClass3({
+					'right-square': true
+				});
+				if (lexer.getCurrent() !== 'right-square') {
+					throw new SyntaxError();
+				}
+				lexer.next();
+				node = new SubscriptNode(node, index);
+				break;
+			default:
+				return node;
+			}
 		}
-		return node;
 	}
 
 	function parseClass2(terminators) {
