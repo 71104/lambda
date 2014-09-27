@@ -49,6 +49,32 @@ VariableNode.prototype.evaluate = function (context) {
 };
 
 
+function ThisNode() {
+	AbstractNode.call(this);
+}
+
+ThisNode.prototype = Object.create(AbstractNode.prototype);
+
+ThisNode.prototype.getType = function () {
+	// TODO
+};
+
+ThisNode.prototype.evaluate = function () {
+	// TODO
+};
+
+ThisNode.INSTANCE = new ThisNode();
+
+
+function ErrorNode() {
+	VariableNode.call(this, 'error');
+}
+
+ErrorNode.prototype = Object.create(VariableNode.prototype);
+
+ErrorNode.INSTANCE = new ErrorNode();
+
+
 function FieldAccessNode(left, name) {
 	AbstractNode.call(this);
 	this.left = left;
