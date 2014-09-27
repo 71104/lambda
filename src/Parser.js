@@ -289,9 +289,8 @@ function Parser(input) {
 				return new TryCatchFinallyNode(tryExpression, catchExpression, parseClass3(terminators));
 			} else if (terminators.hasOwnProperty(lexer.getCurrent())) {
 				return new TryCatchNode(tryExpression, catchExpression);
-			} else {
-				throw new SyntaxError();
 			}
+			throw new SyntaxError();
 		case 'keyword:finally':
 			lexer.next();
 			return new TryFinallyNode(tryExpression, parseClass3(terminators));
