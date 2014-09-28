@@ -163,8 +163,8 @@ ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 
 ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
+	var right = this.right.getType(context);
 	if (left.is(LambdaType)) {
-		var right = this.right.getType(context);
 		if (right.isSubTypeOf(left.left)) {
 			return left.right;
 		} else {

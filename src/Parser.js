@@ -136,7 +136,7 @@ function Parser(input) {
 	function parseClass2(terminators) {
 		var node = parseClass1();
 		while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-			node = new ApplicationNode(parseClass1());
+			node = new ApplicationNode(node, parseClass1());
 		}
 		return node;
 	}
@@ -184,7 +184,7 @@ function Parser(input) {
 		default:
 			var node = new VariableNode(name);
 			while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-				node = new ApplicationNode(parseClass1());
+				node = new ApplicationNode(node, parseClass1());
 			}
 			return node;
 		}
