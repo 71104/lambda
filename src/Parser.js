@@ -48,9 +48,10 @@ function Parser(input) {
 
 	function parseType() {
 		var left = parseArrayType();
-		if (lexer.getCurrent() !== 'arrow') {
+		if (lexer.getCurrent() !== 'fat-arrow') {
 			return left;
 		} else {
+			lexer.next();
 			return new LambdaType(left, parseType());
 		}
 	}
@@ -159,10 +160,17 @@ function Parser(input) {
 		case 'colon':
 			lexer.next();
 			var type = parseType();
-			if (lexer.getCurrent() !== 'comma') {
+			switch (lexer.getCurrent()) {
+			case 'comma':
+				lexer.next();
+				return new LambdaNode(name, type, parseLambdaPartial(terminators));
+			case 'arrow':
+				lexer.next();
+				return new LambdaNode(name, type, parseClass3(terminators));
+			default:
 				throw new SyntaxError();
 			}
-			return new LambdaNode(name, type, parseLambdaPartial(terminators));
+			break;
 		case 'comma':
 			lexer.next();
 			return new LambdaNode(name, null, parseLambdaPartial(terminators));
@@ -187,10 +195,17 @@ function Parser(input) {
 			case 'colon':
 				lexer.next();
 				var type = parseType();
-				if (lexer.getCurrent() !== 'comma') {
+				switch (lexer.getCurrent()) {
+				case 'comma':
+					lexer.next();
+					return new LambdaNode(name, type, parseLambdaPartial(terminators));
+				case 'arrow':
+					lexer.next();
+					return new LambdaNode(name, type, parseClass3(terminators));
+				default:
 					throw new SyntaxError();
 				}
-				return new LambdaNode(name, type, parseLambdaPartial(terminators));
+				break;
 			case 'comma':
 				lexer.next();
 				return new LambdaNode(name, null, parseLambdaPartial(terminators));

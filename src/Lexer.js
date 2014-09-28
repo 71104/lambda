@@ -21,6 +21,8 @@ function Lexer(input) {
 			return token = 'identifier';
 		} else if (match(/^\-\>/)) {
 			return token = 'arrow';
+		} else if (match(/^\=\>/)) {
+			return token = 'fat-arrow';
 		} else if (match(/^\,/)) {
 			return token = 'comma';
 		} else if (match(/^\./)) {

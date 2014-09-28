@@ -198,7 +198,11 @@ LambdaType.prototype.toString = function () {
 		argumentTypes.push(type.left);
 		type = type.right;
 	}
-	return '(' + argumentTypes.join(', ') + ') -> ' + type;
+	if (argumentTypes.length > 1) {
+		return '(' + argumentTypes.join(', ') + ') -> ' + type;
+	} else {
+		return argumentTypes.join(', ') + ' -> ' + type;
+	}
 };
 
 LambdaType.prototype.isSubTypeOf = function (type) {
