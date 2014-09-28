@@ -42,9 +42,9 @@ VariableNode.prototype.evaluate = function (context) {
 		return context.top(this.name);
 	} else {
 		var name = this.name;
-		return (function () {
+		return AbstractValue.wrap((function () {
 			return this[name];
-		}());
+		}()));
 	}
 };
 
@@ -93,7 +93,7 @@ FieldAccessNode.prototype.getType = function (context) {
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
-	return this.left.evaluate(context)[this.name];
+	return this.left.evaluate(context).context.top(this.name);
 };
 
 
@@ -116,7 +116,7 @@ SubscriptNode.prototype.getType = function (context) {
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
-	return this.expression.evaluate(context)[this.index.evaluate(context)];
+	return this.expression.evaluate(context).array[this.index.evaluate(context).value];
 };
 
 
@@ -143,13 +143,7 @@ LambdaNode.prototype.getType = function (context) {
 };
 
 LambdaNode.prototype.evaluate = function (context) {
-	var name = this.name;
-	var body = this.body;
-	return function (value) {
-		return context.augment(name, value, function (context) {
-			return body.evaluate(context);
-		});
-	};
+	return new Closure(this.name, this.body, context);
 };
 
 
@@ -164,21 +158,19 @@ ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	var right = this.right.getType(context);
-	if (left.is(LambdaType)) {
-		if (right.isSubTypeOf(left.left)) {
-			return left.right;
-		} else {
-			throw new TypeError();
-		}
-	} else if (left.is(UnknownType)) {
-		return UnknownType.INSTANCE;
+	if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
+		return left.right;
 	} else {
 		throw new TypeError();
 	}
 };
 
 ApplicationNode.prototype.evaluate = function (context) {
-	return this.left.evaluate(context)(this.right.evaluate(context));
+	var left = this.left.evaluate(context);
+	var right = this.right.evaluate(context);
+	return left.context.augment(left.name, right, function (context) {
+		return left.body.evaluate(context);
+	});
 };
 
 
@@ -192,18 +184,31 @@ FixNode.prototype.getType = function () {
 	// TODO
 };
 
+FixNode.Z_COMBINATOR = (new LambdaNode('f', null, new ApplicationNode(
+	new LambdaNode('x', null, new ApplicationNode(
+		new VariableNode('f'),
+		new LambdaNode('v', null, new ApplicationNode(
+			new ApplicationNode(
+				new VariableNode('x'),
+				new VariableNode('x')
+				),
+			new VariableNode('v')
+			))
+		)),
+	new LambdaNode('x', null, new ApplicationNode(
+		new VariableNode('f'),
+		new LambdaNode('v', null, new ApplicationNode(
+			new ApplicationNode(
+				new VariableNode('x'),
+				new VariableNode('x')
+				),
+			new VariableNode('v')
+			))
+		))
+	))).evaluate(new Context());
+
 FixNode.prototype.evaluate = function () {
-	return function (f) {
-		(function (x) {
-			return f(function (v) {
-				return x(x)(v);
-			});
-		})(function (x) {
-			return f(function (v) {
-				return x(x)(v);
-			});
-		});
-	};
+	return FixNode.Z_COMBINATOR;
 };
 
 FixNode.INSTANCE = new FixNode();
@@ -222,18 +227,18 @@ LetNode.prototype.getType = function (rootContext) {
 	var names = this.names;
 	var expression = this.expression;
 	var body = this.body;
-	return (function augment(context, index) {
+	return (function getType(context, index) {
 		if (index < names.length - 1) {
 			var type;
 			if (context.has(names[index])) {
 				type = context.top(names[index]);
 				if (type.is(ObjectType)) {
-					return augment(type.context, index + 1);
+					return getType(type.context, index + 1);
 				}
 			}
 			type = new ObjectType(new Context());
 			return context.augment(names[index], type, function () {
-				return augment(type.context, index + 1);
+				return getType(type.context, index + 1);
 			});
 		} else if (index < names.length) {
 			return context.augment(names[index], expression.getType(rootContext), function () {
@@ -245,8 +250,28 @@ LetNode.prototype.getType = function (rootContext) {
 	}(rootContext, 0));
 };
 
-LetNode.prototype.evaluate = function () {
-	// TODO
+LetNode.prototype.evaluate = function (rootContext) {
+	var names = this.names;
+	var expression = this.expression;
+	var body = this.body;
+	return (function evaluate(context, index) {
+		if (index < names.length - 1) {
+			if (context.has(names[index])) {
+				return evaluate(context.top(names[index]).context, index + 1);
+			} else {
+				var value = new ObjectValue(new Context());
+				return context.augment(names[index], value, function () {
+					return evaluate(value.context, index + 1);
+				});
+			}
+		} else if (index < names.length) {
+			return context.augment(names[index], expression.evaluate(rootContext), function () {
+				return body.evaluate(rootContext);
+			});
+		} else {
+			throw new InternalError();
+		}
+	}(rootContext, 0));
 };
 
 
@@ -276,7 +301,7 @@ IfNode.prototype.getType = function (context) {
 };
 
 IfNode.prototype.evaluate = function (context) {
-	if (this.condition.evaluate(context)) {
+	if (this.condition.evaluate(context).value) {
 		return this.thenExpression.evaluate(context);
 	} else {
 		return this.elseExpression.evaluate(context);
