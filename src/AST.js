@@ -17,6 +17,10 @@ LiteralNode.prototype.getType = function () {
 	return this.type;
 };
 
+LiteralNode.prototype.getFreeVariables = function () {
+	return [];
+};
+
 LiteralNode.prototype.evaluate = function () {
 	return this.value;
 };
@@ -35,6 +39,10 @@ VariableNode.prototype.getType = function (context) {
 	} else {
 		return UnknownType.INSTANCE;
 	}
+};
+
+VariableNode.prototype.getFreeVariables = function () {
+	return [this.name];
 };
 
 VariableNode.prototype.evaluate = function (context) {
@@ -59,6 +67,10 @@ ThisNode.prototype.getType = function () {
 	// TODO
 };
 
+ThisNode.prototype.getFreeVariables = function () {
+	// TODO
+};
+
 ThisNode.prototype.evaluate = function () {
 	// TODO
 };
@@ -71,6 +83,22 @@ function ErrorNode() {
 }
 
 ErrorNode.prototype = Object.create(VariableNode.prototype);
+
+ErrorNode.prototype.getType = function (context) {
+	if (context.has('error')) {
+		return context.top('error');
+	} else {
+		throw new TypeError();
+	}
+};
+
+ErrorNode.prototype.getFreeVariables = function () {
+	return ['error'];
+};
+
+ErrorNode.prototype.evaluate = function (context) {
+	return context.top('error');
+};
 
 ErrorNode.INSTANCE = new ErrorNode();
 
@@ -90,6 +118,10 @@ FieldAccessNode.prototype.getType = function (context) {
 	} else {
 		throw new TypeError();
 	}
+};
+
+FieldAccessNode.prototype.getFreeVariables = function () {
+	return this.left.getFreeVariables();
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
@@ -113,6 +145,10 @@ SubscriptNode.prototype.getType = function (context) {
 	} else {
 		throw new TypeError();
 	}
+};
+
+SubscriptNode.prototype.getFreeVariables = function () {
+	return this.expression.getFreeVariables();
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
@@ -142,6 +178,12 @@ LambdaNode.prototype.getType = function (context) {
 	}
 };
 
+LambdaNode.prototype.getFreeVariables = function () {
+	return this.body.getFreeVariables().filter(function (name) {
+		return name !== this.name;
+	}, this);
+};
+
 LambdaNode.prototype.evaluate = function (context) {
 	return new Closure(this.name, this.body, context);
 };
@@ -165,6 +207,10 @@ ApplicationNode.prototype.getType = function (context) {
 	}
 };
 
+ApplicationNode.prototype.getFreeVariables = function () {
+	return this.left.getFreeVariables().union(this.right.getFreeVariables());
+};
+
 ApplicationNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
 	var right = this.right.evaluate(context);
@@ -182,6 +228,10 @@ FixNode.prototype = Object.create(AbstractNode.prototype);
 
 FixNode.prototype.getType = function () {
 	// TODO
+};
+
+FixNode.prototype.getFreeVariables = function () {
+	return [];
 };
 
 FixNode.Z_COMBINATOR = (new LambdaNode('f', null, new ApplicationNode(
@@ -250,6 +300,12 @@ LetNode.prototype.getType = function (rootContext) {
 	}(rootContext, 0));
 };
 
+LetNode.prototype.getFreeVariables = function () {
+	return this.expression.getFreeVariables().union(this.body.getFreeVariables().filter(function (name) {
+		return name !== this.names[0];
+	}, this));
+};
+
 LetNode.prototype.evaluate = function (rootContext) {
 	var names = this.names;
 	var expression = this.expression;
@@ -300,6 +356,12 @@ IfNode.prototype.getType = function (context) {
 	}
 };
 
+IfNode.prototype.getFreeVariables = function () {
+	return this.condition.getFreeVariables()
+		.union(this.thenExpression.getFreeVariables())
+		.union(this.elseExpression.getFreeVariables());
+};
+
 IfNode.prototype.evaluate = function (context) {
 	if (this.condition.evaluate(context).value) {
 		return this.thenExpression.evaluate(context);
@@ -318,6 +380,10 @@ ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
 ThrowNode.prototype.getType = function () {
 	// TODO
+};
+
+ThrowNode.prototype.getFreeVariables = function () {
+	return this.expression.getFreeVariables();
 };
 
 ThrowNode.prototype.evaluate = function (context) {
@@ -345,6 +411,11 @@ TryCatchNode.prototype.getType = function (context) {
 	}
 };
 
+TryCatchNode.prototype.getFreeVariables = function () {
+	return this.tryExpression.getFreeVariables()
+		.union(this.catchExpression.getFreeVariables());
+};
+
 TryCatchNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
@@ -366,6 +437,11 @@ TryFinallyNode.prototype.getType = function (context) {
 	var type = this.tryExpression.getType(context);
 	this.finallyExpression.getType(context);
 	return type;
+};
+
+TryFinallyNode.prototype.getFreeVariables = function () {
+	return this.tryExpression.getFreeVariables()
+		.union(this.finallyExpression.getFreeVariables());
 };
 
 TryFinallyNode.prototype.evaluate = function (context) {
@@ -397,6 +473,12 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 	} else {
 		throw new TypeError();
 	}
+};
+
+TryCatchFinallyNode.prototype.getFreeVariables = function () {
+	return this.tryExpression.getFreeVariables()
+		.union(this.catchExpression.getFreeVariables())
+		.union(this.finallyExpression.getFreeVariables());
 };
 
 TryCatchFinallyNode.prototype.evaluate = function (context) {
