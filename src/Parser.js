@@ -74,6 +74,10 @@ function Parser(input) {
 			case 'string':
 				return new LiteralNode(StringType.INSTANCE, lexer.getLabel());
 			case 'identifier':
+			case 'keyword:not':
+			case 'keyword:and':
+			case 'keyword:or':
+			case 'keyword:xor':
 			case 'symbol':
 			case 'equal':
 			case 'asterisk':
