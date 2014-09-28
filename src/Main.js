@@ -15,7 +15,7 @@ if (process.argv.length > 2) {
 				var ast = (new Parser(input)).parse();
 				var type = ast.getType(new Context());
 				var value = ast.evaluate(new Context());
-				callback(JSON.stringify(value) + ': ' + type);
+				callback(value + ': ' + type);
 			} catch (e) {
 				callback(e);
 			}
