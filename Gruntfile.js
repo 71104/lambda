@@ -8,8 +8,10 @@ module.exports = function (grunt) {
 			dist: {
 				src: [
 					'src/Errors.js',
+					'src/Utilities.js',
 					'src/Context.js',
 					'src/Types.js',
+					'src/Values.js',
 					'src/AST.js',
 					'src/Lexer.js',
 					'src/Parser.js',
