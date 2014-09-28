@@ -6,8 +6,8 @@ function Parser(input) {
 			switch (lexer.getCurrent()) {
 			case 'keyword:null':
 				return NullType.INSTANCE;
-			case 'keyword:void':
-				return VoidType.INSTANCE;
+			case 'keyword:undefined':
+				return UndefinedType.INSTANCE;
 			case 'keyword:unknown':
 				return UnknownType.INSTANCE;
 			case 'keyword:bool':
@@ -61,7 +61,7 @@ function Parser(input) {
 			case 'keyword:null':
 				return new LiteralNode(NullType.INSTANCE, null);
 			case 'keyword:undefined':
-				return new LiteralNode(VoidType.INSTANCE);
+				return new LiteralNode(UndefinedType.INSTANCE);
 			case 'keyword:true':
 				return new LiteralNode(BooleanType.INSTANCE, true);
 			case 'keyword:false':
