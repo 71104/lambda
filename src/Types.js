@@ -20,6 +20,8 @@ NullType.prototype.isSubTypeOf = function (type) {
 		type.is(NullType);
 };
 
+NullType.INSTANCE = new NullType();
+
 
 function UndefinedType() {
 	AbstractType.call(this);
