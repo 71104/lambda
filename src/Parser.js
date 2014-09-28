@@ -60,19 +60,19 @@ function Parser(input) {
 		var node = (function () {
 			switch (lexer.getCurrent()) {
 			case 'keyword:null':
-				return new LiteralNode(NullType.INSTANCE, null);
+				return new LiteralNode(NullType.INSTANCE, NullValue.INSTANCE);
 			case 'keyword:undefined':
-				return new LiteralNode(UndefinedType.INSTANCE);
+				return new LiteralNode(UndefinedType.INSTANCE, UndefinedValue.INSTANCE);
 			case 'keyword:true':
-				return new LiteralNode(BooleanType.INSTANCE, true);
+				return new LiteralNode(BooleanType.INSTANCE, new BooleanValue(true));
 			case 'keyword:false':
-				return new LiteralNode(BooleanType.INSTANCE, false);
+				return new LiteralNode(BooleanType.INSTANCE, new BooleanValue(false));
 			case 'integer':
-				return new LiteralNode(IntegerType.INSTANCE, lexer.getLabel());
+				return new LiteralNode(IntegerType.INSTANCE, new IntegerValue(lexer.getLabel));
 			case 'float':
-				return new LiteralNode(FloatType.INSTANCE, lexer.getLabel());
+				return new LiteralNode(FloatType.INSTANCE, new FloatValue(lexer.getLabel()));
 			case 'string':
-				return new LiteralNode(StringType.INSTANCE, lexer.getLabel());
+				return new LiteralNode(StringType.INSTANCE, new StringValue(lexer.getLabel()));
 			case 'identifier':
 			case 'keyword:not':
 			case 'keyword:and':
