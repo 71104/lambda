@@ -14,6 +14,9 @@ AbstractValue.wrap = function (value) {
 		return new FloatValue(value);
 	case 'string':
 		return new StringValue(value);
+	case 'function':
+		// TODO
+		break;
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
