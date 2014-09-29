@@ -5,24 +5,6 @@ AbstractType.prototype.is = function (Class) {
 };
 
 
-function NullType() {
-	AbstractType.call(this);
-}
-
-NullType.prototype = Object.create(AbstractType.prototype);
-
-NullType.prototype.toString = function () {
-	return 'null';
-};
-
-NullType.prototype.isSubTypeOf = function (type) {
-	return type.is(UndefinedType) ||
-		type.is(NullType);
-};
-
-NullType.INSTANCE = new NullType();
-
-
 function UndefinedType() {
 	AbstractType.call(this);
 }
@@ -57,6 +39,46 @@ UnknownType.prototype.isSubTypeOf = function () {
 UnknownType.INSTANCE = new UnknownType();
 
 
+function ThrowingType(subType, thrown) {
+	AbstractType.call(this);
+	this.subType = subType;
+	this.thrown = thrown;
+}
+
+ThrowingType.prototype = Object.create(AbstractType.prototype);
+
+ThrowingType.prototype.toString = function () {
+	return this.subType + ' throws ' + this.thrown;
+};
+
+ThrowingType.prototype.isSubTypeOf = function (type) {
+	return type.is(UndefinedType) ||
+		type.is(ThrowingType) &&
+		this.subType.isSubTypeOf(type.subType) &&
+		this.thrown.isSubTypeOf(type.thrown);
+};
+
+
+function NullType() {
+	AbstractType.call(this);
+}
+
+NullType.prototype = Object.create(AbstractType.prototype);
+
+NullType.prototype.toString = function () {
+	return 'null';
+};
+
+NullType.prototype.isSubTypeOf = function (type) {
+	return type.is(UndefinedType) ||
+		type.is(NullType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
+};
+
+NullType.INSTANCE = new NullType();
+
+
 function BooleanType() {
 	AbstractType.call(this);
 }
@@ -69,7 +91,9 @@ BooleanType.prototype.toString = function () {
 
 BooleanType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
-		type.is(BooleanType);
+		type.is(BooleanType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 BooleanType.INSTANCE = new BooleanType();
@@ -87,7 +111,9 @@ FloatType.prototype.toString = function () {
 
 FloatType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
-		type.is(FloatType);
+		type.is(FloatType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 FloatType.INSTANCE = new FloatType();
@@ -106,7 +132,9 @@ IntegerType.prototype.toString = function () {
 IntegerType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(IntegerType) ||
-		type.is(FloatType);
+		type.is(FloatType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 IntegerType.INSTANCE = new IntegerType();
@@ -124,7 +152,9 @@ StringType.prototype.toString = function () {
 
 StringType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
-		type.is(StringType);
+		type.is(StringType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 StringType.INSTANCE = new StringType();
@@ -142,7 +172,9 @@ RegexType.prototype.toString = function () {
 
 RegexType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
-		type.is(RegexType);
+		type.is(RegexType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 RegexType.INSTANCE = new RegexType();
@@ -161,7 +193,8 @@ ArrayType.prototype.toString = function () {
 
 ArrayType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
-		type.is(ArrayType) && this.subType.isSubTypeOf(type.subType);
+		type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
+		type.is(ThrowingType) && this.isSubTypeOf(type.subType);
 };
 
 
@@ -181,7 +214,8 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(ObjectType) && type.context.forEach(function (name, subType) {
 			return this.context.has(name) && this.context.get(name).isSubTypeOf(subType);
-		}, this);
+		}, this) ||
+		type.is(ThrowingType) && this.isSubTypeOf(type.subType);
 };
 
 
@@ -211,7 +245,9 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(LambdaType) &&
 		type.left.isSubTypeOf(this.left) &&
-		this.right.isSubTypeOf(type.right);
+		this.right.isSubTypeOf(type.right) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
 };
 
 

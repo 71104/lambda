@@ -68,7 +68,7 @@ function Parser(input) {
 			case 'keyword:false':
 				return new LiteralNode(BooleanType.INSTANCE, new BooleanValue(false));
 			case 'integer':
-				return new LiteralNode(IntegerType.INSTANCE, new IntegerValue(lexer.getLabel));
+				return new LiteralNode(IntegerType.INSTANCE, new IntegerValue(lexer.getLabel()));
 			case 'float':
 				return new LiteralNode(FloatType.INSTANCE, new FloatValue(lexer.getLabel()));
 			case 'string':

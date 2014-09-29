@@ -378,8 +378,8 @@ function ThrowNode(expression) {
 
 ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
-ThrowNode.prototype.getType = function () {
-	// TODO
+ThrowNode.prototype.getType = function (context) {
+	return new ThrowingType(UnknownType.INSTANCE, this.expression.getType(context));
 };
 
 ThrowNode.prototype.getFreeVariables = function () {
