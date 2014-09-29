@@ -50,12 +50,22 @@ module.exports = function (grunt) {
 					'bin/lambda.min.js': 'bin/lambda.js'
 				}
 			}
+		},
+		nodeunit: {
+			dist: [
+				'test/lexer.js',
+				'test/parser.js',
+				'test/types.js',
+				'test/evaluation.js'
+			]
 		}
 	});
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
-	grunt.registerTask('all', ['clean', 'concat', 'jshint', 'uglify']);
+	grunt.registerTask('test', ['nodeunit']);
+	grunt.registerTask('all', ['clean', 'concat', 'jshint', 'uglify', 'nodeunit']);
 };
