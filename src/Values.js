@@ -6,8 +6,6 @@ AbstractValue.prototype.is = function (Class) {
 
 AbstractValue.wrap = function (value) {
 	switch (typeof value) {
-	case 'null':
-		return NullValue.INSTANCE;
 	case 'undefined':
 		return UndefinedValue.INSTANCE;
 	case 'boolean':
@@ -16,6 +14,24 @@ AbstractValue.wrap = function (value) {
 		return new FloatValue(value);
 	case 'string':
 		return new StringValue(value);
+	case 'object':
+		if (value === null) {
+			return NullValue.INSTANCE;
+		} else if (Array.isArray(value)) {
+			var result = new ArrayValue();
+			result.array = value.map(function (element) {
+				return AbstractValue.wrap(element);
+			});
+			return result;
+		} else {
+			var context = new Context();
+			for (var key in value) {
+				if (value.hasOwnProperty(key)) {
+					context.push(key, AbstractValue.wrap(value[key]));
+				}
+			}
+			return new ObjectValue(context);
+		}
 	}
 };
 
