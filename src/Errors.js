@@ -1,13 +1,13 @@
-function InternalError() {
+var MyInternalError = exports.InternalError = function () {
 	return Error.call(this, 'internal error');
-}
+};
 
 
-function SyntaxError() {
+var MySyntaxError = exports.SyntaxError = function () {
 	return Error.call(this, 'syntax error');
-}
+};
 
 
-function TypeError() {
+var MyTypeError = exports.TypeError = function () {
 	return Error.call(this, 'type error');
-}
+};

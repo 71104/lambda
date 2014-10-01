@@ -1,15 +1,15 @@
-function AbstractNode() {}
+var AbstractNode = exports.AbstractNode = function () {};
 
 AbstractNode.prototype.is = function (Class) {
 	return this instanceof Class;
 };
 
 
-function LiteralNode(type, value) {
+var LiteralNode = exports.LiteralNode = function (type, value) {
 	AbstractNode.call(this);
 	this.type = type;
 	this.value = value;
-}
+};
 
 LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -26,10 +26,10 @@ LiteralNode.prototype.evaluate = function () {
 };
 
 
-function VariableNode(name) {
+var VariableNode = exports.VariableNode = function (name) {
 	AbstractNode.call(this);
 	this.name = name;
-}
+};
 
 VariableNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -57,9 +57,9 @@ VariableNode.prototype.evaluate = function (context) {
 };
 
 
-function ThisNode() {
+var ThisNode = exports.ThisNode = function () {
 	AbstractNode.call(this);
-}
+};
 
 ThisNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -78,9 +78,9 @@ ThisNode.prototype.evaluate = function () {
 ThisNode.INSTANCE = new ThisNode();
 
 
-function ErrorNode() {
+var ErrorNode = exports.ErrorNode = function () {
 	VariableNode.call(this, 'error');
-}
+};
 
 ErrorNode.prototype = Object.create(VariableNode.prototype);
 
@@ -88,7 +88,7 @@ ErrorNode.prototype.getType = function (context) {
 	if (context.has('error')) {
 		return context.top('error');
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -103,11 +103,11 @@ ErrorNode.prototype.evaluate = function (context) {
 ErrorNode.INSTANCE = new ErrorNode();
 
 
-function FieldAccessNode(left, name) {
+var FieldAccessNode = exports.FieldAccessNode = function (left, name) {
 	AbstractNode.call(this);
 	this.left = left;
 	this.name = name;
-}
+};
 
 FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -116,7 +116,7 @@ FieldAccessNode.prototype.getType = function (context) {
 	if (left.is(ObjectType) && left.context.has(this.name)) {
 		return left.context.top(this.name);
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -129,11 +129,11 @@ FieldAccessNode.prototype.evaluate = function (context) {
 };
 
 
-function SubscriptNode(expression, index) {
+var SubscriptNode = exports.SubscriptNode = function (expression, index) {
 	AbstractNode.call(this);
 	this.expression = expression;
 	this.index = index;
-}
+};
 
 SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -143,7 +143,7 @@ SubscriptNode.prototype.getType = function (context) {
 	if (expression.is(ArrayType) && index.is(IntegerType)) {
 		return expression.subType;
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -156,12 +156,12 @@ SubscriptNode.prototype.evaluate = function (context) {
 };
 
 
-function LambdaNode(name, type, body) {
+var LambdaNode = exports.LambdaNode = function (name, type, body) {
 	AbstractNode.call(this);
 	this.name = name;
 	this.type = type;
 	this.body = body;
-}
+};
 
 LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -189,11 +189,11 @@ LambdaNode.prototype.evaluate = function (context) {
 };
 
 
-function ApplicationNode(left, right) {
+var ApplicationNode = exports.ApplicationNode = function (left, right) {
 	AbstractNode.call(this);
 	this.left = left;
 	this.right = right;
-}
+};
 
 ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -203,7 +203,7 @@ ApplicationNode.prototype.getType = function (context) {
 	if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
 		return left.right;
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -220,9 +220,9 @@ ApplicationNode.prototype.evaluate = function (context) {
 };
 
 
-function FixNode() {
+var FixNode = exports.FixNode = function () {
 	AbstractNode.call(this);
-}
+};
 
 FixNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -264,12 +264,12 @@ FixNode.prototype.evaluate = function () {
 FixNode.INSTANCE = new FixNode();
 
 
-function LetNode(names, expression, body) {
+var LetNode = exports.LetNode = function (names, expression, body) {
 	AbstractNode.call(this);
 	this.names = names;
 	this.expression = expression;
 	this.body = body;
-}
+};
 
 LetNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -295,7 +295,7 @@ LetNode.prototype.getType = function (rootContext) {
 				return body.getType(rootContext);
 			});
 		} else {
-			throw new InternalError();
+			throw new MyInternalError();
 		}
 	}(rootContext, 0));
 };
@@ -325,18 +325,18 @@ LetNode.prototype.evaluate = function (rootContext) {
 				return body.evaluate(rootContext);
 			});
 		} else {
-			throw new InternalError();
+			throw new MyInternalError();
 		}
 	}(rootContext, 0));
 };
 
 
-function IfNode(condition, thenExpression, elseExpression) {
+var IfNode = exports.IfNode = function (condition, thenExpression, elseExpression) {
 	AbstractNode.call(this);
 	this.condition = condition;
 	this.thenExpression = thenExpression;
 	this.elseExpression = elseExpression;
-}
+};
 
 IfNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -349,10 +349,10 @@ IfNode.prototype.getType = function (context) {
 		} else if (type2.isSubTypeOf(type1)) {
 			return type1;
 		} else {
-			throw new TypeError();
+			throw new MyTypeError();
 		}
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -371,10 +371,10 @@ IfNode.prototype.evaluate = function (context) {
 };
 
 
-function ThrowNode(expression) {
+var ThrowNode = exports.ThrowNode = function (expression) {
 	AbstractNode.call(this);
 	this.expression = expression;
-}
+};
 
 ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -391,11 +391,11 @@ ThrowNode.prototype.evaluate = function (context) {
 };
 
 
-function TryCatchNode(tryExpression, catchExpression) {
+var TryCatchNode = exports.TryCatchNode = function (tryExpression, catchExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.catchExpression = catchExpression;
-}
+};
 
 TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -407,7 +407,7 @@ TryCatchNode.prototype.getType = function (context) {
 	} else if (tryExpression.isSubTypeOf(catchExpression)) {
 		return catchExpression;
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 
@@ -425,11 +425,11 @@ TryCatchNode.prototype.evaluate = function (context) {
 };
 
 
-function TryFinallyNode(tryExpression, finallyExpression) {
+var TryFinallyNode = exports.TryFinallyNode = function (tryExpression, finallyExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.finallyExpression = finallyExpression;
-}
+};
 
 TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -453,12 +453,12 @@ TryFinallyNode.prototype.evaluate = function (context) {
 };
 
 
-function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) {
+var TryCatchFinallyNode = exports.TryCatchFinallyNode = function (tryExpression, catchExpression, finallyExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.catchExpression = catchExpression;
 	this.finallyExpression = finallyExpression;
-}
+};
 
 TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -471,7 +471,7 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 	} else if (tryExpression.isSubTypeOf(catchExpression)) {
 		return catchExpression;
 	} else {
-		throw new TypeError();
+		throw new MyTypeError();
 	}
 };
 

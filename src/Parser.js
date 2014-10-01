@@ -1,4 +1,4 @@
-function Parser(input) {
+var Parser = exports.Parser = function (input) {
 	var lexer = new Lexer(input);
 
 	function parseBasicType() {
@@ -26,11 +26,11 @@ function Parser(input) {
 				lexer.next();
 				var type = parseType();
 				if (lexer.getCurrent() !== 'right') {
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 				return type;
 			default:
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			}
 		}());
 		lexer.next();
@@ -94,11 +94,11 @@ function Parser(input) {
 					'right': true
 				});
 				if (lexer.getCurrent() !== 'right') {
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 				return node;
 			default:
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			}
 		}());
 		lexer.next();
@@ -111,7 +111,7 @@ function Parser(input) {
 			switch (lexer.getCurrent()) {
 			case 'point':
 				if (lexer.next() !== 'identifier') {
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 				node = new FieldAccessNode(node, lexer.getLabel());
 				lexer.next();
@@ -122,7 +122,7 @@ function Parser(input) {
 					'right-square': true
 				});
 				if (lexer.getCurrent() !== 'right-square') {
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 				lexer.next();
 				node = new SubscriptNode(node, index);
@@ -172,7 +172,7 @@ function Parser(input) {
 				lexer.next();
 				return new LambdaNode(name, type, parseClass3(terminators));
 			default:
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			}
 			break;
 		case 'comma':
@@ -192,7 +192,7 @@ function Parser(input) {
 
 	function parseLambdaPartial(terminators) {
 		if (lexer.getCurrent() !== 'identifier') {
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		} else {
 			var name = lexer.getLabel();
 			switch (lexer.next()) {
@@ -207,7 +207,7 @@ function Parser(input) {
 					lexer.next();
 					return new LambdaNode(name, type, parseClass3(terminators));
 				default:
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 				break;
 			case 'comma':
@@ -217,25 +217,25 @@ function Parser(input) {
 				lexer.next();
 				return new LambdaNode(name, null, parseClass3(terminators));
 			default:
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			}
 		}
 	}
 
 	function parseLet(terminators) {
 		if (lexer.next() !== 'identifier') {
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		} else {
 			var names = [lexer.getLabel()];
 			while (lexer.next() === 'point') {
 				if (lexer.next() !== 'identifier') {
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				} else {
 					names.push(lexer.getLabel());
 				}
 			}
 			if (lexer.getCurrent() !== 'equal') {
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			} else {
 				lexer.next();
 				var expression = parseClass3({
@@ -249,7 +249,7 @@ function Parser(input) {
 					lexer.next();
 					return new LetNode(names, expression, parseClass3(terminators));
 				default:
-					throw new SyntaxError();
+					throw new MySyntaxError();
 				}
 			}
 		}
@@ -261,14 +261,14 @@ function Parser(input) {
 			'keyword:then': true
 		});
 		if (lexer.getCurrent() !== 'keyword:then') {
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		} else {
 			lexer.next();
 			var thenExpression = parseClass3({
 				'keyword:else': true
 			});
 			if (lexer.getCurrent() !== 'keyword:else') {
-				throw new SyntaxError();
+				throw new MySyntaxError();
 			} else {
 				lexer.next();
 				return new IfNode(condition, thenExpression, parseClass3(terminators));
@@ -309,12 +309,12 @@ function Parser(input) {
 			} else if (terminators.hasOwnProperty(lexer.getCurrent())) {
 				return new TryCatchNode(tryExpression, catchExpression);
 			}
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		case 'keyword:finally':
 			lexer.next();
 			return new TryFinallyNode(tryExpression, parseClass3(terminators));
 		default:
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		}
 	}
 
@@ -323,4 +323,4 @@ function Parser(input) {
 			'end': true
 		});
 	};
-}
+};

@@ -1,6 +1,6 @@
-function Context() {
+var Context = exports.Context = function () {
 	this.names = {};
-}
+};
 
 Context.prototype.has = function (name) {
 	return this.names.hasOwnProperty(name);
@@ -12,7 +12,7 @@ Context.prototype.top = function (name) {
 		if (stack.length > 0) {
 			return stack[stack.length - 1];
 		} else {
-			throw new InternalError();
+			throw new MyInternalError();
 		}
 	} else {
 		throw new Error();
@@ -28,7 +28,7 @@ Context.prototype.forEach = function (callback, context) {
 					return false;
 				}
 			} else {
-				throw new InternalError();
+				throw new MyInternalError();
 			}
 		}
 	}
@@ -49,7 +49,7 @@ Context.prototype.pop = function (name) {
 			delete this.names[name];
 		}
 	} else {
-		throw new InternalError();
+		throw new MyInternalError();
 	}
 };
 

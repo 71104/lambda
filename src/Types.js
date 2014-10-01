@@ -1,13 +1,13 @@
-function AbstractType() {}
+var AbstractType = exports.AbstractType = function () {};
 
 AbstractType.prototype.is = function (Class) {
 	return this instanceof Class;
 };
 
 
-function UndefinedType() {
+var UndefinedType = exports.UndefinedType = function () {
 	AbstractType.call(this);
-}
+};
 
 UndefinedType.prototype = Object.create(AbstractType.prototype);
 
@@ -22,9 +22,9 @@ UndefinedType.prototype.isSubTypeOf = function (type) {
 UndefinedType.INSTANCE = new UndefinedType();
 
 
-function UnknownType() {
+var UnknownType = exports.UnknownType = function () {
 	AbstractType.call(this);
-}
+};
 
 UnknownType.prototype = Object.create(AbstractType.prototype);
 
@@ -39,11 +39,11 @@ UnknownType.prototype.isSubTypeOf = function () {
 UnknownType.INSTANCE = new UnknownType();
 
 
-function ThrowingType(subType, thrown) {
+var ThrowingType = exports.ThrowingType = function (subType, thrown) {
 	AbstractType.call(this);
 	this.subType = subType;
 	this.thrown = thrown;
-}
+};
 
 ThrowingType.prototype = Object.create(AbstractType.prototype);
 
@@ -59,9 +59,9 @@ ThrowingType.prototype.isSubTypeOf = function (type) {
 };
 
 
-function NullType() {
+var NullType = exports.NullType = function () {
 	AbstractType.call(this);
-}
+};
 
 NullType.prototype = Object.create(AbstractType.prototype);
 
@@ -79,9 +79,9 @@ NullType.prototype.isSubTypeOf = function (type) {
 NullType.INSTANCE = new NullType();
 
 
-function BooleanType() {
+var BooleanType = exports.BooleanType = function () {
 	AbstractType.call(this);
-}
+};
 
 BooleanType.prototype = Object.create(AbstractType.prototype);
 
@@ -99,9 +99,9 @@ BooleanType.prototype.isSubTypeOf = function (type) {
 BooleanType.INSTANCE = new BooleanType();
 
 
-function FloatType() {
+var FloatType = exports.FloatType = function () {
 	AbstractType.call(this);
-}
+};
 
 FloatType.prototype = Object.create(AbstractType.prototype);
 
@@ -119,9 +119,9 @@ FloatType.prototype.isSubTypeOf = function (type) {
 FloatType.INSTANCE = new FloatType();
 
 
-function IntegerType() {
+var IntegerType = exports.IntegerType = function () {
 	AbstractType.call(this);
-}
+};
 
 IntegerType.prototype = Object.create(AbstractType.prototype);
 
@@ -140,9 +140,9 @@ IntegerType.prototype.isSubTypeOf = function (type) {
 IntegerType.INSTANCE = new IntegerType();
 
 
-function StringType() {
+var StringType = exports.StringType = function () {
 	AbstractType.call(this);
-}
+};
 
 StringType.prototype = Object.create(AbstractType.prototype);
 
@@ -160,9 +160,9 @@ StringType.prototype.isSubTypeOf = function (type) {
 StringType.INSTANCE = new StringType();
 
 
-function RegexType() {
+var RegexType = exports.RegexType = function () {
 	AbstractType.call(this);
-}
+};
 
 RegexType.prototype = Object.create(AbstractType.prototype);
 
@@ -180,10 +180,10 @@ RegexType.prototype.isSubTypeOf = function (type) {
 RegexType.INSTANCE = new RegexType();
 
 
-function ArrayType(subType) {
+var ArrayType = exports.ArrayType = function (subType) {
 	AbstractType.call(this);
 	this.subType = subType;
-}
+};
 
 ArrayType.prototype = Object.create(AbstractType.prototype);
 
@@ -198,10 +198,10 @@ ArrayType.prototype.isSubTypeOf = function (type) {
 };
 
 
-function ObjectType(context) {
+var ObjectType = exports.ObjectType = function (context) {
 	AbstractType.call(this);
 	this.context = context;
-}
+};
 
 ObjectType.prototype = Object.create(AbstractType.prototype);
 
@@ -219,11 +219,11 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 };
 
 
-function LambdaType(left, right) {
+var LambdaType = exports.LambdaType = function (left, right) {
 	AbstractType.call(this);
 	this.left = left;
 	this.right = right;
-}
+};
 
 LambdaType.prototype = Object.create(AbstractType.prototype);
 
@@ -251,10 +251,10 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 };
 
 
-function VariableType(name) {
+var VariableType = exports.VariableType = function (name) {
 	AbstractType.call(this);
 	this.name = name;
-}
+};
 
 VariableType.prototype = Object.create(AbstractType.prototype);
 
@@ -267,11 +267,11 @@ VariableType.prototype.isSubTypeOf = function () {
 };
 
 
-function PolymorphicType(name, subType) {
+var PolymorphicType = exports.PolymorphicType = function (name, subType) {
 	AbstractType.call(this);
 	this.name = name;
 	this.subType = subType;
-}
+};
 
 PolymorphicType.prototype = Object.create(AbstractType.prototype);
 

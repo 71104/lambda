@@ -1,4 +1,4 @@
-function Lexer(input) {
+var Lexer = exports.Lexer = function (input) {
 	var token, label;
 
 	function match(re) {
@@ -64,7 +64,7 @@ function Lexer(input) {
 			label = null;
 			return token = 'end';
 		} else {
-			throw new SyntaxError();
+			throw new MySyntaxError();
 		}
 	}
 
@@ -83,4 +83,4 @@ function Lexer(input) {
 	this.getLabel = function () {
 		return label;
 	};
-}
+};

@@ -1,8 +1,129 @@
-function AbstractValue() {}
+var AbstractValue = exports.AbstractValue = function () {};
 
 AbstractValue.prototype.is = function (Class) {
 	return this instanceof Class;
 };
+
+
+var NullValue = exports.NullValue = function () {
+	AbstractValue.call(this);
+};
+
+NullValue.prototype = Object.create(AbstractValue.prototype);
+
+NullValue.prototype.toString = function () {
+	return 'null';
+};
+
+NullValue.INSTANCE = new NullValue();
+
+
+var UndefinedValue = exports.UndefinedValue = function () {
+	AbstractValue.call(this);
+};
+
+UndefinedValue.prototype = Object.create(AbstractValue.prototype);
+
+UndefinedValue.prototype.toString = function () {
+	return 'undefined';
+};
+
+UndefinedValue.INSTANCE = new UndefinedValue();
+
+
+var BooleanValue = exports.BooleanValue = function (value) {
+	AbstractValue.call(this);
+	this.value = value;
+};
+
+BooleanValue.prototype = Object.create(AbstractValue.prototype);
+
+BooleanValue.prototype.toString = function () {
+	if (this.value) {
+		return 'true';
+	} else {
+		return 'false';
+	}
+};
+
+
+var IntegerValue = exports.IntegerValue = function (value) {
+	AbstractValue.call(this);
+	this.value = value;
+};
+
+IntegerValue.prototype = Object.create(AbstractValue.prototype);
+
+IntegerValue.prototype.toString = function () {
+	return '' + this.value;
+};
+
+
+var FloatValue = exports.FloatValue = function (value) {
+	AbstractValue.call(this);
+	this.value = value;
+};
+
+FloatValue.prototype = Object.create(AbstractValue.prototype);
+
+FloatValue.prototype.toString = function () {
+	return '' + this.value;
+};
+
+
+var StringValue = exports.StringValue = function (value) {
+	AbstractValue.call(this);
+	this.value = value;
+};
+
+StringValue.prototype = Object.create(AbstractValue.prototype);
+
+StringValue.prototype.toString = function () {
+	return '' + this.value;
+};
+
+
+var ArrayValue = exports.ArrayValue = function () {
+	AbstractValue.call(this);
+	this.array = [];
+};
+
+ArrayValue.prototype = Object.create(AbstractValue.prototype);
+
+ArrayValue.prototype.toString = function () {
+	return '[ ' + this.array.map(function (element) {
+		return element.toString();
+	}).join(', ') + ' ]';
+};
+
+
+var ObjectValue = exports.ObjectValue = function (context) {
+	AbstractValue.call(this);
+	this.context = context;
+};
+
+ObjectValue.prototype = Object.create(AbstractValue.prototype);
+
+ObjectValue.prototype.toString = function () {
+	// TODO
+	return 'object';
+};
+
+
+var Closure = exports.Closure = function (name, body, context) {
+	AbstractValue.call(this);
+	this.name = name;
+	this.body = body;
+	this.context = context;
+};
+
+Closure.prototype = Object.create(AbstractValue.prototype);
+
+Closure.prototype.toString = function () {
+	// TODO
+	return 'closure';
+};
+
 
 AbstractValue.wrap = function (value) {
 	switch (typeof value) {
@@ -36,124 +157,4 @@ AbstractValue.wrap = function (value) {
 			return new ObjectValue(context);
 		}
 	}
-};
-
-
-function NullValue() {
-	AbstractValue.call(this);
-}
-
-NullValue.prototype = Object.create(AbstractValue.prototype);
-
-NullValue.prototype.toString = function () {
-	return 'null';
-};
-
-NullValue.INSTANCE = new NullValue();
-
-
-function UndefinedValue() {
-	AbstractValue.call(this);
-}
-
-UndefinedValue.prototype = Object.create(AbstractValue.prototype);
-
-UndefinedValue.prototype.toString = function () {
-	return 'undefined';
-};
-
-UndefinedValue.INSTANCE = new UndefinedValue();
-
-
-function BooleanValue(value) {
-	AbstractValue.call(this);
-	this.value = value;
-}
-
-BooleanValue.prototype = Object.create(AbstractValue.prototype);
-
-BooleanValue.prototype.toString = function () {
-	if (this.value) {
-		return 'true';
-	} else {
-		return 'false';
-	}
-};
-
-
-function IntegerValue(value) {
-	AbstractValue.call(this);
-	this.value = value;
-}
-
-IntegerValue.prototype = Object.create(AbstractValue.prototype);
-
-IntegerValue.prototype.toString = function () {
-	return '' + this.value;
-};
-
-
-function FloatValue(value) {
-	AbstractValue.call(this);
-	this.value = value;
-}
-
-FloatValue.prototype = Object.create(AbstractValue.prototype);
-
-FloatValue.prototype.toString = function () {
-	return '' + this.value;
-};
-
-
-function StringValue(value) {
-	AbstractValue.call(this);
-	this.value = value;
-}
-
-StringValue.prototype = Object.create(AbstractValue.prototype);
-
-StringValue.prototype.toString = function () {
-	return '' + this.value;
-};
-
-
-function ArrayValue() {
-	AbstractValue.call(this);
-	this.array = [];
-}
-
-ArrayValue.prototype = Object.create(AbstractValue.prototype);
-
-ArrayValue.prototype.toString = function () {
-	return '[ ' + this.array.map(function (element) {
-		return element.toString();
-	}).join(', ') + ' ]';
-};
-
-
-function ObjectValue(context) {
-	AbstractValue.call(this);
-	this.context = context;
-}
-
-ObjectValue.prototype = Object.create(AbstractValue.prototype);
-
-ObjectValue.prototype.toString = function () {
-	// TODO
-	return 'object';
-};
-
-
-function Closure(name, body, context) {
-	AbstractValue.call(this);
-	this.name = name;
-	this.body = body;
-	this.context = context;
-}
-
-Closure.prototype = Object.create(AbstractValue.prototype);
-
-Closure.prototype.toString = function () {
-	// TODO
-	return 'closure';
 };
