@@ -185,7 +185,7 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.evaluate = function (context) {
-	return new Closure(this.name, this.body, context);
+	return new Closure(this.name, this.body, context.capture(this.getFreeVariables()));
 };
 
 

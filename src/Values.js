@@ -148,7 +148,7 @@ function Closure(name, body, context) {
 	AbstractValue.call(this);
 	this.name = name;
 	this.body = body;
-	this.context = context.capture(body.getFreeVariables());
+	this.context = context;
 }
 
 Closure.prototype = Object.create(AbstractValue.prototype);
