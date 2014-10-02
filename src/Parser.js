@@ -1,4 +1,4 @@
-var Parser = exports.Parser = function (input) {
+exports.Parser = function (input) {
 	var lexer = new Lexer(input);
 
 	function parseBasicType() {
