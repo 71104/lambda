@@ -1,4 +1,4 @@
-var Lambda = require('./lambda.min.js');
+var Lambda = require('./lambda.js');
 
 if (process.argv.length > 2) {
 	var fs = require('fs');

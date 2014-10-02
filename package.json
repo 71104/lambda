@@ -7,14 +7,14 @@
 		"bin"
 	],
 	"bin": {
-		"lambda": "bin/lambda.js"
+		"lambda": "bin/REPL.js"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/71104/lambda.git"
 	},
 	"scripts": {
-		"start": "node bin/lambda.js"
+		"start": "node bin/REPL.js"
 	},
 	"devDependencies": {
 		"grunt": "~0.4.5",
@@ -22,6 +22,7 @@
 		"grunt-contrib-concat": "~0.5.0",
 		"grunt-contrib-jshint": "~0.10.0",
 		"grunt-contrib-uglify": "~0.6.0",
+		"grunt-contrib-copy": "~0.6.0",
 		"grunt-contrib-nodeunit": "~0.4.1"
 	},
 	"preferGlobal": true

@@ -50,6 +50,12 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+		copy: {
+			dist: {
+				src: 'src/REPL.js',
+				dest: 'bin/REPL.js'
+			}
+		},
 		nodeunit: {
 			dist: [
 				'test/lexer.js',
@@ -63,8 +69,9 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
 	grunt.registerTask('test', ['nodeunit']);
-	grunt.registerTask('all', ['clean', 'concat', 'jshint', 'uglify', 'nodeunit']);
+	grunt.registerTask('all', ['clean', 'concat', 'jshint', 'uglify', 'copy', 'nodeunit']);
 };
