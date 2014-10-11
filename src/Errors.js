@@ -11,3 +11,8 @@ var MySyntaxError = exports.SyntaxError = function () {
 var MyTypeError = exports.TypeError = function () {
 	return Error.call(this, 'type error');
 };
+
+
+var MyRuntimeError = exports.RuntimeError = function () {
+	return Error.call(this, 'runtime error');
+};

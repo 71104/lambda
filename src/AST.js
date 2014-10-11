@@ -97,7 +97,11 @@ ErrorNode.prototype.getFreeVariables = function () {
 };
 
 ErrorNode.prototype.evaluate = function (context) {
-	return context.top('error');
+	if (context.has('error')) {
+		return context.top('error');
+	} else {
+		throw new MyRuntimeError();
+	}
 };
 
 ErrorNode.INSTANCE = new ErrorNode();
@@ -125,7 +129,12 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
-	return this.left.evaluate(context).context.top(this.name);
+	context = this.left.evaluate(context).context;
+	if (context.has(this.name)) {
+		return context.top(this.name);
+	} else {
+		throw new MyRuntimeError();
+	}
 };
 
 
@@ -152,7 +161,14 @@ SubscriptNode.prototype.getFreeVariables = function () {
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
-	return this.expression.evaluate(context).array[this.index.evaluate(context).value];
+	var value = this.expression.evaluate(context);
+	if (value.is(ArrayValue)) {
+		var index = this.index.evaluate(context);
+		if (index.is(IntegerValue)) {
+			return value.array[index.value];
+		}
+	}
+	throw new MyRuntimeError();
 };
 
 
@@ -213,11 +229,14 @@ ApplicationNode.prototype.getFreeVariables = function () {
 
 ApplicationNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
-	var right = this.right.evaluate(context);
-	var lambda = left.lambda;
-	return left.context.augment(lambda.name, right, function (context) {
-		return lambda.body.evaluate(context);
-	});
+	if (left.is(Closure)) {
+		var lambda = left.lambda;
+		return left.context.augment(lambda.name, this.right.evaluate(context), function (context) {
+			return lambda.body.evaluate(context);
+		});
+	} else {
+		throw new MyRuntimeError();
+	}
 };
 
 
@@ -364,10 +383,15 @@ IfNode.prototype.getFreeVariables = function () {
 };
 
 IfNode.prototype.evaluate = function (context) {
-	if (this.condition.evaluate(context).value) {
-		return this.thenExpression.evaluate(context);
+	var condition = this.condition.evaluate(context);
+	if (condition.is(BooleanValue)) {
+		if (condition.value) {
+			return this.thenExpression.evaluate(context);
+		} else {
+			return this.elseExpression.evaluate(context);
+		}
 	} else {
-		return this.elseExpression.evaluate(context);
+		throw new MyRuntimeError();
 	}
 };
 
@@ -421,7 +445,11 @@ TryCatchNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		return this.catchExpression.evaluate(context);
+		if (e instanceof AbstractValue) {
+			return this.catchExpression.evaluate(context);
+		} else {
+			throw e;
+		}
 	}
 };
 
@@ -486,7 +514,11 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		return this.catchExpression.evaluate(context);
+		if (e instanceof AbstractValue) {
+			return this.catchExpression.evaluate(context);
+		} else {
+			throw e;
+		}
 	} finally {
 		this.finallyExpression.evaluate(context);
 	}
