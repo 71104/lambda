@@ -50,7 +50,7 @@ VariableNode.prototype.evaluate = function (context) {
 		return context.top(this.name);
 	} else {
 		var name = this.name;
-		return AbstractValue.wrap((function () {
+		return AbstractValue.unmarshal((function () {
 			return this[name];
 		}()));
 	}
@@ -185,7 +185,7 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.evaluate = function (context) {
-	return new Closure(this.name, this.body, context.capture(this.getFreeVariables()));
+	return new Closure(this, context.capture(this.getFreeVariables()));
 };
 
 
@@ -214,8 +214,9 @@ ApplicationNode.prototype.getFreeVariables = function () {
 ApplicationNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
 	var right = this.right.evaluate(context);
-	return left.context.augment(left.name, right, function (context) {
-		return left.body.evaluate(context);
+	var lambda = left.lambda;
+	return left.context.augment(lambda.name, right, function (context) {
+		return lambda.body.evaluate(context);
 	});
 };
 
@@ -489,4 +490,26 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	} finally {
 		this.finallyExpression.evaluate(context);
 	}
+};
+
+
+var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, argumentNames) {
+	AbstractNode.call(this);
+	this.nativeFunction = nativeFunction;
+	this.thisArgument = thisArgument;
+	this.argumentNames = argumentNames;
+};
+
+NativeNode.prototype.getType = function () {
+	return UnknownType.INSTANCE;
+};
+
+NativeNode.prototype.getFreeVariables = function () {
+	return [];
+};
+
+NativeNode.prototype.evaluate = function (context) {
+	return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
+		return context.top(name).marshal();
+	})));
 };

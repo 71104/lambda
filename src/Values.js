@@ -15,6 +15,10 @@ NullValue.prototype.toString = function () {
 	return 'null';
 };
 
+NullValue.prototype.marshal = function () {
+	return null;
+};
+
 NullValue.INSTANCE = new NullValue();
 
 
@@ -27,6 +31,8 @@ UndefinedValue.prototype = Object.create(AbstractValue.prototype);
 UndefinedValue.prototype.toString = function () {
 	return 'undefined';
 };
+
+UndefinedValue.prototype.marshal = function () {};
 
 UndefinedValue.INSTANCE = new UndefinedValue();
 
@@ -46,6 +52,10 @@ BooleanValue.prototype.toString = function () {
 	}
 };
 
+BooleanValue.prototype.marshal = function () {
+	return this.value;
+};
+
 
 var IntegerValue = exports.IntegerValue = function (value) {
 	AbstractValue.call(this);
@@ -56,6 +66,10 @@ IntegerValue.prototype = Object.create(AbstractValue.prototype);
 
 IntegerValue.prototype.toString = function () {
 	return '' + this.value;
+};
+
+IntegerValue.prototype.marshal = function () {
+	return this.value;
 };
 
 
@@ -70,6 +84,10 @@ FloatValue.prototype.toString = function () {
 	return '' + this.value;
 };
 
+FloatValue.prototype.marshal = function () {
+	return this.value;
+};
+
 
 var StringValue = exports.StringValue = function (value) {
 	AbstractValue.call(this);
@@ -80,6 +98,10 @@ StringValue.prototype = Object.create(AbstractValue.prototype);
 
 StringValue.prototype.toString = function () {
 	return '' + this.value;
+};
+
+StringValue.prototype.marshal = function () {
+	return this.value;
 };
 
 
@@ -96,6 +118,12 @@ ArrayValue.prototype.toString = function () {
 	}).join(', ') + ' ]';
 };
 
+ArrayValue.prototype.marshal = function () {
+	return this.array.map(function (value) {
+		return value.marshal();
+	});
+};
+
 
 var ObjectValue = exports.ObjectValue = function (context) {
 	AbstractValue.call(this);
@@ -109,23 +137,23 @@ ObjectValue.prototype.toString = function () {
 	return 'object';
 };
 
+ObjectValue.prototype.marshal = function () {
+	var object = {};
+	this.context.forEach(function (name, value) {
+		object[name] = value.marshal();
+	});
+	return object;
+};
 
-var Closure = exports.Closure = function (name, body, context) {
+
+var Closure = exports.Closure = function (lambda, context) {
 	AbstractValue.call(this);
-	this.name = name;
-	this.body = body;
+	this.lambda = lambda;
 	this.context = context;
 };
 
-Closure.prototype = Object.create(AbstractValue.prototype);
 
-Closure.prototype.toString = function () {
-	// TODO
-	return 'closure';
-};
-
-
-AbstractValue.wrap = function (value) {
+AbstractValue.unmarshal = function (value) {
 	switch (typeof value) {
 	case 'undefined':
 		return UndefinedValue.INSTANCE;
@@ -136,22 +164,21 @@ AbstractValue.wrap = function (value) {
 	case 'string':
 		return new StringValue(value);
 	case 'function':
-		// TODO
-		break;
+		return Closure.unmarshal(value);
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
 		} else if (Array.isArray(value)) {
 			var result = new ArrayValue();
 			result.array = value.map(function (element) {
-				return AbstractValue.wrap(element);
+				return AbstractValue.unmarshal(element);
 			});
 			return result;
 		} else {
 			var context = new Context();
 			for (var key in value) {
 				if (value.hasOwnProperty(key)) {
-					context.push(key, AbstractValue.wrap(value[key]));
+					context.push(key, AbstractValue.unmarshal(value[key]));
 				}
 			}
 			return new ObjectValue(context);

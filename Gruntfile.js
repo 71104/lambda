@@ -13,6 +13,7 @@ module.exports = function (grunt) {
 					'src/Types.js',
 					'src/Values.js',
 					'src/AST.js',
+					'src/Closure.js',
 					'src/Lexer.js',
 					'src/Parser.js'
 				],
