@@ -37,10 +37,10 @@ var Lexer = exports.Lexer = function (input) {
 			return token = 'left-square';
 		} else if (match(/^\]/)) {
 			return token = 'right-square';
-		} else if (match(/^[0-9]+\.[0-9]+\b/)) {
+		} else if (match(/^[01-9][0-9]*\.[0-9]+\b/)) {
 			label = parseFloat(label);
 			return token = 'float';
-		} else if (match(/^[0-9]+\b/)) {
+		} else if (match(/^[01-9][0-9]*\b/)) {
 			label = parseInt(label);
 			return token = 'integer';
 		} else if (match(/^\'([^']|\\\')*\'/)) {
