@@ -3,15 +3,15 @@ var DefaultContext = exports.DefaultContext = function () {
 
 	var that = this;
 
-	function pushUnaryOperator(symbol, operator) {
+	function registerUnaryOperator(symbol, operator) {
 		return that.push(symbol, (new LambdaNode('0', null, new NativeNode(operator, null, ['0']))).evaluate(that));
 	}
 
-	function pushBinaryOperator(symbol, operator) {
+	function registerBinaryOperator(symbol, operator) {
 		return that.push(symbol, (new LambdaNode('0', null, new LambdaNode('1', null, new NativeNode(operator, null, ['0', '1'])))).evaluate(that));
 	}
 
-	pushUnaryOperator('not', function (x) {
+	registerUnaryOperator('not', function (x) {
 		if (x instanceof NativeComplexValue) {
 			return !x.r && !x.i;
 		} else {
@@ -19,7 +19,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushUnaryOperator('~', function (x) {
+	registerUnaryOperator('~', function (x) {
 		if (x instanceof NativeComplexValue) {
 			throw new MyRuntimeError();
 		} else {
@@ -27,7 +27,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('+', function (x, y) {
+	registerBinaryOperator('+', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return new NativeComplexValue(x.r + y.r, x.i + y.i);
@@ -41,7 +41,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('-', function (x, y) {
+	registerBinaryOperator('-', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return new NativeComplexValue(x.r - y.r, x.i - y.i);
@@ -55,7 +55,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('*', function (x, y) {
+	registerBinaryOperator('*', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return new NativeComplexValue(x.r * y.r - x.i * y.i, x.r * y.i + x.i * y.r);
@@ -69,7 +69,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('/', function (x, y) {
+	registerBinaryOperator('/', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return new NativeComplexValue((x.r * y.r + x.i * y.i) / (y.r * y.r + y.i * y.i), (x.i * y.r - x.r * y.i) / (y.r * y.r + y.i * y.i));
@@ -83,7 +83,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('%', function (x, y) {
+	registerBinaryOperator('%', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -97,7 +97,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('<', function (x, y) {
+	registerBinaryOperator('<', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -111,7 +111,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('>', function (x, y) {
+	registerBinaryOperator('>', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -125,7 +125,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('&', function (x, y) {
+	registerBinaryOperator('&', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -139,7 +139,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('|', function (x, y) {
+	registerBinaryOperator('|', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -153,7 +153,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('^', function (x, y) {
+	registerBinaryOperator('^', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -167,7 +167,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('=', function (x, y) {
+	registerBinaryOperator('=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return x.r === y.r && x.i === y.i;
@@ -181,7 +181,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('!=', function (x, y) {
+	registerBinaryOperator('!=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return x.r !== y.r || x.i !== y.i;
@@ -195,7 +195,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('>=', function (x, y) {
+	registerBinaryOperator('>=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -209,7 +209,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('<=', function (x, y) {
+	registerBinaryOperator('<=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -223,7 +223,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('**', function (x, y) {
+	registerBinaryOperator('**', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				throw new MyRuntimeError();
@@ -239,7 +239,7 @@ var DefaultContext = exports.DefaultContext = function () {
 
 	/*jshint ignore: start */
 
-	pushBinaryOperator('and', function (x, y) {
+	registerBinaryOperator('and', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return (!!x.r || !!x.i) && (!!y.r || !!y.i);
@@ -253,7 +253,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('or', function (x, y) {
+	registerBinaryOperator('or', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return !!x.r || !!x.i || !!y.r || !!y.i;
@@ -267,7 +267,7 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
-	pushBinaryOperator('xor', function (x, y) {
+	registerBinaryOperator('xor', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return (!!x.r || !!x.i) !== (!!y.r || !!y.i);
