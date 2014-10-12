@@ -13,7 +13,8 @@ module.exports = function (grunt) {
 					'src/Types.js',
 					'src/Values.js',
 					'src/AST.js',
-					'src/Closure.js',
+					'src/Closures.js',
+					'src/Operators.js',
 					'src/Lexer.js',
 					'src/Parser.js'
 				],
@@ -72,7 +73,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
-	grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
+	grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'copy']);
 	grunt.registerTask('test', ['nodeunit']);
 	grunt.registerTask('all', ['clean', 'concat', 'jshint', 'uglify', 'copy', 'nodeunit']);
 };
