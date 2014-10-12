@@ -69,6 +69,8 @@ exports.Parser = function (input) {
 				return new LiteralNode(BooleanType.INSTANCE, new BooleanValue(false));
 			case 'integer':
 				return new LiteralNode(IntegerType.INSTANCE, new IntegerValue(lexer.getLabel()));
+			case 'complex':
+				return new LiteralNode(ComplexType.INSTANCE, new ComplexValue(0, lexer.getLabel()));
 			case 'float':
 				return new LiteralNode(FloatType.INSTANCE, new FloatValue(lexer.getLabel()));
 			case 'string':

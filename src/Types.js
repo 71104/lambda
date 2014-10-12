@@ -99,6 +99,26 @@ BooleanType.prototype.isSubTypeOf = function (type) {
 BooleanType.INSTANCE = new BooleanType();
 
 
+var ComplexType = exports.ComplexType = function () {
+	AbstractType.call(this);
+};
+
+ComplexType.prototype = Object.create(AbstractType.prototype);
+
+ComplexType.prototype.toString = function () {
+	return 'complex';
+};
+
+ComplexType.prototype.isSubTypeOf = function (type) {
+	return type.is(UndefinedType) ||
+		type.is(ComplexType) ||
+		type.is(ThrowingType) &&
+		this.isSubTypeOf(type.subType);
+};
+
+ComplexType.INSTANCE = new ComplexType();
+
+
 var FloatType = exports.FloatType = function () {
 	AbstractType.call(this);
 };
@@ -112,6 +132,7 @@ FloatType.prototype.toString = function () {
 FloatType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(FloatType) ||
+		type.is(ComplexType) ||
 		type.is(ThrowingType) &&
 		this.isSubTypeOf(type.subType);
 };
@@ -133,6 +154,7 @@ IntegerType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(IntegerType) ||
 		type.is(FloatType) ||
+		type.is(ComplexType) ||
 		type.is(ThrowingType) &&
 		this.isSubTypeOf(type.subType);
 };

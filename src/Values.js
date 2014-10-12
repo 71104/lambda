@@ -89,6 +89,32 @@ FloatValue.prototype.marshal = function () {
 };
 
 
+var ComplexValue = exports.ComplexValue = function (real, imaginary) {
+	AbstractValue.call(this);
+	this.real = real;
+	this.imaginary = imaginary;
+};
+
+ComplexValue.prototype = Object.create(AbstractValue.prototype);
+
+ComplexValue.prototype.toString = function () {
+	if (this.imginary < 0) {
+		return this.real + 'i-' - this.imaginary;
+	} else {
+		return this.real + 'i+' + this.imaginary;
+	}
+};
+
+function NativeComplexValue(real, imaginary) {
+	this.r = real;
+	this.i = imaginary;
+}
+
+ComplexValue.prototype.marshal = function () {
+	return new NativeComplexValue(this.real, this.imaginary);
+};
+
+
 var StringValue = exports.StringValue = function (value) {
 	AbstractValue.call(this);
 	this.value = value;
@@ -174,6 +200,8 @@ AbstractValue.unmarshal = function (value) {
 				return AbstractValue.unmarshal(element);
 			});
 			return result;
+		} else if (value instanceof NativeComplexValue) {
+			return new ComplexValue(value.r, value.i);
 		} else {
 			var context = new Context();
 			for (var key in value) {

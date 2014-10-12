@@ -37,6 +37,9 @@ var Lexer = exports.Lexer = function (input) {
 			return token = 'left-square';
 		} else if (match(/^\]/)) {
 			return token = 'right-square';
+		} else if (match(/^(0|[1-9][0-9]*)(\.[0-9]+)?i\b/)) {
+			label = parseFloat(label);
+			return token = 'complex';
 		} else if (match(/^(0|[1-9][0-9]*)\.[0-9]+\b/)) {
 			label = parseFloat(label);
 			return token = 'float';
