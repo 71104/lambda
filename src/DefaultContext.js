@@ -29,10 +29,10 @@ var DefaultContext = exports.DefaultContext = function () {
 	pushBinaryOperator('>=', function (x, y) { return x >= y; });
 	pushBinaryOperator('<=', function (x, y) { return x <= y; });
 	pushBinaryOperator('**', function (x, y) { return Math.pow(x, y); });
-	pushBinaryOperator('and', function (x, y) { return !!(x && y); });
-	pushBinaryOperator('or', function (x, y) { return !!(x || y); });
 
 	/*jshint ignore: start */
+	pushBinaryOperator('and', function (x, y) { return !!x && !!y; });
+	pushBinaryOperator('or', function (x, y) { return !!x || !!y; });
 	pushBinaryOperator('xor', function (x, y) { return !!x !== !!y; });
 	/*jshint ignore: end */
 };
