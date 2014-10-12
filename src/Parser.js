@@ -84,8 +84,6 @@ exports.Parser = function (input) {
 				return new VariableNode(lexer.getLabel());
 			case 'keyword:fix':
 				return FixNode.INSTANCE;
-			case 'keyword:this':
-				return ThisNode.INSTANCE;
 			case 'keyword:error':
 				return ErrorNode.INSTANCE;
 			case 'left':

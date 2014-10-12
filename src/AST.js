@@ -57,27 +57,6 @@ VariableNode.prototype.evaluate = function (context) {
 };
 
 
-var ThisNode = exports.ThisNode = function () {
-	AbstractNode.call(this);
-};
-
-ThisNode.prototype = Object.create(AbstractNode.prototype);
-
-ThisNode.prototype.getType = function () {
-	// TODO
-};
-
-ThisNode.prototype.getFreeVariables = function () {
-	// TODO
-};
-
-ThisNode.prototype.evaluate = function () {
-	// TODO
-};
-
-ThisNode.INSTANCE = new ThisNode();
-
-
 var ErrorNode = exports.ErrorNode = function () {
 	VariableNode.call(this, 'error');
 };
