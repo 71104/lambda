@@ -75,7 +75,8 @@ module.exports.testFloat1 = testTokens('0.0', [{type: 'float', label: 0}]);
 module.exports.testFloat2 = testTokens('3.14', [{type: 'float', label: 3.14}]);
 module.exports.testFloat3 = testTokens('10.0', [{type: 'float', label: 10}]);
 module.exports.testFloat4 = testTokens('578.000', [{type: 'float', label: 578}]);
-module.exports.testFloat5 = testTokens('923.657', [{type: 'float', label: 923.657}]);
+module.exports.testFloat5 = testTokens('214.030', [{type: 'float', label: 214.03}]);
+module.exports.testFloat6 = testTokens('923.657', [{type: 'float', label: 923.657}]);
 
 module.exports.testInteger1 = testTokens('0', [{type: 'integer', label: 0}]);
 module.exports.testInteger2 = testTokens('2', [{type: 'integer', label: 2}]);
