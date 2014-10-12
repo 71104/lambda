@@ -218,6 +218,8 @@ ApplicationNode.prototype.getType = function (context) {
 	var right = this.right.getType(context);
 	if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
 		return left.right;
+	} else if (left.is(UnknownType)) {
+		return UnknownType.INSTANCE;
 	} else {
 		throw new MyTypeError();
 	}
