@@ -513,12 +513,14 @@ var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, ar
 	this.argumentNames = argumentNames;
 };
 
+NativeNode.prototype = Object.create(AbstractNode.prototype);
+
 NativeNode.prototype.getType = function () {
 	return UnknownType.INSTANCE;
 };
 
 NativeNode.prototype.getFreeVariables = function () {
-	return [];
+	return this.argumentNames;
 };
 
 NativeNode.prototype.evaluate = function (context) {

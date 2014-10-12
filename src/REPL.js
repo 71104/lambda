@@ -16,7 +16,7 @@ if (process.argv.length > 2) {
 			try {
 				var ast = (new Lambda.Parser(input)).parse();
 				var type = ast.getType(new Lambda.Context());
-				var value = ast.evaluate(new Lambda.Context());
+				var value = ast.evaluate(new Lambda.DefaultContext());
 				callback(value + ': ' + type);
 			} catch (e) {
 				callback(e);
