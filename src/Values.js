@@ -139,9 +139,9 @@ StringValue.prototype.marshal = function () {
 };
 
 
-var ArrayValue = exports.ArrayValue = function () {
+var ArrayValue = exports.ArrayValue = function (array) {
 	AbstractValue.call(this);
-	this.array = [];
+	this.array = array || [];
 };
 
 ArrayValue.prototype = Object.create(AbstractValue.prototype);

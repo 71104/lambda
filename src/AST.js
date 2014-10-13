@@ -26,6 +26,45 @@ LiteralNode.prototype.evaluate = function () {
 };
 
 
+var ArrayLiteralNode = exports.ArrayLiteralNode = function (expressions) {
+	AbstractNode.call(this);
+	this.expressions = expressions;
+};
+
+ArrayLiteralNode.prototype = Object.create(AbstractValue.prototype);
+
+ArrayLiteralNode.prototype.getType = function (context) {
+	if (this.expressions.length > 0) {
+		var type = this.expressions[0].getType(context);
+		for (var i = 1; i < this.expressions.length; i++) {
+			var nextType = this.expressions[i].getType(context);
+			if (type.isSubTypeOf(nextType)) {
+				type = nextType;
+			} else if (!nextType.isSubTypeOf(type)) {
+				throw new MyTypeError();
+			}
+		}
+		return type;
+	} else {
+		return new ArrayType(UndefinedType.INSTANCE);
+	}
+};
+
+ArrayLiteralNode.prototype.getFreeVariables = function () {
+	var names = [];
+	this.expressions.forEach(function (expression) {
+		names = names.union(expression.getFreeVariables());
+	});
+	return names;
+};
+
+ArrayLiteralNode.prototype.evaluate = function (context) {
+	return new ArrayValue(this.expressions.map(function (expression) {
+		return expression.evaluate(context);
+	}));
+};
+
+
 var VariableNode = exports.VariableNode = function (name) {
 	AbstractNode.call(this);
 	this.name = name;

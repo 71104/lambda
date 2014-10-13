@@ -97,6 +97,22 @@ exports.Parser = function (input) {
 					throw new MySyntaxError();
 				}
 				return node;
+			case 'left-square':
+				lexer.next();
+				var expressions = [];
+				while (lexer.getCurrent() !== 'right-square') {
+					expressions.push(parseClass3({
+						'comma': true,
+						'right-square': true
+					}));
+					if (lexer.getCurrent() === 'comma') {
+						lexer.next();
+					} else if (lexer.getCurrent() !== 'right-square') {
+						throw new MySyntaxError();
+					}
+				}
+				lexer.next();
+				return new ArrayLiteralNode(expressions);
 			default:
 				throw new MySyntaxError();
 			}
