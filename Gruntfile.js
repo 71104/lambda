@@ -63,7 +63,8 @@ module.exports = function (grunt) {
 				'test/lexer.js',
 				'test/parser.js',
 				'test/types.js',
-				'test/evaluation.js'
+				'test/evaluation.js',
+				'test/compiler.js'
 			]
 		}
 	});
