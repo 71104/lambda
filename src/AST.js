@@ -25,6 +25,14 @@ LiteralNode.prototype.evaluate = function () {
 	return this.value;
 };
 
+LiteralNode.prototype.compileExpression = function () {
+	return JSON.stringify(this.value);
+};
+
+LiteralNode.prototype.compileStatement = function () {
+	return 'return ' + JSON.stringify(this.value) + ';';
+};
+
 
 var ArrayLiteralNode = exports.ArrayLiteralNode = function (expressions) {
 	AbstractNode.call(this);
@@ -64,6 +72,18 @@ ArrayLiteralNode.prototype.evaluate = function (context) {
 	}));
 };
 
+ArrayLiteralNode.prototype.compileExpression = function () {
+	return '[' + this.expressions.map(function (expression) {
+		return expression.compile();
+	}).join(',') + ']';
+};
+
+ArrayLiteralNode.prototype.compileStatement = function () {
+	return 'return[' + this.expressions.map(function (expression) {
+		return expression.compile();
+	}).join(',') + '];';
+};
+
 
 var VariableNode = exports.VariableNode = function (name) {
 	AbstractNode.call(this);
@@ -95,6 +115,14 @@ VariableNode.prototype.evaluate = function (context) {
 	}
 };
 
+VariableNode.prototype.compileExpression = function () {
+	return this.name;
+};
+
+VariableNode.prototype.compileStatement = function () {
+	return 'return ' + this.name + ';';
+};
+
 
 var ErrorNode = exports.ErrorNode = function () {
 	VariableNode.call(this, 'error');
@@ -120,6 +148,14 @@ ErrorNode.prototype.evaluate = function (context) {
 	} else {
 		throw new MyRuntimeError();
 	}
+};
+
+ErrorNode.prototype.compileExpression = function () {
+	return 'error';
+};
+
+ErrorNode.prototype.compileStatement = function () {
+	return 'return error;';
 };
 
 ErrorNode.INSTANCE = new ErrorNode();
@@ -158,6 +194,14 @@ FieldAccessNode.prototype.evaluate = function (context) {
 	throw new MyRuntimeError();
 };
 
+FieldAccessNode.prototype.compileExpression = function () {
+	return '(' + this.left.compile() + ').' + this.name;
+};
+
+FieldAccessNode.prototype.compileStatement = function () {
+	return 'return(' + this.left.compile() + ').' + this.name + ';';
+};
+
 
 var SubscriptNode = exports.SubscriptNode = function (expression, index) {
 	AbstractNode.call(this);
@@ -192,6 +236,14 @@ SubscriptNode.prototype.evaluate = function (context) {
 	throw new MyRuntimeError();
 };
 
+SubscriptNode.prototype.compileExpression = function () {
+	return '(' + this.expression.compile() + ')[' + this.index.compile() + ']';
+};
+
+SubscriptNode.prototype.compileStatement = function () {
+	return 'return(' + this.expression.compile() + ')[' + this.index.compile() + '];';
+};
+
 
 var LambdaNode = exports.LambdaNode = function (name, type, body) {
 	AbstractNode.call(this);
@@ -223,6 +275,14 @@ LambdaNode.prototype.getFreeVariables = function () {
 
 LambdaNode.prototype.evaluate = function (context) {
 	return new Closure(this, context.capture(this.getFreeVariables()));
+};
+
+LambdaNode.prototype.compileExpression = function () {
+	return 'function(' + this.name + '){' + this.body.compileStatement() + '}';
+};
+
+LambdaNode.prototype.compileStatement = function () {
+	return 'return function(' + this.name + '){' + this.body.compileStatement() + '};';
 };
 
 
@@ -260,6 +320,14 @@ ApplicationNode.prototype.evaluate = function (context) {
 	} else {
 		throw new MyRuntimeError();
 	}
+};
+
+ApplicationNode.prototype.compileExpression = function () {
+	return '(' + this.left.compile() + ')(' + this.right.compile() + ')';
+};
+
+ApplicationNode.prototype.compileStatement = function () {
+	return 'return(' + this.left.compile() + ')(' + this.right.compile() + ');';
 };
 
 
@@ -302,6 +370,16 @@ FixNode.Z_COMBINATOR = (new LambdaNode('f', null, new ApplicationNode(
 
 FixNode.prototype.evaluate = function () {
 	return FixNode.Z_COMBINATOR;
+};
+
+FixNode.COMPILED_Z_COMBINATOR = 'function(f){return(function(x){return f(function(v){return x(x)(v)})}(function(x){return f(function(v){return x(x)(v)})}))}';
+
+FixNode.prototype.compileExpression = function () {
+	return FixNode.COMPILED_Z_COMBINATOR;
+};
+
+FixNode.prototype.compileStatement = function () {
+	return 'return ' + FixNode.COMPILED_Z_COMBINATOR + ';';
 };
 
 FixNode.INSTANCE = new FixNode();
@@ -373,6 +451,22 @@ LetNode.prototype.evaluate = function (rootContext) {
 	}(rootContext, 0));
 };
 
+LetNode.prototype.compileExpression = function () {
+	if (this.names.length > 1) {
+		// TODO
+	} else {
+		return '(function(' + this.names[0] + '){' + this.body.compileStatement() + '}(' + this.expression.compileExpression() + '))';
+	}
+};
+
+LetNode.prototype.compileStatement = function () {
+	if (this.names.length > 1) {
+		// TODO
+	} else {
+		return 'var ' + this.names[0] + '=' + this.expression.compileExpression() + ';' + this.body.compileStatement();
+	}
+};
+
 
 var IfNode = exports.IfNode = function (condition, thenExpression, elseExpression) {
 	AbstractNode.call(this);
@@ -418,6 +512,18 @@ IfNode.prototype.evaluate = function (context) {
 	}
 };
 
+IfNode.prototype.compileExpression = function () {
+	return '(function(){if(' + this.condition.compileExpression() + '){' +
+		this.thenExpression.compileStatement() + '}else{' +
+		this.elseExpression.compileStatement() + '}}())';
+};
+
+IfNode.prototype.compileStatement = function () {
+	return 'if(' + this.condition.compileExpression() + '){' +
+		this.thenExpression.compileStatement() + '}else{' +
+		this.elseExpression.compileStatement() + '}';
+};
+
 
 var ThrowNode = exports.ThrowNode = function (expression) {
 	AbstractNode.call(this);
@@ -436,6 +542,14 @@ ThrowNode.prototype.getFreeVariables = function () {
 
 ThrowNode.prototype.evaluate = function (context) {
 	throw this.expression.evaluate(context);
+};
+
+ThrowNode.prototype.compileExpression = function () {
+	return '(function(){throw ' + this.expression.compileExpression() + '}())';
+};
+
+ThrowNode.prototype.compileStatement = function () {
+	return 'throw ' + this.expression.compileExpression() + ';';
 };
 
 
@@ -476,6 +590,16 @@ TryCatchNode.prototype.evaluate = function (context) {
 	}
 };
 
+TryCatchNode.prototype.compileExpression = function () {
+	return '(function(){try{' + this.tryExpression.compileStatement() + '}catch(error){' +
+		this.catchExpression.compileStatement() + '}}())';
+};
+
+TryCatchNode.prototype.compileStatement = function () {
+	return 'try{' + this.tryExpression.compileStatement() + '}catch(error){' +
+		this.catchExpression.compileStatement() + '}';
+};
+
 
 var TryFinallyNode = exports.TryFinallyNode = function (tryExpression, finallyExpression) {
 	AbstractNode.call(this);
@@ -502,6 +626,11 @@ TryFinallyNode.prototype.evaluate = function (context) {
 	} finally {
 		this.finallyExpression.evaluate(context);
 	}
+};
+
+TryFinallyNode.prototype.compileExpression = function () {
+	return '(function(){try{' + this.tryExpression.compileStatement() + '}catch(error){' +
+		this.catchExpression.compileStatement() + '}}())';
 };
 
 
@@ -545,6 +674,12 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	} finally {
 		this.finallyExpression.evaluate(context);
 	}
+};
+
+TryCatchFinallyNode.prototype.compileExpression = function () {
+	return '(function(){try{' + this.tryExpression.compileStatement() + '}catch(error){' +
+		this.catchExpression.compileStatement() + '}finally{' +
+		this.finallyExpression.compileStatement() + '}}())';
 };
 
 
