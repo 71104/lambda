@@ -147,9 +147,13 @@ var ArrayValue = exports.ArrayValue = function (array) {
 ArrayValue.prototype = Object.create(AbstractValue.prototype);
 
 ArrayValue.prototype.toString = function () {
-	return '[ ' + this.array.map(function (element) {
-		return element.toString();
-	}).join(', ') + ' ]';
+	if (this.array.length > 0) {
+		return '[ ' + this.array.map(function (element) {
+			return element.toString();
+		}).join(', ') + ' ]';
+	} else {
+		return '[]';
+	}
 };
 
 ArrayValue.prototype.marshal = function () {

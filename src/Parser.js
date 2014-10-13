@@ -111,7 +111,6 @@ exports.Parser = function (input) {
 						throw new MySyntaxError();
 					}
 				}
-				lexer.next();
 				return new ArrayLiteralNode(expressions);
 			default:
 				throw new MySyntaxError();

@@ -44,7 +44,7 @@ ArrayLiteralNode.prototype.getType = function (context) {
 				throw new MyTypeError();
 			}
 		}
-		return type;
+		return new ArrayType(type);
 	} else {
 		return new ArrayType(UndefinedType.INSTANCE);
 	}
