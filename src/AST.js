@@ -137,6 +137,8 @@ FieldAccessNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	if (left.is(ObjectType) && left.context.has(this.name)) {
 		return left.context.top(this.name);
+	} else if (left.is(UnknownType)) {
+		return UnknownType.INSTANCE;
 	} else {
 		throw new MyTypeError();
 	}
@@ -147,12 +149,13 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
-	context = this.left.evaluate(context).context;
-	if (context.has(this.name)) {
-		return context.top(this.name);
-	} else {
-		throw new MyRuntimeError();
+	var left = this.left.evaluate(context);
+	if (left.is(ObjectValue)) {
+		if (left.context.has(this.name)) {
+			return left.context.top(this.name);
+		}
 	}
+	throw new MyRuntimeError();
 };
 
 
