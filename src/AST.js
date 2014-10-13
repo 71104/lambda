@@ -541,7 +541,7 @@ ThrowNode.prototype.getFreeVariables = function () {
 };
 
 ThrowNode.prototype.evaluate = function (context) {
-	throw this.expression.evaluate(context);
+	throw new MyUserError(this.expression.evaluate(context));
 };
 
 ThrowNode.prototype.compileExpression = function () {
@@ -582,8 +582,10 @@ TryCatchNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		if (e instanceof AbstractValue) {
-			return this.catchExpression.evaluate(context);
+		if (e instanceof MyUserError) {
+			return context.augment('error', e.value, function (context) {
+				return this.catchExpression.evaluate(context);
+			});
 		} else {
 			throw e;
 		}
@@ -666,8 +668,10 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		if (e instanceof AbstractValue) {
-			return this.catchExpression.evaluate(context);
+		if (e instanceof MyUserError) {
+			return context.augment('error', e.value, function (context) {
+				return this.catchExpression.evaluate(context);
+			});
 		} else {
 			throw e;
 		}

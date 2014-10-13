@@ -16,3 +16,10 @@ var MyTypeError = exports.TypeError = function () {
 var MyRuntimeError = exports.RuntimeError = function () {
 	return Error.call(this, 'runtime error');
 };
+
+
+var MyUserError = exports.UserError = function (value) {
+	var error = Error.call(this, 'user error');
+	error.value = value;
+	return error;
+};
