@@ -298,11 +298,11 @@ exports.Parser = function (input) {
 
 	function addTerminator(terminators, terminator, callback) {
 		if (terminators.hasOwnProperty(terminator)) {
-			callback(terminators);
+			return callback(terminators);
 		} else {
 			terminators[terminator] = true;
 			try {
-				callback(terminators);
+				return callback(terminators);
 			} finally {
 				delete terminators[terminator];
 			}

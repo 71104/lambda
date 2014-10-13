@@ -562,12 +562,12 @@ var TryCatchNode = exports.TryCatchNode = function (tryExpression, catchExpressi
 TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
 TryCatchNode.prototype.getType = function (context) {
-	var tryExpression = tryExpression.getType(context);
-	var catchExpression = catchExpression.getType(context);
-	if (catchExpression.isSubTypeOf(tryExpression)) {
-		return tryExpression;
-	} else if (tryExpression.isSubTypeOf(catchExpression)) {
-		return catchExpression;
+	var tryType = this.tryExpression.getType(context);
+	var catchType = this.catchExpression.getType(context);
+	if (catchType.isSubTypeOf(tryType)) {
+		return tryType;
+	} else if (tryType.isSubTypeOf(catchType)) {
+		return catchType;
 	} else {
 		throw new MyTypeError();
 	}
@@ -646,13 +646,13 @@ var TryCatchFinallyNode = exports.TryCatchFinallyNode = function (tryExpression,
 TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
 TryCatchFinallyNode.prototype.getType = function (context) {
-	var tryExpression = tryExpression.getType(context);
-	var catchExpression = catchExpression.getType(context);
+	var tryType = this.tryExpression.getType(context);
+	var catchType = this.catchExpression.getType(context);
 	this.finallyExpression.getType(context);
-	if (catchExpression.isSubTypeOf(tryExpression)) {
-		return tryExpression;
-	} else if (tryExpression.isSubTypeOf(catchExpression)) {
-		return catchExpression;
+	if (catchType.isSubTypeOf(tryType)) {
+		return tryType;
+	} else if (tryType.isSubTypeOf(catchType)) {
+		return catchType;
 	} else {
 		throw new MyTypeError();
 	}
