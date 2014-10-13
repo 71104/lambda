@@ -257,9 +257,9 @@ LambdaType.prototype.toString = function () {
 		type = type.right;
 	}
 	if (argumentTypes.length > 1) {
-		return '(' + argumentTypes.join(', ') + ') -> ' + type;
+		return '(' + argumentTypes.join(', ') + ') => ' + type;
 	} else {
-		return argumentTypes.join(', ') + ' -> ' + type;
+		return argumentTypes.join(', ') + ' => ' + type;
 	}
 };
 
