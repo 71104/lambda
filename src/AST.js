@@ -14,7 +14,7 @@ var LiteralNode = exports.LiteralNode = function (type, value) {
 LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
 LiteralNode.prototype.getType = function () {
-	return this.type;
+	return new TypeResult(this.type, []);
 };
 
 LiteralNode.prototype.getFreeVariables = function () {
@@ -43,18 +43,20 @@ ArrayLiteralNode.prototype = Object.create(AbstractValue.prototype);
 
 ArrayLiteralNode.prototype.getType = function (context) {
 	if (this.expressions.length > 0) {
-		var type = this.expressions[0].getType(context);
+		var result = this.expressions[0].getType(context);
 		for (var i = 1; i < this.expressions.length; i++) {
-			var nextType = this.expressions[i].getType(context);
-			if (type.isSubTypeOf(nextType)) {
-				type = nextType;
-			} else if (!nextType.isSubTypeOf(type)) {
+			var nextResult = this.expressions[i].getType(context);
+			if (result.type.isSubTypeOf(nextResult.type)) {
+				result.type = nextResult.type;
+			} else if (!nextResult.type.isSubTypeOf(result.type)) {
 				throw new MyTypeError();
 			}
+			result.thrownTypes.push.apply(result.thrownTypes, nextResult.thrownTypes);
 		}
-		return new ArrayType(type);
+		result.type = new ArrayType(result.type);
+		return result;
 	} else {
-		return new ArrayType(UndefinedType.INSTANCE);
+		return new TypeResult(new ArrayType(UndefinedType.INSTANCE), []);
 	}
 };
 
@@ -94,9 +96,9 @@ VariableNode.prototype = Object.create(AbstractNode.prototype);
 
 VariableNode.prototype.getType = function (context) {
 	if (context.has(this.name)) {
-		return context.top(this.name);
+		return new TypeResult(context.top(this.name), []);
 	} else {
-		return UnknownType.INSTANCE;
+		return new TypeResult(UnknownType.INSTANCE, []);
 	}
 };
 
@@ -132,7 +134,7 @@ ErrorNode.prototype = Object.create(VariableNode.prototype);
 
 ErrorNode.prototype.getType = function (context) {
 	if (context.has('error')) {
-		return context.top('error');
+		return new TypeResult(context.top('error'), []);
 	} else {
 		throw new MyTypeError();
 	}
@@ -171,10 +173,10 @@ FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 
 FieldAccessNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
-	if (left.is(ObjectType) && left.context.has(this.name)) {
-		return left.context.top(this.name);
-	} else if (left.is(UnknownType)) {
-		return UnknownType.INSTANCE;
+	if (left.type.is(ObjectType) && left.type.context.has(this.name)) {
+		return new TypeResult(left.type.context.top(this.name), left.thrownTypes);
+	} else if (left.type.is(UnknownType)) {
+		return new TypeResult(UnknownType.INSTANCE, left.thrownTypes);
 	} else {
 		throw new MyTypeError();
 	}
@@ -214,11 +216,11 @@ SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 SubscriptNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
 	var index = this.index.getType(context);
-	if (index.isSubTypeOf(IntegerType)) {
-		if (expression.is(ArrayType)) {
-			return expression.subType;
-		} else if (expression.is(UnknownType)) {
-			return UnknownType.INSTANCE;
+	if (index.type.isSubTypeOf(IntegerType)) {
+		if (expression.type.is(ArrayType)) {
+			return new TypeResult(expression.subType, expression.thrownTypes.concat(index.thrownTypes));
+		} else if (expression.type.is(UnknownType)) {
+			return new TypeResult(UnknownType.INSTANCE, expression.thrownTypes.concat(index.thrownTypes));
 		}
 	}
 	throw new MyTypeError();
@@ -260,12 +262,14 @@ LambdaNode.prototype = Object.create(AbstractNode.prototype);
 LambdaNode.prototype.getType = function (context) {
 	if (this.type) {
 		return context.augment(this.name, this.type, function (context) {
-			return new LambdaType(this.type, this.body.getType(context));
+			var body = this.body.getType(context);
+			return new TypeResult(new LambdaType(this.type, body.type, body.thrownTypes), []);
 		}, this);
 	} else {
 		var left = new VariableType(this.name);
 		return context.augment(this.name, left, function (context) {
-			return new PolymorphicType(this.name, new LambdaType(left, this.body.getType(context)));
+			var body = this.body.getType(context);
+			return new TypeResult(new PolymorphicType(this.name, new LambdaType(left, body.type, body.thrownTypes)), []);
 		}, this);
 	}
 };
@@ -300,10 +304,10 @@ ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	var right = this.right.getType(context);
-	if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
-		return left.right;
-	} else if (left.is(UnknownType)) {
-		return UnknownType.INSTANCE;
+	if (left.type.is(LambdaType) && right.type.isSubTypeOf(left.type.left)) {
+		return new TypeResult(left.type.right, left.thrownTypes.concat(right.thrownTypes));
+	} else if (left.type.is(UnknownType)) {
+		return new TypeResult(UnknownType.INSTANCE, left.thrownTypes.concat(right.thrownTypes));
 	} else {
 		throw new MyTypeError();
 	}
@@ -415,8 +419,10 @@ LetNode.prototype.getType = function (rootContext) {
 				return getType(type.context, index + 1);
 			});
 		} else if (index < names.length) {
-			return context.augment(names[index], expression.getType(rootContext), function () {
-				return body.getType(rootContext);
+			var expressionResult = expression.getType(rootContext);
+			return context.augment(names[index], expressionResult.type, function () {
+				var bodyResult = body.getType(rootContext);
+				return new TypeResult(bodyResult.type, expressionResult.thrownTypes.concat(bodyResult.thrownTypes));
 			});
 		} else {
 			throw new MyInternalError();
@@ -481,13 +487,15 @@ var IfNode = exports.IfNode = function (condition, thenExpression, elseExpressio
 IfNode.prototype = Object.create(AbstractNode.prototype);
 
 IfNode.prototype.getType = function (context) {
-	if (this.condition.getType(context).isSubTypeOf(BooleanType.INSTANCE)) {
+	var condition = this.condition.getType(context);
+	if (condition.type.isSubTypeOf(BooleanType.INSTANCE)) {
 		var type1 = this.thenExpression.getType(context);
 		var type2 = this.elseExpression.getType(context);
-		if (type1.isSubTypeOf(type2)) {
-			return type2;
-		} else if (type2.isSubTypeOf(type1)) {
-			return type1;
+		var thrownTypes = condition.thrownTypes.concat(type1.thrownTypes).concat(type2.thrownTypes);
+		if (type1.type.isSubTypeOf(type2.type)) {
+			return new TypeResult(type2.type, thrownTypes);
+		} else if (type2.type.isSubTypeOf(type1.type)) {
+			return new TypeResult(type1.type, thrownTypes);
 		}
 	}
 	throw new MyTypeError();
@@ -532,8 +540,9 @@ var ThrowNode = exports.ThrowNode = function (expression) {
 
 ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
-ThrowNode.prototype.getType = function () {
-	return UnknownType.INSTANCE;
+ThrowNode.prototype.getType = function (context) {
+	var expression = this.expression.getType(context);
+	return new TypeResult(UnknownType.INSTANCE, expression.thrownTypes.concat([expression.type]));
 };
 
 ThrowNode.prototype.getFreeVariables = function () {
@@ -680,7 +689,7 @@ var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, ar
 NativeNode.prototype = Object.create(AbstractNode.prototype);
 
 NativeNode.prototype.getType = function () {
-	return UnknownType.INSTANCE;
+	return new TypeResult(UnknownType.INSTANCE, [UnknownType.INSTANCE]);
 };
 
 NativeNode.prototype.getFreeVariables = function () {

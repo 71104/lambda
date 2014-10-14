@@ -52,7 +52,7 @@ exports.Parser = function (input) {
 			return left;
 		} else {
 			lexer.next();
-			return new LambdaType(left, parseType());
+			return new LambdaType(left, parseType(), []); // TODO implements `throws` specifications
 		}
 	}
 

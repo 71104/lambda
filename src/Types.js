@@ -197,10 +197,11 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 };
 
 
-var LambdaType = exports.LambdaType = function (left, right) {
+var LambdaType = exports.LambdaType = function (left, right, thrown) {
 	AbstractType.call(this);
 	this.left = left;
 	this.right = right;
+	this.thrown = thrown;
 };
 
 LambdaType.prototype = Object.create(AbstractType.prototype);
@@ -257,4 +258,10 @@ PolymorphicType.prototype.toString = function () {
 
 PolymorphicType.prototype.isSubTypeOf = function () {
 	// TODO
+};
+
+
+var TypeResult = exports.TypeResult = function (type, thrownTypes) {
+	this.type = type;
+	this.thrownTypes = thrownTypes;
 };
