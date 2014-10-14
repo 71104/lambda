@@ -213,10 +213,16 @@ LambdaType.prototype.toString = function () {
 		argumentTypes.push(type.left);
 		type = type.right;
 	}
+	var result;
 	if (argumentTypes.length > 1) {
-		return '(' + argumentTypes.join(', ') + ') => ' + type;
+		result = '(' + argumentTypes.join(', ') + ') => ' + type;
 	} else {
-		return argumentTypes.join(', ') + ' => ' + type;
+		result = argumentTypes.join(', ') + ' => ' + type;
+	}
+	if (this.thrown.length > 0) {
+		return result + ' throws ' + this.thrown.join(', ');
+	} else {
+		return result;
 	}
 };
 
@@ -264,4 +270,12 @@ PolymorphicType.prototype.isSubTypeOf = function () {
 var TypeResult = exports.TypeResult = function (type, thrownTypes) {
 	this.type = type;
 	this.thrownTypes = thrownTypes;
+};
+
+TypeResult.prototype.toString = function () {
+	if (this.thrownTypes.length > 0) {
+		return this.type + ' throws ' + this.thrownTypes.join(', ');
+	} else {
+		return this.type.toString();
+	}
 };
