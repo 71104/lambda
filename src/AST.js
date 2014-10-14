@@ -216,9 +216,9 @@ SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 SubscriptNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
 	var index = this.index.getType(context);
-	if (index.type.isSubTypeOf(IntegerType)) {
+	if (index.type.isSubTypeOf(IntegerType.INSTANCE)) {
 		if (expression.type.is(ArrayType)) {
-			return new TypeResult(expression.subType, expression.thrownTypes.concat(index.thrownTypes));
+			return new TypeResult(expression.type, expression.thrownTypes.concat(index.thrownTypes));
 		} else if (expression.type.is(UnknownType)) {
 			return new TypeResult(UnknownType.INSTANCE, expression.thrownTypes.concat(index.thrownTypes));
 		}
