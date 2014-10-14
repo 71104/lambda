@@ -565,8 +565,31 @@ var TryCatchNode = exports.TryCatchNode = function (tryExpression, catchExpressi
 
 TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
-TryCatchNode.prototype.getType = function () {
-	// TODO
+TryCatchNode.prototype.getType = function (context) {
+	var tryResult = this.tryExpression.getType(context);
+	if (tryResult.thrownTypes.length > 0) {
+		var errorType = tryResult.thrownTypes[0];
+		for (var i = 1; i < tryResult.thrownTypes.length; i++) {
+			if (errorType.isSubTypeOf(tryResult.thrownTypes[i])) {
+				errorType = tryResult.thrownTypes[i];
+			} else if (!tryResult.thrownTypes[i].isSubTypeOf(errorType)) {
+				errorType = UndefinedType.INSTANCE;
+				break;
+			}
+		}
+		return context.augment('error', errorType, function (context) {
+			var catchResult = this.catchExpression.getType(context);
+			if (catchResult.type.isSubTypeOf(tryResult.type)) {
+				return new TypeResult(tryResult.type, catchResult.thrownTypes);
+			} else if (tryResult.type.isSubTypeOf(catchResult.type)) {
+				return catchResult;
+			} else {
+				throw new MyTypeError();
+			}
+		}, this);
+	} else {
+		throw new MyTypeError();
+	}
 };
 
 TryCatchNode.prototype.getFreeVariables = function () {
@@ -608,9 +631,9 @@ var TryFinallyNode = exports.TryFinallyNode = function (tryExpression, finallyEx
 TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
 TryFinallyNode.prototype.getType = function (context) {
-	var type = this.tryExpression.getType(context);
-	this.finallyExpression.getType(context);
-	return type;
+	var tryResult = this.tryExpression.getType(context);
+	var finallyResult = this.finallyExpression.getType(context);
+	return new TypeResult(tryResult.type, tryResult.thrownTypes.concat(finallyResult.thrownTypes));
 };
 
 TryFinallyNode.prototype.getFreeVariables = function () {
@@ -641,8 +664,32 @@ var TryCatchFinallyNode = exports.TryCatchFinallyNode = function (tryExpression,
 
 TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
-TryCatchFinallyNode.prototype.getType = function () {
-	// TODO
+TryCatchFinallyNode.prototype.getType = function (context) {
+	var tryResult = this.tryExpression.getType(context);
+	if (tryResult.thrownTypes.length > 0) {
+		var errorType = tryResult.thrownTypes[0];
+		for (var i = 1; i < tryResult.thrownTypes.length; i++) {
+			if (errorType.isSubTypeOf(tryResult.thrownTypes[i])) {
+				errorType = tryResult.thrownTypes[i];
+			} else if (!tryResult.thrownTypes[i].isSubTypeOf(errorType)) {
+				errorType = UndefinedType.INSTANCE;
+				break;
+			}
+		}
+		var finallyResult = this.finallyExpression.getType(context);
+		return context.augment('error', errorType, function (context) {
+			var catchResult = this.catchExpression.getType(context);
+			if (catchResult.type.isSubTypeOf(tryResult.type)) {
+				return new TypeResult(tryResult.type, catchResult.thrownTypes.concat(finallyResult.thrownTypes));
+			} else if (tryResult.type.isSubTypeOf(catchResult.type)) {
+				return new TypeResult(catchResult.type, catchResult.thrownTypes.concat(finallyResult.thrownTypes));
+			} else {
+				throw new MyTypeError();
+			}
+		}, this);
+	} else {
+		throw new MyTypeError();
+	}
 };
 
 TryCatchFinallyNode.prototype.getFreeVariables = function () {
