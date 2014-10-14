@@ -21,7 +21,7 @@ var DefaultContext = exports.DefaultContext = function () {
 
 	registerUnaryOperator('~', function (x) {
 		if (x instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return ~x;
 		}
@@ -86,12 +86,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('%', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x % y;
 		}
@@ -100,12 +100,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('<', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x < y;
 		}
@@ -114,12 +114,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('>', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x > y;
 		}
@@ -128,12 +128,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('&', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x & y;
 		}
@@ -142,12 +142,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('|', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x | y;
 		}
@@ -156,12 +156,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('^', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x ^ y;
 		}
@@ -198,12 +198,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('>=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x >= y;
 		}
@@ -212,12 +212,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('<=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return x <= y;
 		}
@@ -226,12 +226,12 @@ var DefaultContext = exports.DefaultContext = function () {
 	registerBinaryOperator('**', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			} else {
-				throw new MyRuntimeError();
+				throw new LambdaRuntimeError();
 			}
 		} else if (y instanceof NativeComplexValue) {
-			throw new MyRuntimeError();
+			throw new LambdaRuntimeError();
 		} else {
 			return Math.pow(x, y);
 		}

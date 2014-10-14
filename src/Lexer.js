@@ -67,7 +67,7 @@ var Lexer = exports.Lexer = function (input) {
 			label = null;
 			return token = 'end';
 		} else {
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		}
 	}
 

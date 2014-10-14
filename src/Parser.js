@@ -26,11 +26,11 @@ exports.Parser = function (input) {
 				lexer.next();
 				var type = parseType();
 				if (lexer.getCurrent() !== 'right') {
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 				return type;
 			default:
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			}
 		}());
 		lexer.next();
@@ -94,7 +94,7 @@ exports.Parser = function (input) {
 					'right': true
 				});
 				if (lexer.getCurrent() !== 'right') {
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 				return node;
 			case 'left-square':
@@ -108,12 +108,12 @@ exports.Parser = function (input) {
 					if (lexer.getCurrent() === 'comma') {
 						lexer.next();
 					} else if (lexer.getCurrent() !== 'right-square') {
-						throw new MySyntaxError();
+						throw new LambdaSyntaxError();
 					}
 				}
 				return new ArrayLiteralNode(expressions);
 			default:
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			}
 		}());
 		lexer.next();
@@ -126,7 +126,7 @@ exports.Parser = function (input) {
 			switch (lexer.getCurrent()) {
 			case 'point':
 				if (lexer.next() !== 'identifier') {
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 				node = new FieldAccessNode(node, lexer.getLabel());
 				lexer.next();
@@ -137,7 +137,7 @@ exports.Parser = function (input) {
 					'right-square': true
 				});
 				if (lexer.getCurrent() !== 'right-square') {
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 				lexer.next();
 				node = new SubscriptNode(node, index);
@@ -187,7 +187,7 @@ exports.Parser = function (input) {
 				lexer.next();
 				return new LambdaNode(name, type, parseClass3(terminators));
 			default:
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			}
 			break;
 		case 'comma':
@@ -207,7 +207,7 @@ exports.Parser = function (input) {
 
 	function parseLambdaPartial(terminators) {
 		if (lexer.getCurrent() !== 'identifier') {
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		} else {
 			var name = lexer.getLabel();
 			switch (lexer.next()) {
@@ -222,7 +222,7 @@ exports.Parser = function (input) {
 					lexer.next();
 					return new LambdaNode(name, type, parseClass3(terminators));
 				default:
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 				break;
 			case 'comma':
@@ -232,25 +232,25 @@ exports.Parser = function (input) {
 				lexer.next();
 				return new LambdaNode(name, null, parseClass3(terminators));
 			default:
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			}
 		}
 	}
 
 	function parseLet(terminators) {
 		if (lexer.next() !== 'identifier') {
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		} else {
 			var names = [lexer.getLabel()];
 			while (lexer.next() === 'point') {
 				if (lexer.next() !== 'identifier') {
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				} else {
 					names.push(lexer.getLabel());
 				}
 			}
 			if (lexer.getCurrent() !== 'equal') {
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			} else {
 				lexer.next();
 				var expression = parseClass3({
@@ -264,7 +264,7 @@ exports.Parser = function (input) {
 					lexer.next();
 					return new LetNode(names, expression, parseClass3(terminators));
 				default:
-					throw new MySyntaxError();
+					throw new LambdaSyntaxError();
 				}
 			}
 		}
@@ -276,14 +276,14 @@ exports.Parser = function (input) {
 			'keyword:then': true
 		});
 		if (lexer.getCurrent() !== 'keyword:then') {
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		} else {
 			lexer.next();
 			var thenExpression = parseClass3({
 				'keyword:else': true
 			});
 			if (lexer.getCurrent() !== 'keyword:else') {
-				throw new MySyntaxError();
+				throw new LambdaSyntaxError();
 			} else {
 				lexer.next();
 				return new IfNode(condition, thenExpression, parseClass3(terminators));
@@ -324,12 +324,12 @@ exports.Parser = function (input) {
 			} else if (terminators.hasOwnProperty(lexer.getCurrent())) {
 				return new TryCatchNode(tryExpression, catchExpression);
 			}
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		case 'keyword:finally':
 			lexer.next();
 			return new TryFinallyNode(tryExpression, parseClass3(terminators));
 		default:
-			throw new MySyntaxError();
+			throw new LambdaSyntaxError();
 		}
 	}
 

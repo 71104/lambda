@@ -1,25 +1,43 @@
-var MyInternalError = exports.InternalError = function () {
-	return Error.call(this, 'internal error');
+var LambdaError = exports.LambdaError = function (description) {
+	this.error = new Error(description);
+};
+
+LambdaError.prototype.toString = function () {
+	return this.error.toString();
 };
 
 
-var MySyntaxError = exports.SyntaxError = function () {
-	return Error.call(this, 'syntax error');
+var LambdaInternalError = exports.InternalError = function () {
+	LambdaError.call(this, 'internal error');
 };
 
+LambdaInternalError.prototype = Object.create(LambdaError.prototype);
 
-var MyTypeError = exports.TypeError = function () {
-	return Error.call(this, 'type error');
+
+var LambdaSyntaxError = exports.SyntaxError = function () {
+	LambdaError.call(this, 'syntax error');
 };
 
+LambdaSyntaxError.prototype = Object.create(LambdaError.prototype);
 
-var MyRuntimeError = exports.RuntimeError = function () {
-	return Error.call(this, 'runtime error');
+
+var LambdaTypeError = exports.TypeError = function () {
+	LambdaError.call(this, 'type error');
 };
 
+LambdaTypeError.prototype = Object.create(LambdaError.prototype);
 
-var MyUserError = exports.UserError = function (value) {
-	var error = Error.call(this, 'user error');
-	error.value = value;
-	return error;
+
+var LambdaRuntimeError = exports.RuntimeError = function () {
+	LambdaError.call(this, 'runtime error');
 };
+
+LambdaRuntimeError.prototype = Object.create(LambdaError.prototype);
+
+
+var LambdaUserError = exports.UserError = function (value) {
+	LambdaError.call(this, 'user error: ' + value);
+	this.value = value;
+};
+
+LambdaUserError.prototype = Object.create(LambdaError.prototype);

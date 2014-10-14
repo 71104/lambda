@@ -49,7 +49,7 @@ ArrayLiteralNode.prototype.getType = function (context) {
 			if (result.type.isSubTypeOf(nextResult.type)) {
 				result.type = nextResult.type;
 			} else if (!nextResult.type.isSubTypeOf(result.type)) {
-				throw new MyTypeError();
+				throw new LambdaTypeError();
 			}
 			result.thrownTypes.push.apply(result.thrownTypes, nextResult.thrownTypes);
 		}
@@ -136,7 +136,7 @@ ErrorNode.prototype.getType = function (context) {
 	if (context.has('error')) {
 		return new TypeResult(context.top('error'), []);
 	} else {
-		throw new MyTypeError();
+		throw new LambdaTypeError();
 	}
 };
 
@@ -148,7 +148,7 @@ ErrorNode.prototype.evaluate = function (context) {
 	if (context.has('error')) {
 		return context.top('error');
 	} else {
-		throw new MyRuntimeError();
+		throw new LambdaRuntimeError();
 	}
 };
 
@@ -178,7 +178,7 @@ FieldAccessNode.prototype.getType = function (context) {
 	} else if (left.type.is(UnknownType)) {
 		return new TypeResult(UnknownType.INSTANCE, left.thrownTypes);
 	} else {
-		throw new MyTypeError();
+		throw new LambdaTypeError();
 	}
 };
 
@@ -193,7 +193,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
 			return left.context.top(this.name);
 		}
 	}
-	throw new MyRuntimeError();
+	throw new LambdaRuntimeError();
 };
 
 FieldAccessNode.prototype.compileExpression = function () {
@@ -223,7 +223,7 @@ SubscriptNode.prototype.getType = function (context) {
 			return new TypeResult(UnknownType.INSTANCE, expression.thrownTypes.concat(index.thrownTypes));
 		}
 	}
-	throw new MyTypeError();
+	throw new LambdaTypeError();
 };
 
 SubscriptNode.prototype.getFreeVariables = function () {
@@ -238,7 +238,7 @@ SubscriptNode.prototype.evaluate = function (context) {
 			return value.array[index.value];
 		}
 	}
-	throw new MyRuntimeError();
+	throw new LambdaRuntimeError();
 };
 
 SubscriptNode.prototype.compileExpression = function () {
@@ -302,7 +302,7 @@ ApplicationNode.prototype.getType = function (context) {
 	} else if (left.type.is(UnknownType)) {
 		return new TypeResult(UnknownType.INSTANCE, left.thrownTypes.concat(right.thrownTypes));
 	} else {
-		throw new MyTypeError();
+		throw new LambdaTypeError();
 	}
 };
 
@@ -318,7 +318,7 @@ ApplicationNode.prototype.evaluate = function (context) {
 			return lambda.body.evaluate(context);
 		});
 	} else {
-		throw new MyRuntimeError();
+		throw new LambdaRuntimeError();
 	}
 };
 
@@ -418,7 +418,7 @@ LetNode.prototype.getType = function (rootContext) {
 				return new TypeResult(bodyResult.type, expressionResult.thrownTypes.concat(bodyResult.thrownTypes));
 			});
 		} else {
-			throw new MyInternalError();
+			throw new LambdaInternalError();
 		}
 	}(rootContext, 0));
 };
@@ -448,7 +448,7 @@ LetNode.prototype.evaluate = function (rootContext) {
 				return body.evaluate(rootContext);
 			});
 		} else {
-			throw new MyInternalError();
+			throw new LambdaInternalError();
 		}
 	}(rootContext, 0));
 };
@@ -491,7 +491,7 @@ IfNode.prototype.getType = function (context) {
 			return new TypeResult(type1.type, thrownTypes);
 		}
 	}
-	throw new MyTypeError();
+	throw new LambdaTypeError();
 };
 
 IfNode.prototype.getFreeVariables = function () {
@@ -545,7 +545,7 @@ ThrowNode.prototype.getFreeVariables = function () {
 };
 
 ThrowNode.prototype.evaluate = function (context) {
-	throw new MyUserError(this.expression.evaluate(context));
+	throw new LambdaUserError(this.expression.evaluate(context));
 };
 
 ThrowNode.prototype.compileExpression = function () {
@@ -584,11 +584,11 @@ TryCatchNode.prototype.getType = function (context) {
 			} else if (tryResult.type.isSubTypeOf(catchResult.type)) {
 				return catchResult;
 			} else {
-				throw new MyTypeError();
+				throw new LambdaTypeError();
 			}
 		}, this);
 	} else {
-		throw new MyTypeError();
+		throw new LambdaTypeError();
 	}
 };
 
@@ -601,7 +601,7 @@ TryCatchNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		if (e instanceof MyUserError) {
+		if (e instanceof LambdaUserError) {
 			return context.augment('error', e.value, function (context) {
 				return this.catchExpression.evaluate(context);
 			});
@@ -684,11 +684,11 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 			} else if (tryResult.type.isSubTypeOf(catchResult.type)) {
 				return new TypeResult(catchResult.type, catchResult.thrownTypes.concat(finallyResult.thrownTypes));
 			} else {
-				throw new MyTypeError();
+				throw new LambdaTypeError();
 			}
 		}, this);
 	} else {
-		throw new MyTypeError();
+		throw new LambdaTypeError();
 	}
 };
 
@@ -702,7 +702,7 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	try {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
-		if (e instanceof MyUserError) {
+		if (e instanceof LambdaUserError) {
 			return context.augment('error', e.value, function (context) {
 				return this.catchExpression.evaluate(context);
 			});

@@ -12,7 +12,7 @@ Context.prototype.top = function (name) {
 		if (stack.length > 0) {
 			return stack[stack.length - 1];
 		} else {
-			throw new MyInternalError();
+			throw new LambdaInternalError();
 		}
 	} else {
 		throw new Error();
@@ -28,7 +28,7 @@ Context.prototype.forEach = function (callback, context) {
 					return false;
 				}
 			} else {
-				throw new MyInternalError();
+				throw new LambdaInternalError();
 			}
 		}
 	}
@@ -49,7 +49,7 @@ Context.prototype.pop = function (name) {
 			delete this.names[name];
 		}
 	} else {
-		throw new MyInternalError();
+		throw new LambdaInternalError();
 	}
 };
 
