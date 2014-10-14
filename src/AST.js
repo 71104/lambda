@@ -501,15 +501,17 @@ IfNode.prototype.getFreeVariables = function () {
 };
 
 IfNode.prototype.evaluate = function (context) {
-	var condition = this.condition.evaluate(context);
-	if (condition.is(BooleanValue)) {
-		if (condition.value) {
+	var condition = this.condition.evaluate(context).marshal();
+	if (condition instanceof NativeComplexValue) {
+		if (condition.r || condition.i) {
 			return this.thenExpression.evaluate(context);
 		} else {
 			return this.elseExpression.evaluate(context);
 		}
+	} else if (condition) {
+		return this.thenExpression.evaluate(context);
 	} else {
-		throw new MyRuntimeError();
+		return this.elseExpression.evaluate(context);
 	}
 };
 
