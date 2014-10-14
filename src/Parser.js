@@ -16,6 +16,8 @@ exports.Parser = function (input) {
 				return IntegerType.INSTANCE;
 			case 'keyword:float':
 				return FloatType.INSTANCE;
+			case 'keyword:complex':
+				return ComplexType.INSTANCE;
 			case 'keyword:string':
 				return StringType.INSTANCE;
 			case 'keyword:regex':

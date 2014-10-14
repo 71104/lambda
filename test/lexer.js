@@ -40,6 +40,7 @@ module.exports.testBoolKeyword = testTokens('bool', ['keyword:bool']);
 module.exports.testUnknownKeyword = testTokens('unknown', ['keyword:unknown']);
 module.exports.testIntKeyword = testTokens('int', ['keyword:int']);
 module.exports.testFloatKeyword = testTokens('float', ['keyword:float']);
+module.exports.testFloatKeyword = testTokens('complex', ['keyword:complex']);
 module.exports.testStringKeyword = testTokens('string', ['keyword:string']);
 module.exports.testRegexKeyword = testTokens('regex', ['keyword:regex']);
 module.exports.testLetKeyword = testTokens('let', ['keyword:let']);
