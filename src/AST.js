@@ -214,11 +214,14 @@ SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 SubscriptNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
 	var index = this.index.getType(context);
-	if (expression.is(ArrayType) && index.is(IntegerType)) {
-		return expression.subType;
-	} else {
-		throw new MyTypeError();
+	if (index.isSubTypeOf(IntegerType)) {
+		if (expression.is(ArrayType)) {
+			return expression.subType;
+		} else if (expression.is(UnknownType)) {
+			return UnknownType.INSTANCE;
+		}
 	}
+	throw new MyTypeError();
 };
 
 SubscriptNode.prototype.getFreeVariables = function () {
@@ -478,20 +481,16 @@ var IfNode = exports.IfNode = function (condition, thenExpression, elseExpressio
 IfNode.prototype = Object.create(AbstractNode.prototype);
 
 IfNode.prototype.getType = function (context) {
-	var condition = this.condition.getType(context);
-	if (condition.isSubTypeOf(BooleanType.INSTANCE)) {
+	if (this.condition.getType(context).isSubTypeOf(BooleanType.INSTANCE)) {
 		var type1 = this.thenExpression.getType(context);
 		var type2 = this.elseExpression.getType(context);
 		if (type1.isSubTypeOf(type2)) {
 			return type2;
 		} else if (type2.isSubTypeOf(type1)) {
 			return type1;
-		} else {
-			throw new MyTypeError();
 		}
-	} else {
-		throw new MyTypeError();
 	}
+	throw new MyTypeError();
 };
 
 IfNode.prototype.getFreeVariables = function () {
