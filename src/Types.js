@@ -250,23 +250,6 @@ VariableType.prototype.isSubTypeOf = function () {
 };
 
 
-var PolymorphicType = exports.PolymorphicType = function (name, subType) {
-	AbstractType.call(this);
-	this.name = name;
-	this.subType = subType;
-};
-
-PolymorphicType.prototype = Object.create(AbstractType.prototype);
-
-PolymorphicType.prototype.toString = function () {
-	// TODO
-};
-
-PolymorphicType.prototype.isSubTypeOf = function () {
-	// TODO
-};
-
-
 var TypeResult = exports.TypeResult = function (type, thrownTypes) {
 	this.type = type;
 	this.thrownTypes = thrownTypes;

@@ -260,18 +260,11 @@ var LambdaNode = exports.LambdaNode = function (name, type, body) {
 LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
 LambdaNode.prototype.getType = function (context) {
-	if (this.type) {
-		return context.augment(this.name, this.type, function (context) {
-			var body = this.body.getType(context);
-			return new TypeResult(new LambdaType(this.type, body.type, body.thrownTypes), []);
-		}, this);
-	} else {
-		var left = new VariableType(this.name);
-		return context.augment(this.name, left, function (context) {
-			var body = this.body.getType(context);
-			return new TypeResult(new PolymorphicType(this.name, new LambdaType(left, body.type, body.thrownTypes)), []);
-		}, this);
-	}
+	var left = this.type || new VariableType(this.name);
+	return context.augment(this.name, left, function (context) {
+		var body = this.body.getType(context);
+		return new TypeResult(new LambdaType(left, body.type, body.thrownTypes), []);
+	}, this);
 };
 
 LambdaNode.prototype.getFreeVariables = function () {
