@@ -52,11 +52,7 @@ ArrayLiteralNode.prototype.getType = function (context) {
 				throw new MyTypeError();
 			}
 		}
-		if (type.isThrowingType) {
-			return new ThrowingType(new ArrayType(type.subType), type.thrown);
-		} else {
-			return new ArrayType(type);
-		}
+		return new ArrayType(type);
 	} else {
 		return new ArrayType(UndefinedType.INSTANCE);
 	}
@@ -175,22 +171,12 @@ FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 
 FieldAccessNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
-	if (left.is(ThrowingType)) {
-		if (left.subType.is(ObjectType) && left.subType.context.has(this.name)) {
-			return new ThrowingType(left.subType.context.top(this.name), left.thrown);
-		} else if (left.subType.is(UnknownType)) {
-			return left;
-		} else {
-			throw new MyTypeError();
-		}
+	if (left.is(ObjectType) && left.context.has(this.name)) {
+		return left.context.top(this.name);
+	} else if (left.is(UnknownType)) {
+		return UnknownType.INSTANCE;
 	} else {
-		if (left.is(ObjectType) && left.context.has(this.name)) {
-			return left.context.top(this.name);
-		} else if (left.is(UnknownType)) {
-			return UnknownType.INSTANCE;
-		} else {
-			throw new MyTypeError();
-		}
+		throw new MyTypeError();
 	}
 };
 
@@ -228,22 +214,8 @@ SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 SubscriptNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
 	var index = this.index.getType(context);
-	if (expression.is(ArrayType)) {
-		if (index.is(IntegerType)) {
-			return expression.subType;
-		} else if (index.is(ThrowingType) && index.subType.is(IntegerType)) {
-			return new ThrowingType(expression.subType, index.thrown);
-		} else {
-			throw new MyTypeError();
-		}
-	} else if (expression.is(ThrowingType) && expression.subType.is(ArrayType)) {
-		if (index.is(IntegerType)) {
-			return new ThrowingType(expression.subType.subType, expression.thrown);
-		} else if (index.is(ThrowingType) && index.subType.is(IntegerType)) {
-			// TODO
-		} else {
-			throw new MyTypeError();
-		}
+	if (expression.is(ArrayType) && index.is(IntegerType)) {
+		return expression.subType;
 	} else {
 		throw new MyTypeError();
 	}
@@ -284,34 +256,13 @@ LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
 LambdaNode.prototype.getType = function (context) {
 	if (this.type) {
-		if (this.type.is(ThrowingType)) {
-			return context.augment(this.name, this.type.subType, function (context) {
-				var body = this.body.getType(context);
-				if (body.is(ThrowingType)) {
-					return new ThrowingType(new LambdaType(this.type.subType, body.subType), body.thrown);
-				} else {
-					return new LambdaType(this.type.subType, body);
-				}
-			}, this);
-		} else {
-			return context.augment(this.name, this.type, function (context) {
-				var body = this.body.getType(context);
-				if (body.is(ThrowingType)) {
-					return new ThrowingType(new LambdaType(this.type, body.subType), body.thrown);
-				} else {
-					return new LambdaType(this.type, body);
-				}
-			}, this);
-		}
+		return context.augment(this.name, this.type, function (context) {
+			return new LambdaType(this.type, this.body.getType(context));
+		}, this);
 	} else {
 		var left = new VariableType(this.name);
 		return context.augment(this.name, left, function (context) {
-			var body = this.body.getType(context);
-			if (body.is(ThrowingType)) {
-				return new ThrowingType(new PolymorphicType(this.name, new LambdaType(left, body.subType)), body.thrown);
-			} else {
-				return new PolymorphicType(this.name, new LambdaType(left, body));
-			}
+			return new PolymorphicType(this.name, new LambdaType(left, this.body.getType(context)));
 		}, this);
 	}
 };
@@ -346,42 +297,12 @@ ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	var right = this.right.getType(context);
-	if (left.is(ThrowingType)) {
-		if (right.is(ThrowingType)) {
-			if (left.subType.is(LambdaType) && right.subType.isSubTypeOf(left.subType.left)) {
-				// TODO
-			} else if (left.subType.is(UnknownType)) {
-				// TODO
-			} else {
-				throw new MyTypeError();
-			}
-		} else {
-			if (left.subType.is(LambdaType) && right.isSubTypeOf(left.subType.left)) {
-				return new ThrowingType(left.subType.right, left.thrown);
-			} else if (left.subType.is(UnknownType)) {
-				return new ThrowingType(UnknownType.INSTANCE, left.thrown);
-			} else {
-				throw new MyTypeError();
-			}
-		}
+	if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
+		return left.right;
+	} else if (left.is(UnknownType)) {
+		return UnknownType.INSTANCE;
 	} else {
-		if (right.is(ThrowingType)) {
-			if (left.is(LambdaType) && right.subType.isSubTypeOf(left.left)) {
-				return new ThrowingType(left.right, right.thrown);
-			} else if (left.is(UnknownType)) {
-				return new ThrowingType(UnknownType.INSTANCE, right.thrown);
-			} else {
-				throw new MyTypeError();
-			}
-		} else {
-			if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
-				return left.right;
-			} else if (left.is(UnknownType)) {
-				return UnknownType.INSTANCE;
-			} else {
-				throw new MyTypeError();
-			}
-		}
+		throw new MyTypeError();
 	}
 };
 
@@ -491,21 +412,9 @@ LetNode.prototype.getType = function (rootContext) {
 				return getType(type.context, index + 1);
 			});
 		} else if (index < names.length) {
-			var expressionType = expression.getType(rootContext);
-			if (expressionType.is(ThrowingType)) {
-				return context.augment(names[index], expressionType.subType, function () {
-					var bodyType = body.getType(rootContext);
-					if (bodyType.is(ThrowingType)) {
-						// TODO
-					} else {
-						return new ThrowingType(bodyType, expressionType.thrown);
-					}
-				});
-			} else {
-				return context.augment(names[index], expressionType, function () {
-					return body.getType(rootContext);
-				});
-			}
+			return context.augment(names[index], expression.getType(rootContext), function () {
+				return body.getType(rootContext);
+			});
 		} else {
 			throw new MyInternalError();
 		}
@@ -570,7 +479,7 @@ IfNode.prototype = Object.create(AbstractNode.prototype);
 
 IfNode.prototype.getType = function (context) {
 	var condition = this.condition.getType(context);
-	if (condition.is(BooleanType)) {
+	if (condition.isSubTypeOf(BooleanType.INSTANCE)) {
 		var type1 = this.thenExpression.getType(context);
 		var type2 = this.elseExpression.getType(context);
 		if (type1.isSubTypeOf(type2)) {
@@ -580,8 +489,6 @@ IfNode.prototype.getType = function (context) {
 		} else {
 			throw new MyTypeError();
 		}
-	} else if (condition.is(ThrowingType) && condition.subType.is(BooleanType)) {
-		// TODO
 	} else {
 		throw new MyTypeError();
 	}
@@ -626,8 +533,8 @@ var ThrowNode = exports.ThrowNode = function (expression) {
 
 ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
-ThrowNode.prototype.getType = function (context) {
-	return new ThrowingType(UnknownType.INSTANCE, this.expression.getType(context));
+ThrowNode.prototype.getType = function () {
+	return UnknownType.INSTANCE;
 };
 
 ThrowNode.prototype.getFreeVariables = function () {
@@ -655,22 +562,8 @@ var TryCatchNode = exports.TryCatchNode = function (tryExpression, catchExpressi
 
 TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
-TryCatchNode.prototype.getType = function (context) {
-	var tryType = this.tryExpression.getType(context);
-	if (tryType.is(ThrowingType)) {
-		var catchType = context.augment('error', tryType.thrown, function (context) {
-			return this.catchExpression.getType(context);
-		});
-		if (catchType.isSubTypeOf(tryType)) {
-			return tryType;
-		} else if (tryType.isSubTypeOf(catchType)) {
-			return catchType;
-		} else {
-			throw new MyTypeError();
-		}
-	} else {
-		throw new MyTypeError();
-	}
+TryCatchNode.prototype.getType = function () {
+	// TODO
 };
 
 TryCatchNode.prototype.getFreeVariables = function () {
@@ -745,23 +638,8 @@ var TryCatchFinallyNode = exports.TryCatchFinallyNode = function (tryExpression,
 
 TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
-TryCatchFinallyNode.prototype.getType = function (context) {
-	var tryType = this.tryExpression.getType(context);
-	if (tryType.is(ThrowingType)) {
-		var catchType = context.augment('error', tryType.thrown, function (context) {
-			return this.catchExpression.getType(context);
-		});
-		this.finallyExpression.getType(context);
-		if (catchType.isSubTypeOf(tryType)) {
-			return tryType;
-		} else if (tryType.isSubTypeOf(catchType)) {
-			return catchType;
-		} else {
-			throw new MyTypeError();
-		}
-	} else {
-		throw new MyTypeError();
-	}
+TryCatchFinallyNode.prototype.getType = function () {
+	// TODO
 };
 
 TryCatchFinallyNode.prototype.getFreeVariables = function () {
