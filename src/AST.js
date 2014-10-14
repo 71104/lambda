@@ -604,7 +604,7 @@ TryCatchNode.prototype.evaluate = function (context) {
 		if (e instanceof LambdaUserError) {
 			return context.augment('error', e.value, function (context) {
 				return this.catchExpression.evaluate(context);
-			});
+			}, this);
 		} else {
 			throw e;
 		}
@@ -705,7 +705,7 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 		if (e instanceof LambdaUserError) {
 			return context.augment('error', e.value, function (context) {
 				return this.catchExpression.evaluate(context);
-			});
+			}, this);
 		} else {
 			throw e;
 		}
