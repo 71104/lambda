@@ -190,6 +190,8 @@ var Closure = exports.Closure = function (lambda, context) {
 	this.context = context;
 };
 
+Closure.prototype = Object.create(AbstractValue.prototype);
+
 
 AbstractValue.unmarshal = function (value) {
 	switch (typeof value) {

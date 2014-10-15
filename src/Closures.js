@@ -1,5 +1,3 @@
-Closure.prototype = Object.create(AbstractValue.prototype);
-
 Closure.prototype.toString = function () {
 	return 'closure';
 };
