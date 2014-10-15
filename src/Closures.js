@@ -1,7 +1,6 @@
 Closure.prototype = Object.create(AbstractValue.prototype);
 
 Closure.prototype.toString = function () {
-	// TODO
 	return 'closure';
 };
 

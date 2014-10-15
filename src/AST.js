@@ -337,8 +337,10 @@ var FixNode = exports.FixNode = function () {
 
 FixNode.prototype = Object.create(AbstractNode.prototype);
 
+FixNode.TYPE = new LambdaType(new LambdaType(new VariableType('T'), new VariableType('T'), []), new VariableType('T'), []);
+
 FixNode.prototype.getType = function () {
-	// TODO
+	return FixNode.TYPE;
 };
 
 FixNode.prototype.getFreeVariables = function () {
