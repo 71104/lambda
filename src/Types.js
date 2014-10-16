@@ -278,7 +278,7 @@ var TypeResult = exports.TypeResult = function (type, thrownType) {
 };
 
 TypeResult.prototype.toString = function () {
-	if (this.thrownType.length > 0) {
+	if (this.thrownType) {
 		return this.type + ' throws ' + this.thrownType;
 	} else {
 		return this.type.toString();

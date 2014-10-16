@@ -14,7 +14,7 @@ var LiteralNode = exports.LiteralNode = function (type, value) {
 LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
 LiteralNode.prototype.getType = function () {
-	return new TypeResult(this.type, []);
+	return new TypeResult(this.type, null);
 };
 
 LiteralNode.prototype.getFreeVariables = function () {
@@ -46,11 +46,7 @@ ArrayLiteralNode.prototype.getType = function (context) {
 		var result = this.expressions[0].getType(context);
 		for (var i = 1; i < this.expressions.length; i++) {
 			var nextResult = this.expressions[i].getType(context);
-			if (result.type.isSubTypeOf(nextResult.type)) {
-				result.type = nextResult.type;
-			} else if (!nextResult.type.isSubTypeOf(result.type)) {
-				throw new LambdaTypeError();
-			}
+			result.type = result.type.merge(nextResult.type);
 			result.addThrownType(nextResult.thrownType);
 		}
 		result.type = new ArrayType(result.type);
