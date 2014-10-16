@@ -219,7 +219,7 @@ LambdaType.prototype.toString = function () {
 	} else {
 		result = argumentTypes.join(', ') + ' => ' + type;
 	}
-	if (this.thrown.length > 0) {
+	if (this.thrown) {
 		return result + ' throws ' + this.thrown;
 	} else {
 		return result;
