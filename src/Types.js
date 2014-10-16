@@ -220,7 +220,7 @@ LambdaType.prototype.toString = function () {
 		result = argumentTypes.join(', ') + ' => ' + type;
 	}
 	if (this.thrown.length > 0) {
-		return result + ' throws ' + this.thrown.join(', ');
+		return result + ' throws ' + this.thrown;
 	} else {
 		return result;
 	}
@@ -230,7 +230,8 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 	return type.is(UndefinedType) ||
 		type.is(LambdaType) &&
 		type.left.isSubTypeOf(this.left) &&
-		this.right.isSubTypeOf(type.right);
+		this.right.isSubTypeOf(type.right) &&
+		(!this.thrown || type.thrown && this.thrown.isSubTypeOf(type.thrown));
 };
 
 
@@ -250,15 +251,50 @@ VariableType.prototype.isSubTypeOf = function () {
 };
 
 
-var TypeResult = exports.TypeResult = function (type, thrownTypes) {
+AbstractType.prototype.merge = function (type, evenToUndefined) {
+	if (type.isSubTypeOf(this)) {
+		return this;
+	} else if (this.isSubTypeOf(type)) {
+		return type;
+	} else if (this.is(ObjectType) && type.is(ObjectType)) {
+		var context = new Context();
+		this.context.forEach(function (name, subType) {
+			if (type.context.has(name)) {
+				context.push(subType.merge(type.context.top(name)));
+			}
+		});
+		return new ObjectType(context);
+	} else if (evenToUndefined) {
+		return UndefinedType.INSTANCE;
+	} else {
+		throw new LambdaTypeError();
+	}
+};
+
+
+var TypeResult = exports.TypeResult = function (type, thrownType) {
 	this.type = type;
-	this.thrownTypes = thrownTypes;
+	this.thrownType = thrownType;
 };
 
 TypeResult.prototype.toString = function () {
-	if (this.thrownTypes.length > 0) {
-		return this.type + ' throws ' + this.thrownTypes.join(', ');
+	if (this.thrownType.length > 0) {
+		return this.type + ' throws ' + this.thrownType;
 	} else {
 		return this.type.toString();
 	}
+};
+
+TypeResult.mergeThrownTypes = function (type1, type2) {
+	if (type1) {
+		if (type2) {
+			return type1.merge(type2, true);
+		}
+	} else {
+		return type2 || null;
+	}
+};
+
+TypeResult.prototype.addThrownType = function (type) {
+	this.thrownType = TypeResult.mergeThrownTypes(this.thrownType, type);
 };
