@@ -289,6 +289,8 @@ TypeResult.mergeThrownTypes = function (type1, type2) {
 	if (type1) {
 		if (type2) {
 			return type1.merge(type2, true);
+		} else {
+			return type1;
 		}
 	} else {
 		return type2 || null;
