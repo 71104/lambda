@@ -14,7 +14,7 @@ var LiteralNode = exports.LiteralNode = function (type, value) {
 LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
 LiteralNode.prototype.getType = function () {
-	return new TypeResult(this.type, null);
+	return new TypeResult(this.type, []);
 };
 
 LiteralNode.prototype.getFreeVariables = function () {
@@ -49,9 +49,9 @@ ArrayLiteralNode.prototype.getType = function (context) {
 			result.type = result.type.merge(nextResult.type);
 			result = result.addThrownType(nextResult.thrownType);
 		}
-		return new TypeResult(new ArrayType(result.type), result.thrownType);
+		return new TypeResult(new ArrayType(result.type), [result.thrownType]);
 	} else {
-		return new TypeResult(new ArrayType(UndefinedType.INSTANCE), null);
+		return new TypeResult(new ArrayType(UndefinedType.INSTANCE), []);
 	}
 };
 
@@ -91,9 +91,9 @@ VariableNode.prototype = Object.create(AbstractNode.prototype);
 
 VariableNode.prototype.getType = function (context) {
 	if (context.has(this.name)) {
-		return new TypeResult(context.top(this.name), null);
+		return new TypeResult(context.top(this.name), []);
 	} else {
-		return new TypeResult(UnknownType.INSTANCE, null);
+		return new TypeResult(UnknownType.INSTANCE, []);
 	}
 };
 
@@ -129,7 +129,7 @@ ErrorNode.prototype = Object.create(VariableNode.prototype);
 
 ErrorNode.prototype.getType = function (context) {
 	if (context.has('error')) {
-		return new TypeResult(context.top('error'), null);
+		return new TypeResult(context.top('error'), []);
 	} else {
 		throw new LambdaTypeError();
 	}
@@ -169,7 +169,7 @@ FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 FieldAccessNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	if (left.type.is(ObjectType) && left.type.context.has(this.name)) {
-		return new TypeResult(left.type.context.top(this.name), left.thrownType);
+		return new TypeResult(left.type.context.top(this.name), [left.thrownType]);
 	} else if (left.type.is(UnknownType)) {
 		return left.addThrownType(UnknownType.INSTANCE);
 	} else {
@@ -213,9 +213,9 @@ SubscriptNode.prototype.getType = function (context) {
 	var index = this.index.getType(context);
 	if (index.type.isSubTypeOf(IntegerType.INSTANCE)) {
 		if (expression.type.is(ArrayType)) {
-			return new TypeResult(expression.type, TypeResult.mergeThrownTypes(expression.thrownType, index.thrownType));
+			return new TypeResult(expression.type, [expression.thrownType, index.thrownType]);
 		} else if (expression.type.is(UnknownType)) {
-			return new TypeResult(UnknownType.INSTANCE, TypeResult.mergeThrownTypes(expression.thrownType, index.thrownType));
+			return new TypeResult(UnknownType.INSTANCE, [expression.thrownType, index.thrownType]);
 		}
 	}
 	throw new LambdaTypeError();
@@ -258,7 +258,7 @@ LambdaNode.prototype.getType = function (context) {
 	var left = this.type || new VariableType(this.name);
 	return context.augment(this.name, left, function (context) {
 		var body = this.body.getType(context);
-		return new TypeResult(new LambdaType(left, body.type, body.thrownType), null);
+		return new TypeResult(new LambdaType(left, body.type, body.thrownType), []);
 	}, this);
 };
 
@@ -293,7 +293,7 @@ ApplicationNode.prototype.getType = function (context) {
 	var left = this.left.getType(context);
 	var right = this.right.getType(context);
 	if (left.type.is(LambdaType) && right.type.isSubTypeOf(left.type.left)) {
-		return new TypeResult(left.type.right, TypeResult.mergeThrownTypes(left.thrownType, right.thrownType));
+		return new TypeResult(left.type.right, [left.thrownType, right.thrownType]);
 	} else if (left.type.is(UnknownType)) {
 		return left.addThrownType(right.thrownType);
 	} else {
@@ -332,7 +332,7 @@ var FixNode = exports.FixNode = function () {
 
 FixNode.prototype = Object.create(AbstractNode.prototype);
 
-FixNode.TYPE_RESULT = new TypeResult(new LambdaType(new LambdaType(new VariableType('T'), new VariableType('T'), null), new VariableType('T'), null), null);
+FixNode.TYPE_RESULT = new TypeResult(new LambdaType(new LambdaType(new VariableType('T'), new VariableType('T'), null), new VariableType('T'), null), []);
 
 FixNode.prototype.getType = function () {
 	return FixNode.TYPE_RESULT;
@@ -412,7 +412,7 @@ LetNode.prototype.getType = function (rootContext) {
 			var expressionResult = expression.getType(rootContext);
 			return context.augment(names[index], expressionResult.type, function () {
 				var bodyResult = body.getType(rootContext);
-				return new TypeResult(bodyResult.type, TypeResult.mergeThrownTypes(expressionResult.thrownType, bodyResult.thrownType));
+				return new TypeResult(bodyResult.type, [expressionResult.thrownType, bodyResult.thrownType]);
 			});
 		} else {
 			throw new LambdaInternalError();
@@ -481,13 +481,11 @@ IfNode.prototype.getType = function (context) {
 	if (condition.type.isSubTypeOf(BooleanType.INSTANCE)) {
 		var type1 = this.thenExpression.getType(context);
 		var type2 = this.elseExpression.getType(context);
-		return new TypeResult(
-			type1.merge(type2),
-			TypeResult.mergeThrownTypes(
-				condition.thrownType,
-				TypeResult.mergeThrownTypes(type1.thrownType, type2.thrownType)
-				)
-			);
+		return new TypeResult(type1.type.merge(type2.type), [
+			condition.thrownType,
+			type1.thrownType,
+			type2.thrownType
+		]);
 	}
 	throw new LambdaTypeError();
 };
@@ -535,7 +533,7 @@ ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
 ThrowNode.prototype.getType = function (context) {
 	var expression = this.expression.getType(context);
-	return new TypeResult(UnknownType.INSTANCE, TypeResult.mergeThrownTypes(expression.type, expression.thrownType));
+	return new TypeResult(UnknownType.INSTANCE, [expression.type, expression.thrownType]);
 };
 
 ThrowNode.prototype.getFreeVariables = function () {
@@ -568,7 +566,7 @@ TryCatchNode.prototype.getType = function (context) {
 	if (tryResult.thrownType) {
 		return context.augment('error', tryResult.thrownType, function (context) {
 			var catchResult = this.catchExpression.getType(context);
-			return new TypeResult(catchResult.type.merge(tryResult.type), catchResult.thrownType);
+			return new TypeResult(catchResult.type.merge(tryResult.type), [catchResult.thrownType]);
 		}, this);
 	} else {
 		throw new LambdaTypeError();
@@ -655,7 +653,7 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 			var catchResult = this.catchExpression.getType(context);
 			return new TypeResult(
 				tryResult.type.merge(catchResult.type),
-				TypeResult.mergeThrownTypes(catchResult.thrownType, finallyResult.thrownType)
+				[catchResult.thrownType, finallyResult.thrownType]
 				);
 		}, this);
 	} else {
@@ -702,7 +700,7 @@ var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, ar
 NativeNode.prototype = Object.create(AbstractNode.prototype);
 
 NativeNode.prototype.getType = function () {
-	return new TypeResult(UnknownType.INSTANCE, UnknownType.INSTANCE);
+	return new TypeResult(UnknownType.INSTANCE, [UnknownType.INSTANCE]);
 };
 
 NativeNode.prototype.getFreeVariables = function () {

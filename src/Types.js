@@ -272,9 +272,9 @@ AbstractType.prototype.merge = function (type, evenToUndefined) {
 };
 
 
-var TypeResult = exports.TypeResult = function (type, thrownType) {
+var TypeResult = exports.TypeResult = function (type, thrownTypes) {
 	this.type = type;
-	this.thrownType = thrownType;
+	this.thrownType = TypeResult.mergeThrownTypes.apply(TypeResult, thrownTypes);
 };
 
 TypeResult.prototype.toString = function () {
@@ -286,23 +286,19 @@ TypeResult.prototype.toString = function () {
 };
 
 TypeResult.mergeThrownTypes = function () {
-	if (arguments.length < 1) {
-		throw new LambdaInternalError();
-	} else {
-		var result = arguments[0];
-		for (var i = 1; i < arguments.length; i++) {
-			if (result) {
-				if (arguments[i]) {
-					result = result.merge(arguments[i], true);
-				}
-			} else {
-				result = arguments[i];
+	var result = null;
+	for (var i = 0; i < arguments.length; i++) {
+		if (result) {
+			if (arguments[i]) {
+				result = result.merge(arguments[i], true);
 			}
+		} else {
+			result = arguments[i];
 		}
-		return result;
 	}
+	return result;
 };
 
 TypeResult.prototype.addThrownType = function (type) {
-	return new TypeResult(this.type, TypeResult.mergeThrownTypes(this.thrownType, type));
+	return new TypeResult(this.type, [this.thrownType, type]);
 };
