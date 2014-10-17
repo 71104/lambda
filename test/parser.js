@@ -8,6 +8,7 @@ module.exports.testUndefined = function (test) {
 	var ast = parse('undefined');
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.UndefinedValue));
+	test.ok(ast.type.is(Lambda.UndefinedType));
 	test.done();
 };
 
@@ -15,6 +16,7 @@ module.exports.testNull = function (test) {
 	var ast = parse('null');
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.NullValue));
+	test.ok(ast.type.is(Lambda.NullType));
 	test.done();
 };
 
@@ -23,6 +25,7 @@ module.exports.testTrue = function (test) {
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.BooleanValue));
 	test.ok(ast.value.value === true);
+	test.ok(ast.type.is(Lambda.BooleanType));
 	test.done();
 };
 
@@ -31,6 +34,7 @@ module.exports.testFalse= function (test) {
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.BooleanValue));
 	test.ok(ast.value.value === false);
+	test.ok(ast.type.is(Lambda.BooleanType));
 	test.done();
 };
 
@@ -39,6 +43,7 @@ module.exports.testInteger = function (test) {
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.IntegerValue));
 	test.ok(ast.value.value === 1);
+	test.ok(ast.type.is(Lambda.IntegerType));
 	test.done();
 };
 
@@ -47,6 +52,7 @@ module.exports.testFloat = function (test) {
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.FloatValue));
 	test.ok(ast.value.value === 3.14);
+	test.ok(ast.type.is(Lambda.FloatType));
 	test.done();
 };
 
@@ -55,6 +61,16 @@ module.exports.testString = function (test) {
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.StringValue));
 	test.ok(ast.value.value === 'hello');
+	test.ok(ast.type.is(Lambda.StringType));
+	test.done();
+};
+
+module.exports.testStringWithEscapes = function (test) {
+	var ast = parse('\'hel\\nlo\'');
+	test.ok(ast.is(Lambda.LiteralNode));
+	test.ok(ast.value.is(Lambda.StringValue));
+	test.ok(ast.value.value === 'hel\nlo');
+	test.ok(ast.type.is(Lambda.StringType));
 	test.done();
 };
 
