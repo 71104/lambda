@@ -21,3 +21,7 @@ var LambdaRuntimeError = exports.RuntimeError = function () {
 var LambdaUserError = exports.UserError = function (value) {
 	this.value = value;
 };
+
+LambdaUserError.prototype.toString = function () {
+	return 'User error: ' + this.value.toString();
+};
