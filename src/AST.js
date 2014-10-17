@@ -295,6 +295,9 @@ ApplicationNode.prototype.getType = function (context) {
 	var right = this.right.getType(context);
 	if (left.type.is(LambdaType) && right.type.isSubTypeOf(left.type.left)) {
 		return new TypeResult(left.type.right, TypeResult.mergeThrownTypes(left.thrownType, right.thrownType));
+	} else if (left.type.is(UnknownType)) {
+		left.addThrownType(right.thrownType);
+		return left;
 	} else {
 		throw new LambdaTypeError();
 	}
