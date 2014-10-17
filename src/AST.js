@@ -47,10 +47,9 @@ ArrayLiteralNode.prototype.getType = function (context) {
 		for (var i = 1; i < this.expressions.length; i++) {
 			var nextResult = this.expressions[i].getType(context);
 			result.type = result.type.merge(nextResult.type);
-			result.addThrownType(nextResult.thrownType);
+			result = result.addThrownType(nextResult.thrownType);
 		}
-		result.type = new ArrayType(result.type);
-		return result;
+		return new TypeResult(new ArrayType(result.type), result.thrownType);
 	} else {
 		return new TypeResult(new ArrayType(UndefinedType.INSTANCE), null);
 	}
@@ -172,7 +171,7 @@ FieldAccessNode.prototype.getType = function (context) {
 	if (left.type.is(ObjectType) && left.type.context.has(this.name)) {
 		return new TypeResult(left.type.context.top(this.name), left.thrownType);
 	} else if (left.type.is(UnknownType)) {
-		return left;
+		return left.addThrownType(UnknownType.INSTANCE);
 	} else {
 		throw new LambdaTypeError();
 	}
@@ -296,8 +295,7 @@ ApplicationNode.prototype.getType = function (context) {
 	if (left.type.is(LambdaType) && right.type.isSubTypeOf(left.type.left)) {
 		return new TypeResult(left.type.right, TypeResult.mergeThrownTypes(left.thrownType, right.thrownType));
 	} else if (left.type.is(UnknownType)) {
-		left.addThrownType(right.thrownType);
-		return left;
+		return left.addThrownType(right.thrownType);
 	} else {
 		throw new LambdaTypeError();
 	}
@@ -618,8 +616,7 @@ TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
 TryFinallyNode.prototype.getType = function (context) {
 	var tryResult = this.tryExpression.getType(context);
 	var finallyResult = this.finallyExpression.getType(context);
-	tryResult.addThrownType(finallyResult.thrownType);
-	return tryResult;
+	return tryResult.addThrownType(finallyResult.thrownType);
 };
 
 TryFinallyNode.prototype.getFreeVariables = function () {

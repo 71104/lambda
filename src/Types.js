@@ -285,18 +285,24 @@ TypeResult.prototype.toString = function () {
 	}
 };
 
-TypeResult.mergeThrownTypes = function (type1, type2) {
-	if (type1) {
-		if (type2) {
-			return type1.merge(type2, true);
-		} else {
-			return type1;
-		}
+TypeResult.mergeThrownTypes = function () {
+	if (arguments.length < 1) {
+		throw new LambdaInternalError();
 	} else {
-		return type2 || null;
+		var result = arguments[0];
+		for (var i = 1; i < arguments.length; i++) {
+			if (result) {
+				if (arguments[i]) {
+					result = result.merge(arguments[i], true);
+				}
+			} else {
+				result = arguments[i];
+			}
+		}
+		return result;
 	}
 };
 
 TypeResult.prototype.addThrownType = function (type) {
-	this.thrownType = TypeResult.mergeThrownTypes(this.thrownType, type);
+	return new TypeResult(this.type, TypeResult.mergeThrownTypes(this.thrownType, type));
 };
