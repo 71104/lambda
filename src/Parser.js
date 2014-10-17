@@ -320,8 +320,9 @@ exports.Parser = function (input) {
 		switch (lexer.getCurrent()) {
 		case 'keyword:catch':
 			lexer.next();
-			var catchExpression = addTerminator(terminators, 'keyword:catch', parseClass3);
+			var catchExpression = addTerminator(terminators, 'keyword:finally', parseClass3);
 			if (lexer.getCurrent() === 'keyword:finally') {
+				lexer.next();
 				return new TryCatchFinallyNode(tryExpression, catchExpression, parseClass3(terminators));
 			} else if (terminators.hasOwnProperty(lexer.getCurrent())) {
 				return new TryCatchNode(tryExpression, catchExpression);
