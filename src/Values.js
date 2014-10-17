@@ -98,8 +98,8 @@ var ComplexValue = exports.ComplexValue = function (real, imaginary) {
 ComplexValue.prototype = Object.create(AbstractValue.prototype);
 
 ComplexValue.prototype.toString = function () {
-	if (this.imginary < 0) {
-		return this.real + '-' - this.imaginary + 'i';
+	if (this.imaginary < 0) {
+		return this.real + '-' + -this.imaginary + 'i';
 	} else {
 		return this.real + '+' + this.imaginary + 'i';
 	}
@@ -112,7 +112,7 @@ function NativeComplexValue(real, imaginary) {
 
 NativeComplexValue.prototype.toString = function () {
 	if (this.i < 0) {
-		return this.r + '-' - this.i + 'i';
+		return this.r + '-' + -this.i + 'i';
 	} else {
 		return this.r + '+' + this.i + 'i';
 	}
