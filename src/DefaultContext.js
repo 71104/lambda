@@ -49,7 +49,7 @@ var DefaultContext = exports.DefaultContext = function () {
 				return new NativeComplexValue(x.r - y, x.i);
 			}
 		} else if (y instanceof NativeComplexValue) {
-			return new NativeComplexValue(x - y.r, y.i);
+			return new NativeComplexValue(x - y.r, -y.i);
 		} else {
 			return x - y;
 		}
