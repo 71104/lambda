@@ -121,11 +121,48 @@ VariableNode.prototype.compileStatement = function () {
 };
 
 
-var ErrorNode = exports.ErrorNode = function () {
-	VariableNode.call(this, 'error');
+var ThisNode = exports.ThisNode = function () {
+	AbstractNode.call(this, 'this');
 };
 
-ErrorNode.prototype = Object.create(VariableNode.prototype);
+ThisNode.prototype = Object.create(AbstractNode.prototype);
+
+ThisNode.prototype.getType = function (context) {
+	if (context.has('this')) {
+		return new TypeResult(context.top('this'), []);
+	} else {
+		throw new LambdaTypeError();
+	}
+};
+
+ThisNode.prototype.getFreeVariables = function () {
+	return ['this'];
+};
+
+ThisNode.prototype.evaluate = function (context) {
+	if (context.has('this')) {
+		return context.top('this');
+	} else {
+		throw new LambdaRuntimeError();
+	}
+};
+
+ThisNode.prototype.compileExpression = function () {
+	return 'this';
+};
+
+ThisNode.prototype.compileStatement = function () {
+	return 'return this;';
+};
+
+ThisNode.INSTANCE = new ThisNode();
+
+
+var ErrorNode = exports.ErrorNode = function () {
+	AbstractNode.call(this, 'error');
+};
+
+ErrorNode.prototype = Object.create(AbstractNode.prototype);
 
 ErrorNode.prototype.getType = function (context) {
 	if (context.has('error')) {

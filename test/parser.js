@@ -94,6 +94,12 @@ module.exports.testFix = function (test) {
 	test.done();
 };
 
+module.exports.testThis = function (test) {
+	var ast = parse('this');
+	test.ok(ast.is(Lambda.ThisNode));
+	test.done();
+};
+
 module.exports.testError = function (test) {
 	var ast = parse('error');
 	test.ok(ast.is(Lambda.ErrorNode));

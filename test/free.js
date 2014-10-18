@@ -29,4 +29,7 @@ module.exports.testFloatLiteral = testSet('3.14', []);
 module.exports.testComplexLiteral = testSet('5i', []);
 module.exports.testStringLiteral = testSet('\'hello\'', []);
 
-module.exports.testVariable = testSet('x', ['x']);
+module.exports.testVariable = testSet('blahblah', ['blahblah']);
+module.exports.testFix = testSet('fix', ['fix']);
+module.exports.testThis = testSet('this', ['this']);
+module.exports.testError = testSet('error', ['error']);
