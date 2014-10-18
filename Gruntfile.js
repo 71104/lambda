@@ -63,6 +63,7 @@ module.exports = function (grunt) {
 				'test/lexer.js',
 				'test/parser.js',
 				'test/types.js',
+				'test/free.js',
 				'test/evaluation.js',
 				'test/compiler.js'
 			]
