@@ -199,9 +199,34 @@ exports.Parser = function (input) {
 			lexer.next();
 			return new LambdaNode(name, null, parseClass3(terminators));
 		default:
-			var node = new VariableNode(name);
+			var node = (function (node) {
+				while (true) {
+					switch (lexer.getCurrent()) {
+					case 'point':
+						if (lexer.next() !== 'identifier') {
+							throw new LambdaSyntaxError();
+						}
+						node = new FieldAccessNode(node, lexer.getLabel());
+						lexer.next();
+						break;
+					case 'left-square':
+						lexer.next();
+						var index = parseClass3({
+							'right-square': true
+						});
+						if (lexer.getCurrent() !== 'right-square') {
+							throw new LambdaSyntaxError();
+						}
+						lexer.next();
+						node = new SubscriptNode(node, index);
+						break;
+					default:
+						return node;
+					}
+				}
+			}(new VariableNode(name)));
 			while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-				node = new ApplicationNode(node, parseClass1());
+				node = new ApplicationNode(node, parseClass3(terminators));
 			}
 			return node;
 		}
