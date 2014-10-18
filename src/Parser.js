@@ -153,7 +153,7 @@ exports.Parser = function (input) {
 	function parseClass2(terminators) {
 		var node = parseClass1();
 		while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-			node = new ApplicationNode(node, parseClass1());
+			node = new ApplicationNode(node, parseClass3(terminators));
 		}
 		return node;
 	}
