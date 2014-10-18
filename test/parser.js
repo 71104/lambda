@@ -102,22 +102,22 @@ module.exports.testError = function (test) {
 
 module.exports.testFieldAccess1 = function (test) {
 	var ast = parse('x.x');
-	test.ok(ast.is(FieldAccessNode));
+	test.ok(ast.is(Lambda.FieldAccessNode));
 	test.ok(ast.name === 'x');
 	test.done();
 };
 
 module.exports.testFieldAccess2 = function (test) {
 	var ast = parse('x.y');
-	test.ok(ast.is(FieldAccessNode));
+	test.ok(ast.is(Lambda.FieldAccessNode));
 	test.ok(ast.name === 'y');
 	test.done();
 };
 
 module.exports.testVariableFieldAccess = function (test) {
 	var ast = parse('object.field');
-	test.ok(ast.is(FieldAccessNode));
-	test.ok(ast.left.is(VariableNode));
+	test.ok(ast.is(Lambda.FieldAccessNode));
+	test.ok(ast.left.is(Lambda.VariableNode));
 	test.ok(ast.left.name === 'object');
 	test.ok(ast.name === 'field');
 	test.done();
