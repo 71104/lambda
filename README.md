@@ -10,4 +10,4 @@ An effort to create the perfect programming language.
 
 ## More Information
 
-See the [Wiki](wiki).
+See the [Wiki](https://github.com/71104/lambda/wiki).
