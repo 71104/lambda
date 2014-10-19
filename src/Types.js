@@ -161,22 +161,6 @@ RegexType.prototype.isSubTypeOf = function (type) {
 RegexType.INSTANCE = new RegexType();
 
 
-var ArrayType = exports.ArrayType = function (subType) {
-	AbstractType.call(this);
-	this.subType = subType;
-};
-
-ArrayType.prototype = Object.create(AbstractType.prototype);
-
-ArrayType.prototype.toString = function () {
-	return this.subType + '*';
-};
-
-ArrayType.prototype.isSubTypeOf = function (type) {
-	return type.is(UndefinedType) || type.is(ArrayType) && this.subType.isSubTypeOf(type.subType);
-};
-
-
 var ObjectType = exports.ObjectType = function (context) {
 	AbstractType.call(this);
 	this.context = context;
@@ -194,6 +178,23 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 		type.is(ObjectType) && type.context.forEach(function (name, subType) {
 			return this.context.has(name) && this.context.get(name).isSubTypeOf(subType);
 		}, this);
+};
+
+
+var ArrayType = exports.ArrayType = function (subType) {
+	ObjectType.call(this, new Context());
+	this.subType = subType;
+};
+
+ArrayType.prototype = Object.create(ObjectType.prototype);
+
+ArrayType.prototype.toString = function () {
+	return this.subType + '*';
+};
+
+ArrayType.prototype.isSubTypeOf = function (type) {
+	return type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
+		ObjectType.prototype.isSubTypeOf.call(this, type);
 };
 
 
