@@ -53,6 +53,7 @@ module.exports.testTryKeyword = testTokens('try', ['keyword:try']);
 module.exports.testCatchKeyword = testTokens('catch', ['keyword:catch']);
 module.exports.testFinallyKeyword = testTokens('finally', ['keyword:finally']);
 module.exports.testErrorKeyword = testTokens('error', ['keyword:error']);
+module.exports.testThrowsKeyword = testTokens('throws', ['keyword:throws']);
 
 module.exports.testIdentifier1 = testTokens('a', [{type: 'identifier', label: 'a'}]);
 module.exports.testIdentifier2 = testTokens('_', [{type: 'identifier', label: '_'}]);

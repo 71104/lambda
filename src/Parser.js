@@ -54,7 +54,13 @@ exports.Parser = function (input) {
 			return left;
 		} else {
 			lexer.next();
-			return new LambdaType(left, parseType(), []); // TODO implements `throws` specifications
+			var right = parseType();
+			if (lexer.getCurrent() !== 'keyword:throws') {
+				return new LambdaType(left, right, null);
+			} else {
+				lexer.next();
+				return new LambdaType(left, right, parseType());
+			}
 		}
 	}
 
@@ -163,7 +169,7 @@ exports.Parser = function (input) {
 	function parseClass3(terminators) {
 		switch (lexer.getCurrent()) {
 		case 'identifier':
-			return parseLambda(terminators);
+			return parseLambdaOrVariable(terminators);
 		case 'keyword:let':
 			return parseLet(terminators);
 		case 'keyword:if':
@@ -177,7 +183,7 @@ exports.Parser = function (input) {
 		}
 	}
 
-	function parseLambda(terminators) {
+	function parseLambdaOrVariable(terminators) {
 		var name = lexer.getLabel();
 		switch (lexer.next()) {
 		case 'colon':

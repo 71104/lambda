@@ -15,7 +15,7 @@ var Lexer = exports.Lexer = function (input) {
 	function next() {
 		if (match(/^(\s|(#.*\n))+/)) {
 			return next();
-		} else if (match(/^(null|undefined|true|false|not|and|or|xor|fix|this|new|bool|unknown|int|float|complex|string|regex|let|in|if|then|else|throw|try|catch|finally|error)\b/)) {
+		} else if (match(/^(null|undefined|true|false|not|and|or|xor|fix|this|new|bool|unknown|int|float|complex|string|regex|let|in|if|then|else|throw|try|catch|finally|error|throws)\b/)) {
 			return token = 'keyword:' + label;
 		} else if (match(/^[A-Za-z_\$][A-Za-z0-9_\$]*\b/)) {
 			return token = 'identifier';
