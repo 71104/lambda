@@ -1,6 +1,8 @@
-Lambda
-======
+# Lambda
 
-A simple, statically typed, functional programming language that compiles to plain JavaScript.
+An effort to create the perfect programming language.
 
-Use it in the browser, [Node.js](http://nodejs.org/), or your preferred JavaScript environment.
+## FAQ
+
+**Q**. - Is it perfect yet?
+**A**. - No.
