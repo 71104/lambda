@@ -5,7 +5,8 @@ if (process.argv.length > 2) {
 	var input = fs.readFileSync(process.argv[2], 'ascii');
 	try {
 		var ast = (new Lambda.Parser(input)).parse();
-		console.log(ast.getType(new Lambda.Context()).toString());
+		ast.getType(new Lambda.DefaultContext());
+		fs.writeFileSync(process.argv[2].replace(/(\.[A-Za-z0-9_-]*)?$/, '.js'), ast.compileStatement(), 'ascii');
 	} catch (e) {
 		console.error(e.message);
 		console.error(e.stack);

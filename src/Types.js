@@ -181,23 +181,6 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 };
 
 
-var ArrayType = exports.ArrayType = function (subType) {
-	ObjectType.call(this, new Context());
-	this.subType = subType;
-};
-
-ArrayType.prototype = Object.create(ObjectType.prototype);
-
-ArrayType.prototype.toString = function () {
-	return this.subType + '*';
-};
-
-ArrayType.prototype.isSubTypeOf = function (type) {
-	return type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
-		ObjectType.prototype.isSubTypeOf.call(this, type);
-};
-
-
 var LambdaType = exports.LambdaType = function (left, right, thrown) {
 	AbstractType.call(this);
 	this.left = left;
@@ -233,6 +216,23 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 		type.left.isSubTypeOf(this.left) &&
 		this.right.isSubTypeOf(type.right) &&
 		(!this.thrown || type.thrown && this.thrown.isSubTypeOf(type.thrown));
+};
+
+
+var ArrayType = exports.ArrayType = function (subType) {
+	ObjectType.call(this, new Context());
+	this.subType = subType;
+};
+
+ArrayType.prototype = Object.create(ObjectType.prototype);
+
+ArrayType.prototype.toString = function () {
+	return this.subType + '*';
+};
+
+ArrayType.prototype.isSubTypeOf = function (type) {
+	return type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
+		ObjectType.prototype.isSubTypeOf.call(this, type);
 };
 
 
