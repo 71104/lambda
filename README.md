@@ -7,3 +7,7 @@ An effort to create the perfect programming language.
 **Q**. - Is it perfect yet?
 
 **A**. - No.
+
+## More Information
+
+See the [Wiki](Home).
