@@ -10,4 +10,4 @@ An effort to create the perfect programming language.
 
 ## More Information
 
-See the [Wiki](Home).
+See the [Wiki](wiki).
