@@ -127,40 +127,6 @@ IntegerType.prototype.isSubTypeOf = function (type) {
 IntegerType.INSTANCE = new IntegerType();
 
 
-var StringType = exports.StringType = function () {
-	AbstractType.call(this);
-};
-
-StringType.prototype = Object.create(AbstractType.prototype);
-
-StringType.prototype.toString = function () {
-	return 'string';
-};
-
-StringType.prototype.isSubTypeOf = function (type) {
-	return type.is(UndefinedType) || type.is(StringType);
-};
-
-StringType.INSTANCE = new StringType();
-
-
-var RegexType = exports.RegexType = function () {
-	AbstractType.call(this);
-};
-
-RegexType.prototype = Object.create(AbstractType.prototype);
-
-RegexType.prototype.toString = function () {
-	return 'regex';
-};
-
-RegexType.prototype.isSubTypeOf = function (type) {
-	return type.is(UndefinedType) || type.is(RegexType);
-};
-
-RegexType.INSTANCE = new RegexType();
-
-
 var ObjectType = exports.ObjectType = function (context) {
 	AbstractType.call(this);
 	this.context = context;
@@ -181,14 +147,61 @@ ObjectType.prototype.isSubTypeOf = function (type) {
 };
 
 
+var StringType = exports.StringType = function () {
+	ObjectType.call(this, StringType.createPrototype());
+};
+
+StringType.prototype = Object.create(ObjectType.prototype);
+
+StringType.prototype.toString = function () {
+	return 'string';
+};
+
+StringType.prototype.isSubTypeOf = function (type) {
+	return type.is(StringType) || ObjectType.prototype.isSubTypeOf.call(this, type);
+};
+
+
+var RegexType = exports.RegexType = function () {
+	ObjectType.call(this, RegexType.createPrototype());
+};
+
+RegexType.prototype = Object.create(ObjectType.prototype);
+
+RegexType.prototype.toString = function () {
+	return 'regex';
+};
+
+RegexType.prototype.isSubTypeOf = function (type) {
+	return type.is(RegexType) || ObjectType.prototype.isSubTypeOf.call(this, type);
+};
+
+
+var ArrayType = exports.ArrayType = function (subType) {
+	ObjectType.call(this, ArrayType.createPrototype(subType));
+	this.subType = subType;
+};
+
+ArrayType.prototype = Object.create(ObjectType.prototype);
+
+ArrayType.prototype.toString = function () {
+	return this.subType + '*';
+};
+
+ArrayType.prototype.isSubTypeOf = function (type) {
+	return type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
+		ObjectType.prototype.isSubTypeOf.call(this, type);
+};
+
+
 var LambdaType = exports.LambdaType = function (left, right, thrown) {
-	AbstractType.call(this);
+	ObjectType.call(this, LambdaType.createPrototype());
 	this.left = left;
 	this.right = right;
 	this.thrown = thrown;
 };
 
-LambdaType.prototype = Object.create(AbstractType.prototype);
+LambdaType.prototype = Object.create(ObjectType.prototype);
 
 LambdaType.prototype.toString = function () {
 	var argumentTypes = [];
@@ -211,27 +224,10 @@ LambdaType.prototype.toString = function () {
 };
 
 LambdaType.prototype.isSubTypeOf = function (type) {
-	return type.is(UndefinedType) ||
-		type.is(LambdaType) &&
+	return type.is(LambdaType) &&
 		type.left.isSubTypeOf(this.left) &&
 		this.right.isSubTypeOf(type.right) &&
-		(!this.thrown || type.thrown && this.thrown.isSubTypeOf(type.thrown));
-};
-
-
-var ArrayType = exports.ArrayType = function (subType) {
-	ObjectType.call(this, new Context());
-	this.subType = subType;
-};
-
-ArrayType.prototype = Object.create(ObjectType.prototype);
-
-ArrayType.prototype.toString = function () {
-	return this.subType + '*';
-};
-
-ArrayType.prototype.isSubTypeOf = function (type) {
-	return type.is(ArrayType) && this.subType.isSubTypeOf(type.subType) ||
+		(!this.thrown || type.thrown && this.thrown.isSubTypeOf(type.thrown)) ||
 		ObjectType.prototype.isSubTypeOf.call(this, type);
 };
 
@@ -249,6 +245,38 @@ VariableType.prototype.toString = function () {
 
 VariableType.prototype.isSubTypeOf = function () {
 	// TODO
+};
+
+
+StringType.createPrototype = function () {
+	var context = new Context();
+	// TODO
+	return context;
+};
+
+StringType.INSTANCE = new StringType();
+
+
+RegexType.createPrototype = function () {
+	var context = new Context();
+	// TODO
+	return context;
+};
+
+RegexType.INSTANCE = new RegexType();
+
+
+ArrayType.createPrototype = function () {
+	var context = new Context();
+	// TODO
+	return context;
+};
+
+
+LambdaType.createPrototype = function () {
+	var context = new Context();
+	// TODO
+	return context;
 };
 
 
