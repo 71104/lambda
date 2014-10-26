@@ -33,3 +33,12 @@ module.exports.testVariable = testSet('blahblah', ['blahblah']);
 module.exports.testFix = testSet('fix', []);
 module.exports.testThis = testSet('this', ['this']);
 module.exports.testError = testSet('error', ['error']);
+
+module.exports.testField1 = testSet('x.y', ['x']);
+module.exports.testField2 = testSet('x.y.z', ['x']);
+module.exports.testSubscript = testSet('x[y]', ['x', 'y']);
+module.exports.testLambda1 = testSet('x -> x', []);
+module.exports.testLambda2 = testSet('x -> y', ['y']);
+module.exports.testLambda3 = testSet('x, y -> x', []);
+module.exports.testLambda4 = testSet('x, y -> y', []);
+module.exports.testLambda5 = testSet('x, y -> z', ['z']);

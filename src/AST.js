@@ -259,7 +259,7 @@ SubscriptNode.prototype.getType = function (context) {
 };
 
 SubscriptNode.prototype.getFreeVariables = function () {
-	return this.expression.getFreeVariables();
+	return this.expression.getFreeVariables().union(this.index.getFreeVariables());
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
