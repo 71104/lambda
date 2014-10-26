@@ -612,7 +612,9 @@ TryCatchNode.prototype.getType = function (context) {
 
 TryCatchNode.prototype.getFreeVariables = function () {
 	return this.tryExpression.getFreeVariables()
-		.union(this.catchExpression.getFreeVariables());
+		.union(this.catchExpression.getFreeVariables().filter(function (name) {
+			return name !== 'error';
+	}));
 };
 
 TryCatchNode.prototype.evaluate = function (context) {
@@ -700,7 +702,9 @@ TryCatchFinallyNode.prototype.getType = function (context) {
 
 TryCatchFinallyNode.prototype.getFreeVariables = function () {
 	return this.tryExpression.getFreeVariables()
-		.union(this.catchExpression.getFreeVariables())
+		.union(this.catchExpression.getFreeVariables().filter(function (name) {
+			return name !== 'error';
+	}))
 		.union(this.finallyExpression.getFreeVariables());
 };
 
