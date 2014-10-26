@@ -55,7 +55,9 @@ var Lexer = exports.Lexer = function (input) {
 				.replace(/\\\r/g, '\r')
 				.replace(/\\\t/g, '\t');
 			return token = 'string';
-		} else if (match(/^(\!\=|<\=|>\=|\*\*)/)) {
+		} else if (match(/^>>>/)) {
+			return token = 'symbol';
+		} else if (match(/^(<<|>>|\!\=|<\=|>\=|\*\*)/)) {
 			return token = 'symbol';
 		} else if (match(/^(<|>|\+|\-|\/|\%|\~|\&|\||\^)/)) {
 			return token = 'symbol';

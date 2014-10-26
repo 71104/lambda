@@ -83,6 +83,20 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
+	registerBinaryOperator('**', function (x, y) {
+		if (x instanceof NativeComplexValue) {
+			if (y instanceof NativeComplexValue) {
+				throw new LambdaRuntimeError();
+			} else {
+				throw new LambdaRuntimeError();
+			}
+		} else if (y instanceof NativeComplexValue) {
+			throw new LambdaRuntimeError();
+		} else {
+			return Math.pow(x, y);
+		}
+	});
+
 	registerBinaryOperator('%', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
@@ -167,6 +181,48 @@ var DefaultContext = exports.DefaultContext = function () {
 		}
 	});
 
+	registerBinaryOperator('>>', function (x, y) {
+		if (x instanceof NativeComplexValue) {
+			if (y instanceof NativeComplexValue) {
+				throw new LambdaRuntimeError();
+			} else {
+				throw new LambdaRuntimeError();
+			}
+		} else if (y instanceof NativeComplexValue) {
+			throw new LambdaRuntimeError();
+		} else {
+			return x >> y;
+		}
+	});
+
+	registerBinaryOperator('>>>', function (x, y) {
+		if (x instanceof NativeComplexValue) {
+			if (y instanceof NativeComplexValue) {
+				throw new LambdaRuntimeError();
+			} else {
+				throw new LambdaRuntimeError();
+			}
+		} else if (y instanceof NativeComplexValue) {
+			throw new LambdaRuntimeError();
+		} else {
+			return x >>> y;
+		}
+	});
+
+	registerBinaryOperator('<<', function (x, y) {
+		if (x instanceof NativeComplexValue) {
+			if (y instanceof NativeComplexValue) {
+				throw new LambdaRuntimeError();
+			} else {
+				throw new LambdaRuntimeError();
+			}
+		} else if (y instanceof NativeComplexValue) {
+			throw new LambdaRuntimeError();
+		} else {
+			return x << y;
+		}
+	});
+
 	registerBinaryOperator('=', function (x, y) {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
@@ -220,20 +276,6 @@ var DefaultContext = exports.DefaultContext = function () {
 			throw new LambdaRuntimeError();
 		} else {
 			return x <= y;
-		}
-	});
-
-	registerBinaryOperator('**', function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
-			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return Math.pow(x, y);
 		}
 	});
 
