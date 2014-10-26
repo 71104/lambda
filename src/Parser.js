@@ -158,31 +158,6 @@ exports.Parser = function (input) {
 		}
 	}
 
-	function parseClass2(terminators) {
-		var node = parseClass1();
-		while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-			node = new ApplicationNode(node, parseClass3(terminators));
-		}
-		return node;
-	}
-
-	function parseClass3(terminators) {
-		switch (lexer.getCurrent()) {
-		case 'identifier':
-			return parseLambdaOrVariable(terminators);
-		case 'keyword:let':
-			return parseLet(terminators);
-		case 'keyword:if':
-			return parseIf(terminators);
-		case 'keyword:throw':
-			return parseThrow(terminators);
-		case 'keyword:try':
-			return parseTry(terminators);
-		default:
-			return parseClass2(terminators);
-		}
-	}
-
 	function parseLambdaOrVariable(terminators) {
 		var name = lexer.getLabel();
 		switch (lexer.next()) {
@@ -207,36 +182,31 @@ exports.Parser = function (input) {
 			lexer.next();
 			return new LambdaNode(name, null, parseClass3(terminators));
 		default:
-			var node = (function (node) {
-				while (true) {
-					switch (lexer.getCurrent()) {
-					case 'point':
-						if (lexer.next() !== 'identifier') {
-							throw new LambdaSyntaxError();
-						}
-						node = new FieldAccessNode(node, lexer.getLabel());
-						lexer.next();
-						break;
-					case 'left-square':
-						lexer.next();
-						var index = parseClass3({
-							'right-square': true
-						});
-						if (lexer.getCurrent() !== 'right-square') {
-							throw new LambdaSyntaxError();
-						}
-						lexer.next();
-						node = new SubscriptNode(node, index);
-						break;
-					default:
-						return node;
+			var node = new VariableNode(name);
+			while (true) {
+				switch (lexer.getCurrent()) {
+				case 'point':
+					if (lexer.next() !== 'identifier') {
+						throw new LambdaSyntaxError();
 					}
+					node = new FieldAccessNode(node, lexer.getLabel());
+					lexer.next();
+					break;
+				case 'left-square':
+					lexer.next();
+					var index = parseClass3({
+						'right-square': true
+					});
+					if (lexer.getCurrent() !== 'right-square') {
+						throw new LambdaSyntaxError();
+					}
+					lexer.next();
+					node = new SubscriptNode(node, index);
+					break;
+				default:
+					return node;
 				}
-			}(new VariableNode(name)));
-			while (!terminators.hasOwnProperty(lexer.getCurrent())) {
-				node = new ApplicationNode(node, parseClass3(terminators));
 			}
-			return node;
 		}
 	}
 
@@ -367,6 +337,31 @@ exports.Parser = function (input) {
 		default:
 			throw new LambdaSyntaxError();
 		}
+	}
+
+	function parseClass2(terminators) {
+		switch (lexer.getCurrent()) {
+		case 'identifier':
+			return parseLambdaOrVariable(terminators);
+		case 'keyword:let':
+			return parseLet(terminators);
+		case 'keyword:if':
+			return parseIf(terminators);
+		case 'keyword:throw':
+			return parseThrow(terminators);
+		case 'keyword:try':
+			return parseTry(terminators);
+		default:
+			return parseClass1(terminators);
+		}
+	}
+
+	function parseClass3(terminators) {
+		var node = parseClass2();
+		while (!terminators.hasOwnProperty(lexer.getCurrent())) {
+			node = new ApplicationNode(node, parseClass2(terminators));
+		}
+		return node;
 	}
 
 	this.parse = function () {
