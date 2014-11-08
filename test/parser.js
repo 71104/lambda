@@ -120,6 +120,13 @@ module.exports.testFieldAccess2 = function (test) {
 	test.done();
 };
 
+module.exports.testFieldAccess3 = function (test) {
+	var ast = parse('x.then');
+	test.ok(ast.is(Lambda.FieldAccessNode));
+	test.ok(ast.name === 'then');
+	test.done();
+};
+
 module.exports.testVariableFieldAccess = function (test) {
 	var ast = parse('object.field');
 	test.ok(ast.is(Lambda.FieldAccessNode));

@@ -135,7 +135,8 @@ exports.Parser = function (input) {
 		while (true) {
 			switch (lexer.getCurrent()) {
 			case 'point':
-				if (lexer.next() !== 'identifier') {
+				var token = lexer.next();
+				if (token !== 'identifier' && !token.match(/^keyword\:/)) {
 					throw new LambdaSyntaxError();
 				}
 				node = new FieldAccessNode(node, lexer.getLabel());
@@ -186,7 +187,8 @@ exports.Parser = function (input) {
 			while (true) {
 				switch (lexer.getCurrent()) {
 				case 'point':
-					if (lexer.next() !== 'identifier') {
+					var token = lexer.next();
+					if (token !== 'identifier' && !token.match(/^keyword\:/)) {
 						throw new LambdaSyntaxError();
 					}
 					node = new FieldAccessNode(node, lexer.getLabel());
