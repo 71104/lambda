@@ -87,10 +87,8 @@ VariableNode.prototype.evaluate = function (context) {
 	if (context.has(this.name)) {
 		return context.top(this.name);
 	} else {
-		var name = this.name;
-		return AbstractValue.unmarshal((function () {
-			return this[name];
-		}()));
+		var evil = eval;
+		return AbstractValue.unmarshal(evil('this')[this.name]);
 	}
 };
 
@@ -466,8 +464,10 @@ TryCatchNode.prototype.evaluate = function (context) {
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
 			return this.catchExpression.evaluate(context.add('error', e.value));
-		} else {
+		} else if (e instanceof LambdaError) {
 			throw e;
+		} else {
+			return this.catchExpression.evaluate(context.add('error', AbstractValue.unmarshal(e)));
 		}
 	}
 };
@@ -534,8 +534,10 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
 			return this.catchExpression.evaluate(context.add('error', e.value));
-		} else {
+		} else if (e instanceof LambdaError) {
 			throw e;
+		} else {
+			return this.catchExpression.evaluate(context.add('error', AbstractValue.unmarshal(e)));
 		}
 	} finally {
 		this.finallyExpression.evaluate(context);
