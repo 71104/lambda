@@ -58,7 +58,9 @@ module.exports = function (grunt) {
 		},
 		nodeunit: {
 			dist: [
-				'test/lexer.js'
+				'test/lexer.js',
+				'test/parser.js',
+				'test/free.js',
 			]
 		}
 	});
