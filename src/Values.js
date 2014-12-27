@@ -214,9 +214,8 @@ AbstractValue.unmarshal = function (value) {
 		} else {
 			var hash = {};
 			for (var key in value) {
-				if (value.hasOwnProperty(key)) {
-					hash[key] = AbstractValue.unmarshal(value[key]);
-				}
+				/*jshint forin: false */
+				hash[key] = AbstractValue.unmarshal(value[key]);
 			}
 			return new ObjectValue(new Context(hash));
 		}
