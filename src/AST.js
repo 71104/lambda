@@ -30,11 +30,11 @@ LiteralNode.prototype.evaluate = function () {
 };
 
 LiteralNode.prototype.compileExpression = function () {
-	return JSON.stringify(this.value);
+	return JSON.stringify(this.value.marshal());
 };
 
 LiteralNode.prototype.compileStatement = function () {
-	return 'return ' + JSON.stringify(this.value) + ';';
+	return 'return ' + JSON.stringify(this.value.marshal()) + ';';
 };
 
 
