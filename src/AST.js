@@ -210,9 +210,13 @@ SubscriptNode.prototype.evaluate = function (context) {
 		var index = this.index.evaluate(context);
 		if (index.is(IntegerValue)) {
 			if (value.is(ArrayValue)) {
-				return value.array[index.value];
+				if (index.value >= 0 && index.value < value.array.length) {
+					return value.array[index.value];
+				}
 			} else if (value.is(StringValue)) {
-				return value.value[index.value];
+				if (index.value >= 0 && index.value < value.value.length) {
+					return value.value[index.value];
+				}
 			}
 		}
 	}

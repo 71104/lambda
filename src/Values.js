@@ -4,6 +4,15 @@ AbstractValue.prototype.is = function (Class) {
 	return this instanceof Class;
 };
 
+AbstractValue.prototype.isAny = function () {
+	for (var i = 0; i < arguments.length; i++) {
+		if (this instanceof arguments[i]) {
+			return true;
+		}
+	}
+	return false;
+};
+
 
 var NullValue = exports.NullValue = function () {
 	AbstractValue.call(this);
