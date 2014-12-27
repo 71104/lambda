@@ -29,11 +29,17 @@ var PlusOperator = exports.PlusOperator = function () {
 		if (x instanceof NativeComplexValue) {
 			if (y instanceof NativeComplexValue) {
 				return new NativeComplexValue(x.r + y.r, x.i + y.i);
+			} else if (typeof y === 'string') {
+				return x.toString() + y;
 			} else {
 				return new NativeComplexValue(x.r + ~~y, x.i);
 			}
 		} else if (y instanceof NativeComplexValue) {
-			return new NativeComplexValue(~~x + y.r, y.i);
+			if (typeof x === 'string') {
+				return x + y.toString();
+			} else {
+				return new NativeComplexValue(~~x + y.r, y.i);
+			}
 		} else {
 			return x + y;
 		}
