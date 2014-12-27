@@ -8,11 +8,6 @@ var LambdaSyntaxError = exports.SyntaxError = function () {
 };
 
 
-var LambdaTypeError = exports.TypeError = function () {
-	return Error.call(this, 'type error');
-};
-
-
 var LambdaRuntimeError = exports.RuntimeError = function () {
 	return Error.call(this, 'runtime error');
 };
