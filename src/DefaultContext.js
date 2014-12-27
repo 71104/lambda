@@ -1,39 +1,39 @@
 var DefaultContext = exports.DefaultContext = function () {
-	Context.call(this);
+	var emptyContext = new Context();
 
-	var that = this;
-
-	function registerUnaryOperator(symbol, Operator) {
-		return that.hash[symbol] = new LambdaNode('x', new Operator()).evaluate(that);
+	function unaryOperator(Operator) {
+		return new LambdaNode('x', new Operator()).evaluate(emptyContext);
 	}
 
-	function registerBinaryOperator(symbol, Operator) {
-		return that.hash[symbol] = new LambdaNode('x', new LambdaNode('y', new Operator())).evaluate(that);
+	function binaryOperator(Operator) {
+		return new LambdaNode('x', new LambdaNode('y', new Operator())).evaluate(emptyContext);
 	}
 
-	registerUnaryOperator('not', LogicalNotOperator);
-	registerUnaryOperator('~', BitwiseNotOperator);
-	registerBinaryOperator('+', PlusOperator);
-	registerBinaryOperator('-', MinusOperator);
-	registerBinaryOperator('*', MultiplyOperator);
-	registerBinaryOperator('/', DivideOperator);
-	registerBinaryOperator('**', PowerOperator);
-	registerBinaryOperator('%', ModulusOperator);
-	registerBinaryOperator('<', LessThanOperator);
-	registerBinaryOperator('<=', LessThanOrEqualOperator);
-	registerBinaryOperator('>', GreaterThanOperator);
-	registerBinaryOperator('>=', GreaterThanOrEqualOperator);
-	registerBinaryOperator('&', BitwiseAndOperator);
-	registerBinaryOperator('|', BitwiseOrOperator);
-	registerBinaryOperator('^', BitwiseXorOperator);
-	registerBinaryOperator('<<', LeftShiftOperator);
-	registerBinaryOperator('>>', RightShiftOperator);
-	registerBinaryOperator('>>>', UnsignedRightShiftOperator);
-	registerBinaryOperator('=', ComparisonOperator);
-	registerBinaryOperator('!=', NegatedComparisonOperator);
-	registerBinaryOperator('and', LogicalAndOperator);
-	registerBinaryOperator('or', LogicalOrOperator);
-	registerBinaryOperator('xor', LogicalXorOperator);
+	Context.call(this, {
+		'not': unaryOperator(LogicalNotOperator),
+		'~': unaryOperator(BitwiseNotOperator),
+		'+': binaryOperator(PlusOperator),
+		'-': binaryOperator(MinusOperator),
+		'*': binaryOperator(MultiplyOperator),
+		'/': binaryOperator(DivideOperator),
+		'**': binaryOperator(PowerOperator),
+		'%': binaryOperator(ModulusOperator),
+		'<': binaryOperator(LessThanOperator),
+		'<=': binaryOperator(LessThanOrEqualOperator),
+		'>': binaryOperator(GreaterThanOperator),
+		'>=': binaryOperator(GreaterThanOrEqualOperator),
+		'&': binaryOperator(BitwiseAndOperator),
+		'|': binaryOperator(BitwiseOrOperator),
+		'^': binaryOperator(BitwiseXorOperator),
+		'<<': binaryOperator(LeftShiftOperator),
+		'>>': binaryOperator(RightShiftOperator),
+		'>>>': binaryOperator(UnsignedRightShiftOperator),
+		'=': binaryOperator(ComparisonOperator),
+		'!=': binaryOperator(NegatedComparisonOperator),
+		'and': binaryOperator(LogicalAndOperator),
+		'or': binaryOperator(LogicalOrOperator),
+		'xor': binaryOperator(LogicalXorOperator)
+	});
 };
 
 DefaultContext.prototype = Object.create(Context.prototype);
