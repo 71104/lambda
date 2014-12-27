@@ -1,0 +1,29 @@
+{
+	"name": "lambda",
+	"version": "0.5.1",
+	"license": "MIT",
+	"author": "Alberto La Rocca <a71104@gmail.com> (https://github.com/71104)",
+	"files": [
+		"bin"
+	],
+	"bin": {
+		"lambda": "bin/REPL.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/71104/lambda.git"
+	},
+	"scripts": {
+		"start": "node bin/REPL.js"
+	},
+	"devDependencies": {
+		"grunt": "~0.4.5",
+		"grunt-contrib-clean": "~0.6.0",
+		"grunt-contrib-concat": "~0.5.0",
+		"grunt-contrib-jshint": "~0.10.0",
+		"grunt-contrib-uglify": "~0.6.0",
+		"grunt-contrib-copy": "~0.7.0",
+		"grunt-contrib-nodeunit": "~0.4.1"
+	},
+	"preferGlobal": true
+}
