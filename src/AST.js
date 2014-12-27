@@ -176,6 +176,8 @@ FieldAccessNode.prototype.evaluate = function (context) {
 	if (left.is(ObjectValue)) {
 		if (left.context.has(this.name)) {
 			return left.context.top(this.name);
+		} else {
+			return UndefinedValue.INSTANCE;
 		}
 	}
 	throw new LambdaRuntimeError();
