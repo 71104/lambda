@@ -422,6 +422,49 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 };
 
 
+var UnaryOperatorNode = exports.UnaryOperatorNode = function (evaluator) {
+	AbstractNode.call(this);
+	this.evaluator = evaluator;
+};
+
+UnaryOperatorNode.prototype = Object.create(AbstractNode.prototype);
+
+UnaryOperatorNode.prototype.getFreeVariables = function () {
+	return ['x'];
+};
+
+UnaryOperatorNode.prototype.evaluate = function (context) {
+	if (context.has('x')) {
+		return AbstractValue.unmarshal(this.evaluator(context.top('x').marshal()));
+	} else {
+		throw new LambdaRuntimeError();
+	}
+};
+
+
+var BinaryOperatorNode = exports.BinaryOperatorNode = function (evaluator) {
+	AbstractNode.call(this);
+	this.evaluator = evaluator;
+};
+
+BinaryOperatorNode.prototype = Object.create(AbstractNode.prototype);
+
+BinaryOperatorNode.prototype.getFreeVariables = function () {
+	return ['x', 'y'];
+};
+
+BinaryOperatorNode.prototype.evaluate = function (context) {
+	if (context.has('x') && context.has('y')) {
+		return AbstractValue.unmarshal(this.evaluator(
+			context.top('x').marshal(),
+			context.top('y').marshal()
+			));
+	} else {
+		throw new LambdaRuntimeError();
+	}
+};
+
+
 var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, argumentNames) {
 	AbstractNode.call(this);
 	this.nativeFunction = nativeFunction;
