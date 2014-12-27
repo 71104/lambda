@@ -212,13 +212,13 @@ AbstractValue.unmarshal = function (value) {
 		} else if (value instanceof NativeComplexValue) {
 			return new ComplexValue(value.r, value.i);
 		} else {
-			var context = new Context();
+			var hash = {};
 			for (var key in value) {
 				if (value.hasOwnProperty(key)) {
-					context.push(key, AbstractValue.unmarshal(value[key]));
+					hash[key] = AbstractValue.unmarshal(value[key]);
 				}
 			}
-			return new ObjectValue(context);
+			return new ObjectValue(new Context(hash));
 		}
 	}
 };

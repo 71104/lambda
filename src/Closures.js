@@ -13,9 +13,7 @@ Closure.prototype.marshal = function () {
 		var values = arguments;
 		return (function augment(node, context, index) {
 			if (index < length) {
-				return context.augment(node.name, AbstractValue.unmarshal(values[index]), function (context) {
-					return augment(node.body, context, index + 1);
-				});
+				return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
 			} else {
 				return node.evaluate(context);
 			}

@@ -183,7 +183,7 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.evaluate = function (context) {
-	return new Closure(this, context.capture(this.getFreeVariables()));
+	return new Closure(this, context);
 };
 
 
@@ -202,9 +202,7 @@ ApplicationNode.prototype.getFreeVariables = function () {
 ApplicationNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
 	if (left.is(Closure)) {
-		return left.context.augment(left.lambda.name, this.right.evaluate(context), function (context) {
-			return left.lambda.body.evaluate(context);
-		});
+		return left.lambda.body.evaluate(left.context.add(left.lambda.name, this.right.evaluate(context)));
 	} else {
 		throw new LambdaRuntimeError();
 	}
@@ -266,28 +264,23 @@ LetNode.prototype.getFreeVariables = function () {
 	}, this));
 };
 
-LetNode.prototype.evaluate = function (rootContext) {
+LetNode.prototype.evaluate = function (context) {
 	var names = this.names;
-	var expression = this.expression;
-	var body = this.body;
-	return (function evaluate(context, index) {
+	var value = this.expression.evaluate(context);
+	return this.body.evaluate((function augment(context, index) {
 		if (index < names.length - 1) {
-			if (context.has(names[index])) {
-				return evaluate(context.top(names[index]).context, index + 1);
+			var name = names[index];
+			if (context.has(name) && context.top(name).is(ObjectValue)) {
+				return context.add(name, new ObjectValue(augment(context.top(name).context, index + 1)));
 			} else {
-				var value = new ObjectValue(new Context());
-				return context.augment(names[index], value, function () {
-					return evaluate(value.context, index + 1);
-				});
+				return context.add(name, new ObjectValue(augment(new Context(), index + 1)));
 			}
 		} else if (index < names.length) {
-			return context.augment(names[index], expression.evaluate(rootContext), function () {
-				return body.evaluate(rootContext);
-			});
+			return context.add(names[index], value);
 		} else {
 			throw new LambdaInternalError();
 		}
-	}(rootContext, 0));
+	}(context, 0)));
 };
 
 
@@ -356,9 +349,7 @@ TryCatchNode.prototype.evaluate = function (context) {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
-			return context.augment('error', e.value, function (context) {
-				return this.catchExpression.evaluate(context);
-			}, this);
+			return this.catchExpression.evaluate(context.add('error', e.value));
 		} else {
 			throw e;
 		}
@@ -410,9 +401,7 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 		return this.tryExpression.evaluate(context);
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
-			return context.augment('error', e.value, function (context) {
-				return this.catchExpression.evaluate(context);
-			}, this);
+			return this.catchExpression.evaluate(context.add('error', e.value));
 		} else {
 			throw e;
 		}
@@ -483,7 +472,7 @@ NativeNode.prototype.evaluate = function (context) {
 		if (context.has(name)) {
 			return context.top(name).marshal();
 		} else {
-			throw new LambdaRuntimeError();
+			throw new LambdaInternalError();
 		}
 	})));
 };

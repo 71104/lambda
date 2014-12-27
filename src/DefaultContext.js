@@ -4,11 +4,11 @@ var DefaultContext = exports.DefaultContext = function () {
 	var that = this;
 
 	function registerUnaryOperator(symbol, Operator) {
-		return that.push(symbol, (new LambdaNode('x', new Operator())).evaluate(that));
+		return that.hash[symbol] = new LambdaNode('x', new Operator()).evaluate(that);
 	}
 
 	function registerBinaryOperator(symbol, Operator) {
-		return that.push(symbol, (new LambdaNode('x', new LambdaNode('y', new Operator()))).evaluate(that));
+		return that.hash[symbol] = new LambdaNode('x', new LambdaNode('y', new Operator())).evaluate(that);
 	}
 
 	registerUnaryOperator('not', LogicalNotOperator);

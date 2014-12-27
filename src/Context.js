@@ -1,71 +1,34 @@
-var Context = exports.Context = function () {
-	this.names = {};
+var Context = exports.Context = function (hash) {
+	this.hash = hash || {};
 };
 
 Context.prototype.has = function (name) {
-	return this.names.hasOwnProperty(name);
+	return this.hash.hasOwnProperty(name);
 };
 
 Context.prototype.top = function (name) {
-	if (this.names.hasOwnProperty(name)) {
-		var stack = this.names[name];
-		if (stack.length > 0) {
-			return stack[stack.length - 1];
-		} else {
-			throw new LambdaInternalError();
-		}
-	} else {
-		throw new Error();
-	}
-};
-
-Context.prototype.forEach = function (callback, context) {
-	for (var name in this.names) {
-		if (this.names.hasOwnProperty(name)) {
-			var stack = this.names[name];
-			if (stack.length > 0) {
-				if (callback.call(context || null, name, stack[stack.length - 1]) === false) {
-					return false;
-				}
-			} else {
-				throw new LambdaInternalError();
-			}
-		}
-	}
-	return true;
-};
-
-Context.prototype.push = function (name, value) {
-	if (!this.names.hasOwnProperty(name)) {
-		this.names[name] = [];
-	}
-	this.names[name].push(value);
-};
-
-Context.prototype.pop = function (name) {
-	if (this.names.hasOwnProperty(name)) {
-		this.names[name].pop();
-		if (!this.names[name].length) {
-			delete this.names[name];
-		}
+	if (this.hash.hasOwnProperty(name)) {
+		return this.hash[name];
 	} else {
 		throw new LambdaInternalError();
 	}
 };
 
-Context.prototype.augment = function (name, value, callback, context) {
-	this.push(name, value);
-	try {
-		return callback.call(context || null, this);
-	} finally {
-		this.pop(name);
+Context.prototype.forEach = function (callback, context) {
+	for (var name in this.hash) {
+		if (this.hash.hasOwnProperty(name)) {
+			callback.call(context || null, name, this.hash[name]);
+		}
 	}
 };
 
-Context.prototype.capture = function (names) {
-	var context = new Context();
-	(names || this).forEach(function (name) {
-		context.push(name, this.top(name));
-	}, this);
-	return context;
+Context.prototype.add = function (newName, value) {
+	var hash = {};
+	for (var name in this.hash) {
+		if (this.hash.hasOwnProperty(name)) {
+			hash[name] = this.hash[name];
+		}
+	}
+	hash[newName] = value;
+	return new Context(hash);
 };
