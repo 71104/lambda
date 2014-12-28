@@ -12,13 +12,47 @@ var Lexer = exports.Lexer = function (input) {
 		}
 	}
 
+	var keywords = [
+		'null',
+		'undefined',
+		'true',
+		'false',
+		'not',
+		'and',
+		'or',
+		'xor',
+		'fix',
+		'this',
+		'new',
+		'bool',
+		'unknown',
+		'int',
+		'float',
+		'complex',
+		'string',
+		'regex',
+		'let',
+		'in',
+		'if',
+		'then',
+		'else',
+		'throw',
+		'try',
+		'catch',
+		'finally',
+		'error',
+		'throws'
+	];
+
 	function next() {
 		if (match(/^(\s|(#.*\n))+/)) {
 			return next();
-		} else if (match(/^(null|undefined|true|false|not|and|or|xor|fix|this|new|bool|unknown|int|float|complex|string|regex|let|in|if|then|else|throw|try|catch|finally|error|throws)\b/)) {
-			return token = 'keyword:' + label;
-		} else if (match(/^[A-Za-z_\$][A-Za-z0-9_\$]*\b/)) {
-			return token = 'identifier';
+		} else if (match(/^[A-Za-z_\$][A-Za-z0-9_\$]*/)) {
+			if (keywords.indexOf(label) < 0) {
+				return token = 'identifier';
+			} else {
+				return token = 'keyword:' + label;
+			}
 		} else if (match(/^\-\>/)) {
 			return token = 'arrow';
 		} else if (match(/^\=\>/)) {
