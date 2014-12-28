@@ -6,5 +6,5 @@ Array.prototype.union = function (other) {
 	for (var j = 0; j < other.length; j++) {
 		hash[other[j]] = true;
 	}
-	return Object.getOwnPropertyNames(hash);
+	return Object.keys(hash);
 };
