@@ -43,7 +43,7 @@ var ArrayLiteralNode = exports.ArrayLiteralNode = function (expressions) {
 	this.expressions = expressions;
 };
 
-ArrayLiteralNode.prototype = Object.create(AbstractValue.prototype);
+ArrayLiteralNode.prototype = Object.create(AbstractNode.prototype);
 
 ArrayLiteralNode.prototype.getFreeVariables = function () {
 	var names = [];
