@@ -197,6 +197,16 @@ var ArrayValue = exports.ArrayValue = function (array) {
 			}
 			return true;
 		}),
+		filter: Closure.unmarshal(function (callback) {
+			var result = [];
+			for (var i = 0; i < array.length; i++) {
+				var value = array[i].marshal();
+				if (callback(value)) {
+					result.push(value);
+				}
+			}
+			return result;
+		}),
 		map: Closure.unmarshal(function (callback) {
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
