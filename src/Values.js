@@ -136,6 +136,9 @@ ComplexValue.prototype.marshal = function () {
 var StringValue = exports.StringValue = function (value) {
 	AbstractValue.call(this);
 	this.value = '' + value;
+	this.prototype = new Context({
+		length: new IntegerValue(value.length)
+	});
 };
 
 StringValue.prototype = Object.create(AbstractValue.prototype);
@@ -152,6 +155,9 @@ StringValue.prototype.marshal = function () {
 var ArrayValue = exports.ArrayValue = function (array) {
 	AbstractValue.call(this);
 	this.array = array || [];
+	this.prototype = new Context({
+		length: new IntegerValue(array.length)
+	});
 };
 
 ArrayValue.prototype = Object.create(AbstractValue.prototype);
