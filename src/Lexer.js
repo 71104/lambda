@@ -43,8 +43,14 @@ var Lexer = exports.Lexer = function (input) {
 		} else if (match(/^(0|[1-9][0-9]*)\.[0-9]+\b/)) {
 			label = parseFloat(label);
 			return token = 'float';
+		} else if (match(/^0[xX][0-9a-fA-F]+\b/)) {
+			label = parseInt(label, 16);
+			return token = 'integer';
+		} else if (match(/^0[0-7]*\b/)) {
+			label = parseInt(label, 8);
+			return token = 'integer';
 		} else if (match(/^(0|[1-9][0-9]*)\b/)) {
-			label = parseInt(label);
+			label = parseInt(label, 10);
 			return token = 'integer';
 		} else if (match(/^\"([^"\\]|\\\\|\\["bfnrtv])*\"/)) {
 			label = label
