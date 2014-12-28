@@ -21,7 +21,7 @@ Closure.prototype.marshal = function () {
 	};
 };
 
-Closure.unmarshal = function (value) {
+Closure.unmarshal = function (value, context) {
 	return new Closure((function makeLambda(index, names) {
 		if (index < Math.max(value.length, 1)) {
 			var name = '' + index;
@@ -30,5 +30,5 @@ Closure.unmarshal = function (value) {
 		} else {
 			return new NativeNode(value, null, names);
 		}
-	}(0, [])), new Context());
+	}(0, [])), context || new Context());
 };
