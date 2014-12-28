@@ -159,7 +159,8 @@ exports.Parser = function (input) {
 		} else {
 			var names = [lexer.label()];
 			while (lexer.next() === 'point') {
-				if (lexer.next() !== 'identifier') {
+				var token = lexer.next();
+				if (token !== 'identifier' && !token.match(/^keyword\:/)) {
 					throw new LambdaSyntaxError();
 				} else {
 					names.push(lexer.label());
