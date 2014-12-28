@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var Lambda = require('./lambda.js');
 
 require('repl').start({
