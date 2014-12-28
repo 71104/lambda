@@ -167,19 +167,23 @@ var ArrayValue = exports.ArrayValue = function (array) {
 	this.prototype = new Context({
 		length: new IntegerValue(array.length),
 		concat: Closure.unmarshal(function (other) {
-			return array.concat(other);
+			return array.map(function (value) {
+				return value.marshal();
+			}).concat(other);
 		}),
 		join: Closure.unmarshal(function (glue) {
-			return array.join(glue);
+			return array.map(function (value) {
+				return value.marshal();
+			}).join(glue);
 		}),
 		forEach: Closure.unmarshal(function (callback) {
 			for (var i = 0; i < array.length; i++) {
-				callback(array[i]);
+				callback(array[i].marshal());
 			}
 		}),
 		some: Closure.unmarshal(function (callback) {
 			for (var i = 0; i < array.length; i++) {
-				if (callback(array[i])) {
+				if (callback(array[i].marshal())) {
 					return true;
 				}
 			}
@@ -187,7 +191,7 @@ var ArrayValue = exports.ArrayValue = function (array) {
 		}),
 		every: Closure.unmarshal(function (callback) {
 			for (var i = 0; i < array.length; i++) {
-				if (!callback(array[i])) {
+				if (!callback(array[i].marshal())) {
 					return false;
 				}
 			}
@@ -196,13 +200,13 @@ var ArrayValue = exports.ArrayValue = function (array) {
 		map: Closure.unmarshal(function (callback) {
 			var result = [];
 			for (var i = 0; i < array.length; i++) {
-				result.push(callback(array[i]));
+				result.push(callback(array[i].marshal()));
 			}
 			return result;
 		}),
 		reduce: Closure.unmarshal(function (callback, value) {
 			for (var i = 0; i < array.length; i++) {
-				value = callback(value, array[i]);
+				value = callback(value, array[i].marshal());
 			}
 			return value;
 		})
