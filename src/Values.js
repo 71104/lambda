@@ -133,6 +133,15 @@ ComplexValue.prototype.marshal = function () {
 };
 
 
+var Closure = exports.Closure = function (lambda, context) {
+	AbstractValue.call(this);
+	this.lambda = lambda;
+	this.context = context;
+};
+
+Closure.prototype = Object.create(AbstractValue.prototype);
+
+
 var StringValue = exports.StringValue = function (value) {
 	AbstractValue.call(this);
 	this.value = '' + value;
@@ -156,7 +165,47 @@ var ArrayValue = exports.ArrayValue = function (array) {
 	AbstractValue.call(this);
 	this.array = array || [];
 	this.prototype = new Context({
-		length: new IntegerValue(array.length)
+		length: new IntegerValue(array.length),
+		concat: Closure.unmarshal(function (other) {
+			return array.concat(other);
+		}),
+		join: Closure.unmarshal(function (glue) {
+			return array.join(glue);
+		}),
+		forEach: Closure.unmarshal(function (callback) {
+			for (var i = 0; i < array.length; i++) {
+				callback(array[i]);
+			}
+		}),
+		some: Closure.unmarshal(function (callback) {
+			for (var i = 0; i < array.length; i++) {
+				if (callback(array[i])) {
+					return true;
+				}
+			}
+			return false;
+		}),
+		every: Closure.unmarshal(function (callback) {
+			for (var i = 0; i < array.length; i++) {
+				if (!callback(array[i])) {
+					return false;
+				}
+			}
+			return true;
+		}),
+		map: Closure.unmarshal(function (callback) {
+			var result = [];
+			for (var i = 0; i < array.length; i++) {
+				result.push(callback(array[i]));
+			}
+			return result;
+		}),
+		reduce: Closure.unmarshal(function (callback, value) {
+			for (var i = 0; i < array.length; i++) {
+				value = callback(value, array[i]);
+			}
+			return value;
+		})
 	});
 };
 
@@ -194,15 +243,6 @@ ObjectValue.prototype.marshal = function () {
 	});
 	return object;
 };
-
-
-var Closure = exports.Closure = function (lambda, context) {
-	AbstractValue.call(this);
-	this.lambda = lambda;
-	this.context = context;
-};
-
-Closure.prototype = Object.create(AbstractValue.prototype);
 
 
 AbstractValue.unmarshal = function (value) {
