@@ -423,7 +423,7 @@ IfNode.prototype.compileExpression = function () {
 };
 
 IfNode.prototype.compileStatement = function () {
-	return 'if(' + this.condition.compileExpression() + '){' + this.thenExpression.compileStatement() + '}else{' + this.elseExpression() + '}';
+	return 'if(' + this.condition.compileExpression() + '){' + this.thenExpression.compileStatement() + '}else{' + this.elseExpression.compileStatement() + '}';
 };
 
 
@@ -472,10 +472,8 @@ TryCatchNode.prototype.evaluate = function (context) {
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
 			return this.catchExpression.evaluate(context.add('error', e.value));
-		} else if (e instanceof LambdaError) {
-			throw e;
 		} else {
-			return this.catchExpression.evaluate(context.add('error', AbstractValue.unmarshal(e)));
+			throw e;
 		}
 	}
 };
@@ -542,10 +540,8 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 	} catch (e) {
 		if (e instanceof LambdaUserError) {
 			return this.catchExpression.evaluate(context.add('error', e.value));
-		} else if (e instanceof LambdaError) {
-			throw e;
 		} else {
-			return this.catchExpression.evaluate(context.add('error', AbstractValue.unmarshal(e)));
+			throw e;
 		}
 	} finally {
 		this.finallyExpression.evaluate(context);
@@ -622,11 +618,15 @@ NativeNode.prototype.getFreeVariables = function () {
 };
 
 NativeNode.prototype.evaluate = function (context) {
-	return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
-		if (context.has(name)) {
-			return context.top(name).marshal();
-		} else {
-			throw new LambdaInternalError();
-		}
-	})));
+	try {
+		return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
+			if (context.has(name)) {
+				return context.top(name).marshal();
+			} else {
+				throw new LambdaInternalError();
+			}
+		})));
+	} catch (e) {
+		throw new LambdaUserError(AbstractValue.unmarshal(e));
+	}
 };
