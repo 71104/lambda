@@ -41,7 +41,7 @@ Context.prototype.add = function (newName, value) {
 		}
 	}
 	hash[Context.PREFIX + newName] = value;
-	var context = new Context(hash);
+	var context = new Context();
 	context.hash = hash;
 	return context;
 };
