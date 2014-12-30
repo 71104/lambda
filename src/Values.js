@@ -219,6 +219,12 @@ var ArrayValue = exports.ArrayValue = function (array) {
 				value = callback(value, array[i].marshal());
 			}
 			return value;
+		}),
+		reduceRight: Closure.unmarshal(function (callback, value) {
+			for (var i = array.length - 1; i >= 0; i--) {
+				value = callback(value, array[i].marshal());
+			}
+			return value;
 		})
 	});
 };
