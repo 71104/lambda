@@ -2,11 +2,11 @@ var DefaultContext = exports.DefaultContext = function () {
 	var emptyContext = new Context();
 
 	function unaryOperator(Operator) {
-		return new LambdaNode('x', new Operator()).evaluate(emptyContext);
+		return new LambdaNode('0', new Operator()).evaluate(emptyContext);
 	}
 
 	function binaryOperator(Operator) {
-		return new LambdaNode('x', new LambdaNode('y', new Operator())).evaluate(emptyContext);
+		return new LambdaNode('0', new LambdaNode('1', new Operator())).evaluate(emptyContext);
 	}
 
 	Context.call(this, {

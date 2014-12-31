@@ -1,8 +1,6 @@
 var LogicalNotOperator = exports.LogicalNotOperator = function () {
-	UnaryOperatorNode.call(this, function (x) {
-		if (x instanceof NativeComplexValue) {
-			return !x.r && !x.i;
-		} else {
+	UnaryOperatorNode.call(this, {
+		'bool': function (x) {
 			return !x;
 		}
 	});
@@ -12,10 +10,8 @@ LogicalNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 
 var BitwiseNotOperator = exports.BitwiseNotOperator = function () {
-	UnaryOperatorNode.call(this, function (x) {
-		if (x instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
+	UnaryOperatorNode.call(this, {
+		'int': function (x) {
 			return ~x;
 		}
 	});

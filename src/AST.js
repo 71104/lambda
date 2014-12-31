@@ -589,11 +589,13 @@ NativeNode.prototype.evaluate = function (context) {
 };
 
 
-var SemiNativeNode = exports.SemiNativeNode = function (overloads, thisArgument, argumentNames) {
+var SemiNativeNode = exports.SemiNativeNode = function (overloads, ariety) {
 	AbstractNode.call(this);
 	this.overloads = overloads;
-	this.thisArgument = thisArgument;
-	this.argumentNames = argumentNames;
+	this.argumentNames = [];
+	for (var i = 0; i < ariety; i++) {
+		this.argumentNames.push('' + i);
+	}
 };
 
 SemiNativeNode.prototype = Object.create(AbstractNode.prototype);
@@ -618,28 +620,15 @@ SemiNativeNode.prototype.evaluate = function (context) {
 			throw new LambdaRuntimeError();
 		}
 	});
-	return overload.apply(this.thisArgument, argumentValues);
+	return overload.apply(null, argumentValues);
 };
 
 
-var UnaryOperatorNode = exports.UnaryOperatorNode = function (evaluator) {
-	AbstractNode.call(this);
-	this.evaluator = evaluator;
+var UnaryOperatorNode = exports.UnaryOperatorNode = function (overloads) {
+	SemiNativeNode.call(this, overloads, 1);
 };
 
-UnaryOperatorNode.prototype = Object.create(AbstractNode.prototype);
-
-UnaryOperatorNode.prototype.getFreeVariables = function () {
-	return ['x'];
-};
-
-UnaryOperatorNode.prototype.evaluate = function (context) {
-	if (context.has('x')) {
-		return AbstractValue.unmarshal(this.evaluator(context.top('x').marshal()));
-	} else {
-		throw new LambdaRuntimeError();
-	}
-};
+UnaryOperatorNode.prototype = Object.create(SemiNativeNode.prototype);
 
 
 var BinaryOperatorNode = exports.BinaryOperatorNode = function (evaluator) {
