@@ -14,11 +14,30 @@ AbstractValue.prototype.isAny = function () {
 };
 
 
+var UndefinedValue = exports.UndefinedValue = function () {
+	AbstractValue.call(this);
+};
+
+UndefinedValue.prototype = Object.create(AbstractValue.prototype);
+
+UndefinedValue.prototype.type = 'undefined';
+
+UndefinedValue.prototype.toString = function () {
+	return 'undefined';
+};
+
+UndefinedValue.prototype.marshal = function () {};
+
+UndefinedValue.INSTANCE = new UndefinedValue();
+
+
 var NullValue = exports.NullValue = function () {
 	AbstractValue.call(this);
 };
 
 NullValue.prototype = Object.create(AbstractValue.prototype);
+
+NullValue.prototype.type = 'null';
 
 NullValue.prototype.toString = function () {
 	return 'null';
@@ -31,27 +50,14 @@ NullValue.prototype.marshal = function () {
 NullValue.INSTANCE = new NullValue();
 
 
-var UndefinedValue = exports.UndefinedValue = function () {
-	AbstractValue.call(this);
-};
-
-UndefinedValue.prototype = Object.create(AbstractValue.prototype);
-
-UndefinedValue.prototype.toString = function () {
-	return 'undefined';
-};
-
-UndefinedValue.prototype.marshal = function () {};
-
-UndefinedValue.INSTANCE = new UndefinedValue();
-
-
 var BooleanValue = exports.BooleanValue = function (value) {
 	AbstractValue.call(this);
 	this.value = !!value;
 };
 
 BooleanValue.prototype = Object.create(AbstractValue.prototype);
+
+BooleanValue.prototype.type = 'bool';
 
 BooleanValue.prototype.toString = function () {
 	if (this.value) {
@@ -73,6 +79,8 @@ var IntegerValue = exports.IntegerValue = function (value) {
 
 IntegerValue.prototype = Object.create(AbstractValue.prototype);
 
+IntegerValue.prototype.type = 'int';
+
 IntegerValue.prototype.toString = function () {
 	return '' + this.value;
 };
@@ -88,6 +96,8 @@ var FloatValue = exports.FloatValue = function (value) {
 };
 
 FloatValue.prototype = Object.create(AbstractValue.prototype);
+
+FloatValue.prototype.type = 'float';
 
 FloatValue.prototype.toString = function () {
 	return '' + this.value;
@@ -120,6 +130,8 @@ var ComplexValue = exports.ComplexValue = function (real, imaginary) {
 
 ComplexValue.prototype = Object.create(AbstractValue.prototype);
 
+ComplexValue.prototype.type = 'complex';
+
 ComplexValue.prototype.toString = function () {
 	if (this.imaginary < 0) {
 		return this.real + '-' + -this.imaginary + 'i';
@@ -151,6 +163,8 @@ var StringValue = exports.StringValue = function (value) {
 };
 
 StringValue.prototype = Object.create(AbstractValue.prototype);
+
+StringValue.prototype.type = 'string';
 
 StringValue.prototype.toString = function () {
 	return this.value;
@@ -231,6 +245,8 @@ var ArrayValue = exports.ArrayValue = function (array) {
 
 ArrayValue.prototype = Object.create(AbstractValue.prototype);
 
+ArrayValue.prototype.type = 'array';
+
 ArrayValue.prototype.toString = function () {
 	return '[ ' + this.array.map(function (element) {
 		return element.toString();
@@ -250,6 +266,8 @@ var ObjectValue = exports.ObjectValue = function (context) {
 };
 
 ObjectValue.prototype = Object.create(AbstractValue.prototype);
+
+ObjectValue.prototype.type = 'object';
 
 ObjectValue.prototype.toString = function () {
 	// TODO

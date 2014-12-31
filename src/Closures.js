@@ -1,3 +1,5 @@
+Closure.prototype.type = 'closure';
+
 Closure.prototype.toString = function () {
 	return 'closure';
 };

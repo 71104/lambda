@@ -561,6 +561,67 @@ TryCatchFinallyNode.prototype.compileExpression = function () {
 };
 
 
+var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, argumentNames) {
+	AbstractNode.call(this);
+	this.nativeFunction = nativeFunction;
+	this.thisArgument = thisArgument;
+	this.argumentNames = argumentNames;
+};
+
+NativeNode.prototype = Object.create(AbstractNode.prototype);
+
+NativeNode.prototype.getFreeVariables = function () {
+	return this.argumentNames;
+};
+
+NativeNode.prototype.evaluate = function (context) {
+	try {
+		return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
+			if (context.has(name)) {
+				return context.top(name).marshal();
+			} else {
+				throw new LambdaInternalError();
+			}
+		})));
+	} catch (e) {
+		throw new LambdaUserError(AbstractValue.unmarshal(e));
+	}
+};
+
+
+var SemiNativeNode = exports.SemiNativeNode = function (overloads, thisArgument, argumentNames) {
+	AbstractNode.call(this);
+	this.overloads = overloads;
+	this.thisArgument = thisArgument;
+	this.argumentNames = argumentNames;
+};
+
+SemiNativeNode.prototype = Object.create(AbstractNode.prototype);
+
+SemiNativeNode.prototype.getFreeVariables = function () {
+	return this.argumentNames;
+};
+
+SemiNativeNode.prototype.evaluate = function (context) {
+	var argumentValues = this.argumentNames.map(function (name) {
+		if (context.has(name)) {
+			return context.top(name);
+		} else {
+			throw new LambdaInternalError();
+		}
+	});
+	var overload = this.overloads;
+	argumentValues.forEach(function (argument) {
+		if (overload.hasOwnProperty(argument.type)) {
+			overload = overload[argument.type];
+		} else {
+			throw new LambdaRuntimeError();
+		}
+	});
+	return overload.apply(this.thisArgument, argumentValues);
+};
+
+
 var UnaryOperatorNode = exports.UnaryOperatorNode = function (evaluator) {
 	AbstractNode.call(this);
 	this.evaluator = evaluator;
@@ -600,33 +661,5 @@ BinaryOperatorNode.prototype.evaluate = function (context) {
 			));
 	} else {
 		throw new LambdaRuntimeError();
-	}
-};
-
-
-var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, argumentNames) {
-	AbstractNode.call(this);
-	this.nativeFunction = nativeFunction;
-	this.thisArgument = thisArgument;
-	this.argumentNames = argumentNames;
-};
-
-NativeNode.prototype = Object.create(AbstractNode.prototype);
-
-NativeNode.prototype.getFreeVariables = function () {
-	return this.argumentNames;
-};
-
-NativeNode.prototype.evaluate = function (context) {
-	try {
-		return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
-			if (context.has(name)) {
-				return context.top(name).marshal();
-			} else {
-				throw new LambdaInternalError();
-			}
-		})));
-	} catch (e) {
-		throw new LambdaUserError(AbstractValue.unmarshal(e));
 	}
 };
