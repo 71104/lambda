@@ -92,17 +92,33 @@ PlusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var MinusOperator = exports.MinusOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return new NativeComplexValue(x.r - y.r, x.i - y.i);
-			} else {
-				return new NativeComplexValue(x.r - ~~y, x.i);
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value - y.value);
+			},
+			'float': function (x, y) {
+				return new FloatValue(x.value - y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value - y.real, -y.imaginary);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return new NativeComplexValue(~~x - y.r, -y.i);
-		} else {
-			return x - y;
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(x.value - y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value - y.real, -y.imaginary);
+			}
+		},
+		'complex': {
+			'int|float': function (x, y) {
+				return new ComplexValue(x.real - y.value, x.imaginary);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.real - y.real, x.imaginary - y.imaginary);
+			}
 		}
 	});
 };
