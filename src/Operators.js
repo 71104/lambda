@@ -373,17 +373,11 @@ GreaterThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototyp
 
 
 var BitwiseAndOperator = exports.BitwiseAndOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return x.value & y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x & y;
 		}
 	});
 };
@@ -392,17 +386,11 @@ BitwiseAndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var BitwiseOrOperator = exports.BitwiseOrOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return x.value | y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x | y;
 		}
 	});
 };
@@ -411,17 +399,11 @@ BitwiseOrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var BitwiseXorOperator = exports.BitwiseXorOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return x.value ^ y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x ^ y;
 		}
 	});
 };
