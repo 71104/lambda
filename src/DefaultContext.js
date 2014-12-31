@@ -10,6 +10,7 @@ var DefaultContext = exports.DefaultContext = function () {
 	}
 
 	Context.call(this, {
+		'typeof': unaryOperator(TypeOfOperator),
 		'not': unaryOperator(LogicalNotOperator),
 		'~': unaryOperator(BitwiseNotOperator),
 		'+': binaryOperator(PlusOperator),

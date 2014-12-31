@@ -1,3 +1,38 @@
+var TypeOfOperator = exports.TypeOfOperator = function () {
+	UnaryOperatorNode.call(this, {
+		'undefined': function () {
+			return 'undefined';
+		},
+		'null': function () {
+			return 'null';
+		},
+		'bool': function () {
+			return 'bool';
+		},
+		'int': function () {
+			return 'int';
+		},
+		'float': function () {
+			return 'float';
+		},
+		'complex': function () {
+			return 'complex';
+		},
+		'string': function () {
+			return 'string';
+		},
+		'array': function () {
+			return 'array';
+		},
+		'object': function () {
+			return 'object';
+		}
+	});
+};
+
+TypeOfOperator.prototype = Object.create(UnaryOperatorNode.prototype);
+
+
 var LogicalNotOperator = exports.LogicalNotOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'bool': function (x) {

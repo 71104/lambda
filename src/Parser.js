@@ -21,6 +21,7 @@ exports.Parser = function (input) {
 			case 'string':
 				return new LiteralNode(new StringValue(lexer.label()));
 			case 'identifier':
+			case 'keyword:typeof':
 			case 'keyword:not':
 			case 'keyword:and':
 			case 'keyword:or':
