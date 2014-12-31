@@ -71,6 +71,17 @@ BooleanValue.prototype.marshal = function () {
 	return this.value;
 };
 
+BooleanValue.TRUE = new BooleanValue(true);
+BooleanValue.FALSE = new BooleanValue(false);
+
+BooleanValue.unmarshal = function (value) {
+	if (value) {
+		return BooleanValue.TRUE;
+	} else {
+		return BooleanValue.FALSE;
+	}
+};
+
 
 var IntegerValue = exports.IntegerValue = function (value) {
 	AbstractValue.call(this);
@@ -294,7 +305,7 @@ AbstractValue.unmarshal = function (value) {
 	case 'undefined':
 		return UndefinedValue.INSTANCE;
 	case 'boolean':
-		return new BooleanValue(value);
+		return BooleanValue.unmarshal(value);
 	case 'number':
 		return new FloatValue(value);
 	case 'string':

@@ -9,9 +9,9 @@ exports.Parser = function (input) {
 			case 'keyword:undefined':
 				return new LiteralNode(UndefinedValue.INSTANCE);
 			case 'keyword:true':
-				return new LiteralNode(new BooleanValue(true));
+				return new LiteralNode(BooleanValue.TRUE);
 			case 'keyword:false':
-				return new LiteralNode(new BooleanValue(false));
+				return new LiteralNode(BooleanValue.FALSE);
 			case 'integer':
 				return new LiteralNode(new IntegerValue(lexer.label()));
 			case 'complex':
