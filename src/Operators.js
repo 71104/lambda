@@ -304,7 +304,7 @@ var LessThanOperator = exports.LessThanOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'bool': {
 			'bool': function (x, y) {
-				return !x.value && y.value;
+				return new BooleanValue(!x.value && y.value);
 			}
 		},
 		'int|float': {
@@ -322,7 +322,7 @@ var LessThanOrEqualOperator = exports.LessThanOrEqualOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'bool': {
 			'bool': function (x, y) {
-				return !x.value || y.value;
+				return new BooleanValue(!x.value || y.value);
 			}
 		},
 		'int|float': {
@@ -340,7 +340,7 @@ var GreaterThanOperator = exports.GreaterThanOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'bool': {
 			'bool': function (x, y) {
-				return x.value && !y.value;
+				return new BooleanValue(x.value && !y.value);
 			}
 		},
 		'int|float': {
@@ -358,7 +358,7 @@ var GreaterThanOrEqualOperator = exports.GreaterThanOrEqualOperator = function (
 	BinaryOperatorNode.call(this, {
 		'bool': {
 			'bool': function (x, y) {
-				return x.value || !y.value;
+				return new BooleanValue(x.value || !y.value);
 			}
 		},
 		'int|float': {
@@ -376,7 +376,7 @@ var BitwiseAndOperator = exports.BitwiseAndOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'int': {
 			'int': function (x, y) {
-				return x.value & y.value;
+				return new IntegerValue(x.value & y.value);
 			}
 		}
 	});
@@ -389,7 +389,7 @@ var BitwiseOrOperator = exports.BitwiseOrOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'int': {
 			'int': function (x, y) {
-				return x.value | y.value;
+				return new IntegerValue(x.value | y.value);
 			}
 		}
 	});
@@ -402,7 +402,7 @@ var BitwiseXorOperator = exports.BitwiseXorOperator = function () {
 	BinaryOperatorNode.call(this, {
 		'int': {
 			'int': function (x, y) {
-				return x.value ^ y.value;
+				return new IntegerValue(x.value ^ y.value);
 			}
 		}
 	});
