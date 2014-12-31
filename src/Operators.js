@@ -259,17 +259,19 @@ DivideOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var PowerOperator = exports.PowerOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(Math.pow(x.value, y.value));
+			},
+			'float': function (x, y) {
+				return new FloatValue(Math.pow(x.value, y.value));
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return Math.pow(x, y);
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(Math.pow(x.value, y.value));
+			}
 		}
 	});
 };
@@ -278,17 +280,19 @@ PowerOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var ModulusOperator = exports.ModulusOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value % y.value);
+			},
+			'float': function (x, y) {
+				return new FloatValue(x.value % y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x % y;
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(x.value % y.value);
+			}
 		}
 	});
 };
