@@ -12,7 +12,7 @@ TypeOfOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 var LogicalNotOperator = exports.LogicalNotOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'bool': function (x) {
-			return BooleanValue.unmarshal(!x);
+			return BooleanValue.unmarshal(!x.value);
 		}
 	});
 };
@@ -23,7 +23,7 @@ LogicalNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 var BitwiseNotOperator = exports.BitwiseNotOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'int': function (x) {
-			return new IntegerValue(~x);
+			return new IntegerValue(~x.value);
 		}
 	});
 };
