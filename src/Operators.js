@@ -639,17 +639,11 @@ NegatedComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype
 
 
 var LogicalAndOperator = exports.LogicalAndOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return (!!x.r || !!x.i) && (!!y.r || !!y.i);
-			} else {
-				return (!!x.r || !!x.i) && !!y;
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value && y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return !!x && (!!y.r || !!y.i);
-		} else {
-			return !!x && !!y;
 		}
 	});
 };
@@ -658,17 +652,11 @@ LogicalAndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var LogicalOrOperator = exports.LogicalOrOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return !!x.r || !!x.i || !!y.r || !!y.i;
-			} else {
-				return !!x.r || !!x.i || !!y;
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value || y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return !!x || !!y.r || !!y.i;
-		} else {
-			return !!x || !!y;
 		}
 	});
 };
@@ -677,23 +665,11 @@ LogicalOrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var LogicalXorOperator = exports.LogicalXorOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return (!!x.r || !!x.i) !== (!!y.r || !!y.i);
-			} else {
-/*jshint ignore:start */
-				return (!!x.r || !!x.i) !== !!y;
-/*jshint ignore:end */
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value !== y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-/*jshint ignore:start */
-			return !!x !== (!!y.r || !!y.i);
-/*jshint ignore:end */
-		} else {
-/*jshint ignore:start */
-			return !!x !== !!y;
-/*jshint ignore:end */
 		}
 	});
 };
