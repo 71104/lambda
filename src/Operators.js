@@ -301,17 +301,16 @@ ModulusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var LessThanOperator = exports.LessThanOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return !x.value && y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x < y;
+		},
+		'int|float': {
+			'int|float': function (x, y) {
+				return new BooleanValue(x.value < y.value);
+			}
 		}
 	});
 };
@@ -320,17 +319,16 @@ LessThanOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var LessThanOrEqualOperator = exports.LessThanOrEqualOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return !x.value || y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x <= y;
+		},
+		'int|float': {
+			'int|float': function (x, y) {
+				return new BooleanValue(x.value <= y.value);
+			}
 		}
 	});
 };
@@ -339,17 +337,16 @@ LessThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var GreaterThanOperator = exports.GreaterThanOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return x.value && !y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x > y;
+		},
+		'int|float': {
+			'int|float': function (x, y) {
+				return new BooleanValue(x.value > y.value);
+			}
 		}
 	});
 };
@@ -358,17 +355,16 @@ GreaterThanOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var GreaterThanOrEqualOperator = exports.GreaterThanOrEqualOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return x.value || !y.value;
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x >= y;
+		},
+		'int|float': {
+			'int|float': function (x, y) {
+				return new BooleanValue(x.value >= y.value);
+			}
 		}
 	});
 };
