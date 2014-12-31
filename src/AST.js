@@ -614,11 +614,15 @@ SemiNativeNode.prototype.evaluate = function (context) {
 	});
 	var overload = this.overloads;
 	argumentValues.forEach(function (argument) {
-		if (overload.hasOwnProperty(argument.type)) {
-			overload = overload[argument.type];
-		} else {
-			throw new LambdaRuntimeError();
+		for (var key in overload) {
+			if (overload.hasOwnProperty(key)) {
+				if ((new RegExp('^(' + key + ')$')).test(argument.type)) {
+					overload = overload[key];
+					return;
+				}
+			}
 		}
+		throw new LambdaRuntimeError();
 	});
 	return overload.apply(null, argumentValues);
 };
