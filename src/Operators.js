@@ -534,7 +534,7 @@ var ComparisonOperator = exports.ComparisonOperator = function () {
 			'undefined|null': function () {
 				return new BooleanValue(false);
 			},
-			 'object': function (x, y) {
+			 'object': function () {
 				 // TODO
 			 }
 		}
@@ -545,17 +545,92 @@ ComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var NegatedComparisonOperator = exports.NegatedComparisonOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return x.r !== y.r || x.i !== y.i;
-			} else {
-				return x.r !== y || !!x.i;
+	BinaryOperatorNode.call(this, {
+		'undefined': {
+			'undefined': function () {
+				return new BooleanValue(false);
+			},
+			'string': function () {
+				return new BooleanValue(true);
+			},
+			'closure': function () {
+				return new BooleanValue(true);
+			},
+			'array': function () {
+				return new BooleanValue(true);
+			},
+			'object': function () {
+				return new BooleanValue(true);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return x !== y.r || !!y.i;
-		} else {
-			return x !== y;
+		},
+		'null': {
+			'null': function () {
+				return new BooleanValue(false);
+			},
+			'string': function () {
+				return new BooleanValue(true);
+			},
+			'closure': function () {
+				return new BooleanValue(true);
+			},
+			'array': function () {
+				return new BooleanValue(true);
+			},
+			'object': function () {
+				return new BooleanValue(true);
+			}
+		},
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value !== y.value);
+			}
+		},
+		'int|float': {
+			'int|float': function (x, y) {
+				return new BooleanValue(x.value !== y.value);
+			},
+			'complex': function (x, y) {
+				return new BooleanValue(x.value !== y.real || !!y.imaginary);
+			}
+		},
+		'complex': {
+			'int|float': function (x, y) {
+				return new BooleanValue(!!x.imaginary || x.real !== y.value);
+			},
+			'complex': function (x, y) {
+				return new BooleanValue(x.real !== y.real || x.imaginary !== y.imaginary);
+			}
+		},
+		'string': {
+			'undefined|null': function () {
+				return new BooleanValue(true);
+			},
+			'string': function (x, y) {
+				return new BooleanValue(x.value !== y.value);
+			}
+		},
+		'array': {
+			'undefined|null': function () {
+				return new BooleanValue(true);
+			},
+			'array': function (x, y) {
+				if (x.array.length !== y.array.length) {
+					return new BooleanValue(true);
+				} else {
+					for (var i = 0; i < x.array.length; i++) {
+						// TODO
+					}
+					return false;
+				}
+			}
+		},
+		'object': {
+			'undefined|null': function () {
+				return new BooleanValue(true);
+			},
+			 'object': function () {
+				 // TODO
+			 }
 		}
 	});
 };
