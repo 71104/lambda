@@ -167,17 +167,41 @@ MinusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var MultiplyOperator = exports.MultiplyOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return new NativeComplexValue(x.r * y.r - x.i * y.i, x.r * y.i + x.i * y.r);
-			} else {
-				return new NativeComplexValue(x.r * ~~y, x.i * ~~y);
+	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value && y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return new NativeComplexValue(~~x * y.r, ~~x * y.i);
-		} else {
-			return x * y;
+		},
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value * y.value);
+			},
+			'float': function (x, y) {
+				return new FloatValue(x.value * y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value * y.real, x.value * y.imaginary);
+			}
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(x.value * y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value * y.real, x.value * y.imaginary);
+			}
+		},
+		'complex': {
+			'int|float': function (x, y) {
+				return new ComplexValue(x.real * y.value, x.imaginary * y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(
+					x.real * y.real - x.imaginary * y.imaginary,
+					x.real * y.imaginary + x.imaginary * y.real
+					);
+			}
 		}
 	});
 };
@@ -186,17 +210,47 @@ MultiplyOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var DivideOperator = exports.DivideOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return new NativeComplexValue((x.r * y.r + x.i * y.i) / (y.r * y.r + y.i * y.i), (x.i * y.r - x.r * y.i) / (y.r * y.r + y.i * y.i));
-			} else {
-				return new NativeComplexValue(x.r / ~~y, x.i / ~~y);
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				var value = x.value / y.value;
+				if (value < 0) {
+					return new IntegerValue(Math.ceil(value));
+				} else {
+					return new IntegerValue(Math.floor(value));
+				}
+			},
+			'float': function (x, y) {
+				return new FloatValue(x.value / y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(
+					x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
+					x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary)
+					);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			return new NativeComplexValue(~~x * y.r / (y.r * y.r + y.i * y.i), ~~x * y.i / (y.r * y.r + y.i * y.i));
-		} else {
-			return x / y;
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(x.value / y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(
+					x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
+					x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary)
+					);
+			}
+		},
+		'complex': {
+			'int|float': function (x, y) {
+				return new ComplexValue(x.real / y.value, x.imaginary / y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(
+					(x.real * y.imaginary + x.imaginary * y.real) / (y.real * y.real + y.imaginary * y.imaginary),
+					(x.imaginary * y.real - x.real * y.imaginary) / (y.real * y.real + y.imaginary * y.imaginary)
+					);
+			}
 		}
 	});
 };
