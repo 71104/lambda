@@ -629,30 +629,14 @@ SemiNativeNode.prototype.evaluate = function (context) {
 
 
 var UnaryOperatorNode = exports.UnaryOperatorNode = function (overloads) {
-	SemiNativeNode.call(this, overloads, 1);
+	LambdaNode.call(this, '0', new SemiNativeNode(overloads, 1));
 };
 
-UnaryOperatorNode.prototype = Object.create(SemiNativeNode.prototype);
+UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
 
 
-var BinaryOperatorNode = exports.BinaryOperatorNode = function (evaluator) {
-	AbstractNode.call(this);
-	this.evaluator = evaluator;
+var BinaryOperatorNode = exports.BinaryOperatorNode = function (overloads) {
+	LambdaNode.call(this, '0', new LambdaNode('1', new SemiNativeNode(overloads, 1)));
 };
 
-BinaryOperatorNode.prototype = Object.create(AbstractNode.prototype);
-
-BinaryOperatorNode.prototype.getFreeVariables = function () {
-	return ['x', 'y'];
-};
-
-BinaryOperatorNode.prototype.evaluate = function (context) {
-	if (context.has('x') && context.has('y')) {
-		return AbstractValue.unmarshal(this.evaluator(
-			context.top('x').marshal(),
-			context.top('y').marshal()
-			));
-	} else {
-		throw new LambdaRuntimeError();
-	}
-};
+BinaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
