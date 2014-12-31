@@ -29,6 +29,7 @@ module.exports.testNullKeyword = testTokens('null', ['keyword:null']);
 module.exports.testUndefinedKeyword = testTokens('undefined', ['keyword:undefined']);
 module.exports.testTrueKeyword = testTokens('true', ['keyword:true']);
 module.exports.testFalseKeyword = testTokens('false', ['keyword:false']);
+module.exports.testNotKeyword = testTokens('typeof', ['keyword:typeof']);
 module.exports.testNotKeyword = testTokens('not', ['keyword:not']);
 module.exports.testAndKeyword = testTokens('and', ['keyword:and']);
 module.exports.testOrKeyword = testTokens('or', ['keyword:or']);
