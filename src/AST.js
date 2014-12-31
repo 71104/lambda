@@ -179,7 +179,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
 		} else {
 			return UndefinedValue.INSTANCE;
 		}
-	} else if (left.isAny(StringValue, ArrayValue, Closure) && left.prototype.has(this.name)) {
+	} else if (left.isAny(ComplexValue, StringValue, ArrayValue, Closure) && left.prototype.has(this.name)) {
 		return left.prototype.top(this.name);
 	}
 	throw new LambdaRuntimeError();

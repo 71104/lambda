@@ -124,8 +124,14 @@ NativeComplexValue.prototype.toString = function () {
 
 var ComplexValue = exports.ComplexValue = function (real, imaginary) {
 	AbstractValue.call(this);
-	this.real = real * 1;
-	this.imaginary = imaginary * 1;
+	real = real * 1;
+	imaginary = imaginary * 1;
+	this.real = real;
+	this.imaginary = imaginary;
+	this.prototype = new Context({
+		real: new FloatValue(real),
+		imaginary: new FloatValue(imaginary)
+	});
 };
 
 ComplexValue.prototype = Object.create(AbstractValue.prototype);
