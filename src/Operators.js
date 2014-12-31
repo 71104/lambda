@@ -33,6 +33,11 @@ BitwiseNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 var PlusOperator = exports.PlusOperator = function () {
 	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value, y.value);
+			}
+		},
 		'int': {
 			'int': function (x, y) {
 				return new IntegerValue(x.value + y.value);
@@ -93,6 +98,11 @@ PlusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 var MinusOperator = exports.MinusOperator = function () {
 	BinaryOperatorNode.call(this, {
+		'bool': {
+			'bool': function (x, y) {
+				return new BooleanValue(x.value && !y.value);
+			}
+		},
 		'int': {
 			'int': function (x, y) {
 				return new IntegerValue(x.value - y.value);
