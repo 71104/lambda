@@ -1,7 +1,7 @@
 var TypeOfOperator = exports.TypeOfOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'.*': function (x) {
-			return x.type;
+			return new StringValue(x.type);
 		}
 	});
 };
@@ -12,7 +12,7 @@ TypeOfOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 var LogicalNotOperator = exports.LogicalNotOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'bool': function (x) {
-			return !x;
+			return new BooleanValue(!x);
 		}
 	});
 };
@@ -23,7 +23,7 @@ LogicalNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 var BitwiseNotOperator = exports.BitwiseNotOperator = function () {
 	UnaryOperatorNode.call(this, {
 		'int': function (x) {
-			return ~x;
+			return new IntegerValue(~x);
 		}
 	});
 };
