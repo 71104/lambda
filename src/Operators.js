@@ -412,17 +412,11 @@ BitwiseXorOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var LeftShiftOperator = exports.LeftShiftOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value << y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x << y;
 		}
 	});
 };
@@ -431,17 +425,11 @@ LeftShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var RightShiftOperator = exports.RightShiftOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value >> y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x >> y;
 		}
 	});
 };
@@ -450,17 +438,11 @@ RightShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
 var UnsignedRightShiftOperator = exports.UnsignedRightShiftOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				throw new LambdaRuntimeError();
-			} else {
-				throw new LambdaRuntimeError();
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value >>> y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			throw new LambdaRuntimeError();
-		} else {
-			return x >>> y;
 		}
 	});
 };
