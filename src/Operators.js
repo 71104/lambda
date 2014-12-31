@@ -32,23 +32,58 @@ BitwiseNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 
 var PlusOperator = exports.PlusOperator = function () {
-	BinaryOperatorNode.call(this, function (x, y) {
-		if (x instanceof NativeComplexValue) {
-			if (y instanceof NativeComplexValue) {
-				return new NativeComplexValue(x.r + y.r, x.i + y.i);
-			} else if (typeof y === 'string') {
-				return x.toString() + y;
-			} else {
-				return new NativeComplexValue(x.r + ~~y, x.i);
+	BinaryOperatorNode.call(this, {
+		'int': {
+			'int': function (x, y) {
+				return new IntegerValue(x.value + y.value);
+			},
+			'float': function (x, y) {
+				return new FloatValue(x.value + y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value + y.real, y.imaginary);
+			},
+			'string': function (x, y) {
+				return new StringValue(('' + x.value) + y.value);
 			}
-		} else if (y instanceof NativeComplexValue) {
-			if (typeof x === 'string') {
-				return x + y.toString();
-			} else {
-				return new NativeComplexValue(~~x + y.r, y.i);
+		},
+		'float': {
+			'int|float': function (x, y) {
+				return new FloatValue(x.value + y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value + y.real, y.imaginary);
+			},
+			'string': function (x, y) {
+				return new StringValue(('' + x.value) + y.value);
 			}
-		} else {
-			return x + y;
+		},
+		'complex': {
+			'int|float': function (x, y) {
+				return new ComplexValue(x.real + y.value, x.imaginary);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.real + y.real, x.imaginary + y.imaginary);
+			},
+			'string': function (x, y) {
+				return new StringValue(x.toString() + y.value);
+			}
+		},
+		'string': {
+			'int|float': function (x, y) {
+				return new StringValue(x.value + y.value);
+			},
+			'complex': function (x, y) {
+				return new ComplexValue(x.value + y.toString());
+			},
+			'string': function (x, y) {
+				return new StringValue(x.value + y.value);
+			}
+		},
+		'array': {
+			'array': function (x, y) {
+				return new ArrayValue(x.array.concat(y.array));
+			}
 		}
 	});
 };

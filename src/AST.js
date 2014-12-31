@@ -636,7 +636,7 @@ UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
 
 
 var BinaryOperatorNode = exports.BinaryOperatorNode = function (overloads) {
-	LambdaNode.call(this, '0', new LambdaNode('1', new SemiNativeNode(overloads, 1)));
+	LambdaNode.call(this, '0', new LambdaNode('1', new SemiNativeNode(overloads, 2)));
 };
 
 BinaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
