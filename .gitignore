@@ -1,3 +1,5 @@
 node_modules/
 /bin/
+/doc/html/
+/doc/latex/
 /*.log
