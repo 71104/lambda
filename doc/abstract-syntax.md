@@ -2,8 +2,10 @@
 
 Let \f$M\f$ be the generic Lambda term, \f$n\f$ the generic unsigned integer literal, \f$\alpha\f$ the generic unsigned floating point literal, and \f$s\f$ the generic string literal.
 
+Curly braces indicate optional parts.
+
 \f[\begin{align}
-	M :=	& undefined \\
+	M\ :=\ 	& undefined \\
 		& null \\
 		& true \\
 		& false \\
@@ -14,14 +16,14 @@ Let \f$M\f$ be the generic Lambda term, \f$n\f$ the generic unsigned integer lit
 		& x \\
 		& fix \\
 		& this \\
-		& x -> M \\
-		& M N \\
-		& let\ x_1\left{.x_2\left{...\right}\right}\ =\ M\ in\ N \\
+		& x_1\{,\ x_2\{\ ...\ \}\}\ \rightarrow\ M \\
+		& M\ N \\
+		& let\ x_1\{.x_2\{\ ...\ \}\}\ =\ M\ in\ N \\
 \end{align}\f]
 
 Application associativity is left-most, i.e. the following are equivalent:
 
-\f[
-	A\ B\ C \\
-	(A\ B)\ C \\
-\f]
+\f[\begin{align}
+	& A\ B\ C \\
+	& (A\ B)\ C \\
+\end{align}\f]
