@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		clean: {
-			dist: ['bin']
+			dist: ['bin', 'doc/html']
 		},
 		concat: {
 			dist: {
