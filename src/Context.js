@@ -12,13 +12,12 @@ var Context = exports.Context = function (hash) {
 Context.PREFIX = 'LAMBDA ';
 
 Context.prototype.has = function (name) {
-	name = Context.PREFIX + name;
-	return this.hash.hasOwnProperty(name);
+	return (Context.PREFIX + name) in this.hash;
 };
 
 Context.prototype.top = function (name) {
 	name = Context.PREFIX + name;
-	if (this.hash.hasOwnProperty(name)) {
+	if (name in this.hash) {
 		return this.hash[name];
 	} else {
 		throw new LambdaInternalError();
@@ -27,20 +26,17 @@ Context.prototype.top = function (name) {
 
 Context.prototype.forEach = function (callback, context) {
 	for (var name in this.hash) {
-		if (this.hash.hasOwnProperty(name)) {
+		if (name.substr(0, Context.PREFIX.length) === Context.PREFIX) {
 			callback.call(context || null, name.substr(Context.PREFIX.length), this.hash[name]);
 		}
 	}
 };
 
-Context.prototype.add = function (newName, value) {
-	var hash = {};
-	for (var name in this.hash) {
-		if (this.hash.hasOwnProperty(name)) {
-			hash[name] = this.hash[name];
-		}
-	}
-	hash[Context.PREFIX + newName] = value;
+Context.prototype.add = function (name, value) {
+	function Hash() {}
+	Hash.prototype = this.hash;
+	var hash = new Hash();
+	hash[Context.PREFIX + name] = value;
 	var context = new Context();
 	context.hash = hash;
 	return context;
