@@ -45,17 +45,17 @@ exports.Parser = function (input) {
 					throw new LambdaSyntaxError();
 				}
 				return node;
-			case 'left-square':
+			case 'left-curly':
 				lexer.next();
 				var expressions = [];
-				while (lexer.token() !== 'right-square') {
+				while (lexer.token() !== 'right-curly') {
 					expressions.push(parseClass3({
 						'comma': true,
-						'right-square': true
+						'right-curly': true
 					}));
 					if (lexer.token() === 'comma') {
 						lexer.next();
-					} else if (lexer.token() !== 'right-square') {
+					} else if (lexer.token() !== 'right-curly') {
 						throw new LambdaSyntaxError();
 					}
 				}

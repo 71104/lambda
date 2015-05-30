@@ -265,9 +265,9 @@ ArrayValue.prototype = Object.create(AbstractValue.prototype);
 ArrayValue.prototype.type = 'array';
 
 ArrayValue.prototype.toString = function () {
-	return '[ ' + this.array.map(function (element) {
+	return '{ ' + this.array.map(function (element) {
 		return element.toString();
-	}).join(', ') + ' ]';
+	}).join(', ') + ' }';
 };
 
 ArrayValue.prototype.marshal = function () {
