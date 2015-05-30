@@ -76,6 +76,8 @@ module.exports.testLeft = testTokens('(', ['left']);
 module.exports.testRight = testTokens(')', ['right']);
 module.exports.testLeftSquare = testTokens('[', ['left-square']);
 module.exports.testRightSquare = testTokens(']', ['right-square']);
+module.exports.testLeftCurly = testTokens('{', ['left-curly']);
+module.exports.testRightCurly = testTokens('}', ['right-curly']);
 
 module.exports.testComplex1 = testTokens('0i', [{type: 'complex', label: 0}]);
 module.exports.testComplex2 = testTokens('2i', [{type: 'complex', label: 2}]);

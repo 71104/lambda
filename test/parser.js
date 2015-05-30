@@ -26,7 +26,7 @@ module.exports.testTrue = function (test) {
 	test.done();
 };
 
-module.exports.testFalse= function (test) {
+module.exports.testFalse = function (test) {
 	var ast = parse('false');
 	test.ok(ast.is(Lambda.LiteralNode));
 	test.ok(ast.value.is(Lambda.BooleanValue));
