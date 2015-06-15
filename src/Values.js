@@ -184,7 +184,7 @@ StringValue.prototype = Object.create(AbstractValue.prototype);
 StringValue.prototype.type = 'string';
 
 StringValue.prototype.toString = function () {
-	return this.value;
+	return '\"' + this.value.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"') + '\"';
 };
 
 StringValue.prototype.marshal = function () {
