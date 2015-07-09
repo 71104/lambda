@@ -1,6 +1,6 @@
 {
 	"name": "lambda",
-	"version": "0.6.2",
+	"version": "0.6.3",
 	"description": "An effort to create the perfect programming language.",
 	"bugs": "https://github.com/71104/lambda/issues",
 	"license": "MIT",
