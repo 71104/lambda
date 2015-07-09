@@ -194,7 +194,7 @@ StringValue.prototype.marshal = function () {
 
 var ArrayValue = exports.ArrayValue = function (array) {
 	AbstractValue.call(this);
-	this.array = array || [];
+	this.array = array = array || [];
 	this.prototype = new Context({
 		length: new IntegerValue(array.length),
 		concat: Closure.unmarshal(function (other) {
@@ -276,6 +276,18 @@ ArrayValue.prototype.marshal = function () {
 	});
 };
 
+ArrayValue.unmarshal = function (value, dictionary) {
+	if (!dictionary) {
+		dictionary = new Dictionary();
+	}
+	var unmarshalled = new ArrayValue();
+	dictionary.put(value, unmarshalled);
+	unmarshalled.array = value.map(function (element) {
+		return AbstractValue.unmarshal(element, dictionary);
+	});
+	return unmarshalled;
+};
+
 
 var ObjectValue = exports.ObjectValue = function (context) {
 	AbstractValue.call(this);
@@ -299,8 +311,24 @@ ObjectValue.prototype.marshal = function () {
 	return object;
 };
 
+ObjectValue.unmarshal = function (value, dictionary) {
+	if (!dictionary) {
+		dictionary = new Dictionary();
+	}
+	var unmarshalled = new ObjectValue(new Context());
+	dictionary.put(value, unmarshalled);
+	for (var key in value) {
+		/*jshint forin: false */
+		unmarshalled.context.overwrite(key, AbstractValue.unmarshal(value[key], dictionary));
+	}
+	return unmarshalled;
+};
 
-AbstractValue.unmarshal = function (value) {
+
+AbstractValue.unmarshal = function (value, dictionary) {
+	if (!dictionary) {
+		dictionary = new Dictionary();
+	}
 	switch (typeof value) {
 	case 'undefined':
 		return UndefinedValue.INSTANCE;
@@ -315,19 +343,14 @@ AbstractValue.unmarshal = function (value) {
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
+		} else if (dictionary.has(value)) {
+			return dictionary.get(value);
 		} else if (Array.isArray(value)) {
-			return new ArrayValue(value.map(function (element) {
-				return AbstractValue.unmarshal(element);
-			}));
+			return ArrayValue.unmarshal(value, dictionary);
 		} else if (value instanceof NativeComplexValue) {
 			return new ComplexValue(value.r, value.i);
 		} else {
-			var hash = {};
-			for (var key in value) {
-				/*jshint forin: false */
-				hash[key] = AbstractValue.unmarshal(value[key]);
-			}
-			return new ObjectValue(new Context(hash));
+			return ObjectValue.unmarshal(value, dictionary);
 		}
 	}
 };
