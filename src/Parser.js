@@ -38,9 +38,7 @@ exports.Parser = function (input) {
 				return ErrorNode.INSTANCE;
 			case 'left':
 				lexer.next();
-				var node = parseClass3({
-					'right': true
-				});
+				var node = parseClass3(['right']);
 				if (lexer.token() !== 'right') {
 					throw new LambdaSyntaxError();
 				}
@@ -49,10 +47,7 @@ exports.Parser = function (input) {
 				lexer.next();
 				var expressions = [];
 				while (lexer.token() !== 'right-curly') {
-					expressions.push(parseClass3({
-						'comma': true,
-						'right-curly': true
-					}));
+					expressions.push(parseClass3(['comma', 'right-curly']));
 					if (lexer.token() === 'comma') {
 						lexer.next();
 					} else if (lexer.token() !== 'right-curly') {
@@ -82,9 +77,7 @@ exports.Parser = function (input) {
 				break;
 			case 'left-square':
 				lexer.next();
-				var index = parseClass3({
-					'right-square': true
-				});
+				var index = parseClass3(['right-square']);
 				if (lexer.token() !== 'right-square') {
 					throw new LambdaSyntaxError();
 				}
@@ -120,9 +113,7 @@ exports.Parser = function (input) {
 					break;
 				case 'left-square':
 					lexer.next();
-					var index = parseClass3({
-						'right-square': true
-					});
+					var index = parseClass3(['right-square']);
 					if (lexer.token() !== 'right-square') {
 						throw new LambdaSyntaxError();
 					}
@@ -171,10 +162,7 @@ exports.Parser = function (input) {
 				throw new LambdaSyntaxError();
 			} else {
 				lexer.next();
-				var expression = parseClass3({
-					'comma': true,
-					'keyword:in': true
-				});
+				var expression = parseClass3(['comma', 'keyword:in']);
 				switch (lexer.token()) {
 				case 'comma':
 					return new LetNode(names, expression, parseLet(terminators));
@@ -190,16 +178,12 @@ exports.Parser = function (input) {
 
 	function parseIf(terminators) {
 		lexer.next();
-		var condition = parseClass3({
-			'keyword:then': true
-		});
+		var condition = parseClass3(['keyword:then']);
 		if (lexer.token() !== 'keyword:then') {
 			throw new LambdaSyntaxError();
 		} else {
 			lexer.next();
-			var thenExpression = parseClass3({
-				'keyword:else': true
-			});
+			var thenExpression = parseClass3(['keyword:else']);
 			if (lexer.token() !== 'keyword:else') {
 				throw new LambdaSyntaxError();
 			} else {
@@ -214,33 +198,17 @@ exports.Parser = function (input) {
 		return new ThrowNode(parseClass3(terminators));
 	}
 
-	function addTerminator(terminators, terminator, callback) {
-		if (terminators.hasOwnProperty(terminator)) {
-			return callback(terminators);
-		} else {
-			terminators[terminator] = true;
-			try {
-				return callback(terminators);
-			} finally {
-				delete terminators[terminator];
-			}
-		}
-	}
-
 	function parseTry(terminators) {
 		lexer.next();
-		var tryExpression = parseClass3({
-			'keyword:catch': true,
-			'keyword:finally': true
-		});
+		var tryExpression = parseClass3(['keyword:catch', 'keyword:finally']);
 		switch (lexer.token()) {
 		case 'keyword:catch':
 			lexer.next();
-			var catchExpression = addTerminator(terminators, 'keyword:finally', parseClass3);
+			var catchExpression = parseClass3(terminators.union(['keyword:finally']));
 			if (lexer.token() === 'keyword:finally') {
 				lexer.next();
 				return new TryCatchFinallyNode(tryExpression, catchExpression, parseClass3(terminators));
-			} else if (terminators.hasOwnProperty(lexer.token())) {
+			} else if (terminators.contains(lexer.token())) {
 				return new TryCatchNode(tryExpression, catchExpression);
 			}
 			throw new LambdaSyntaxError();
@@ -271,15 +239,13 @@ exports.Parser = function (input) {
 
 	function parseClass3(terminators) {
 		var node = parseClass2(terminators);
-		while (!terminators.hasOwnProperty(lexer.token())) {
+		while (!terminators.contains(lexer.token())) {
 			node = new ApplicationNode(node, parseClass2(terminators));
 		}
 		return node;
 	}
 
 	this.parse = function () {
-		return parseClass3({
-			'end': true
-		});
+		return parseClass3(['end']);
 	};
 };

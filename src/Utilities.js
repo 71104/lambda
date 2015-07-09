@@ -1,15 +1,17 @@
-Array.prototype.union = function (other) {
-	var prefix = 'SET ';
-	var hash = {};
+Array.prototype.contains = function () {
+	return this.indexOf.apply(this, arguments) >= 0;
+};
+
+Array.prototype.unique = function () {
+	var array = [];
 	for (var i = 0; i < this.length; i++) {
-		hash[prefix + this[i]] = true;
+		if (array.indexOf(this[i]) < 0) {
+			array.push(this[i]);
+		}
 	}
-	for (var j = 0; j < other.length; j++) {
-		hash[prefix + other[j]] = true;
-	}
-	return Object.keys(hash).filter(function (key) {
-		return key.substr(0, prefix.length) === prefix;
-	}).map(function (key) {
-		return key.substr(prefix.length);
-	});
+	return array;
+};
+
+Array.prototype.union = function (other) {
+	return this.concat(other).unique();
 };
