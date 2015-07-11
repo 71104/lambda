@@ -342,7 +342,7 @@ ObjectValue.unmarshal = function (value, dictionary) {
 	} else {
 		var unmarshalled = new ObjectValue(new Context());
 		dictionary.put(value, unmarshalled);
-		getAllPropertyNames(value).forEach(function (name) {
+		Object.getOwnPropertyNames(value).union(Object.keys(value)).forEach(function (name) {
 			unmarshalled.context.overwrite(name, AbstractValue.unmarshal(value[name], dictionary));
 		});
 		return unmarshalled;
