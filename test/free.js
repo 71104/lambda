@@ -29,6 +29,14 @@ module.exports.testFloatLiteral = testSet('3.14', []);
 module.exports.testComplexLiteral = testSet('5i', []);
 module.exports.testStringLiteral = testSet('"hello"', []);
 
+module.exports.testArray1 = testSet('{}', []);
+module.exports.testArray2 = testSet('{0}', []);
+module.exports.testArray3 = testSet('{0, 1}', []);
+module.exports.testArray4 = testSet('{x}', ['x']);
+
+// TODO this fails because of issue #44
+// module.exports.testArray5 = testSet('{x, y}', ['x', 'y']);
+
 module.exports.testVariable = testSet('blahblah', ['blahblah']);
 module.exports.testFix = testSet('fix', []);
 module.exports.testThis = testSet('this', ['this']);
