@@ -12,8 +12,8 @@ Array.prototype.unique = function () {
 	return array;
 };
 
-Array.prototype.union = function (other) {
-	return this.concat(other).unique();
+Array.prototype.union = function () {
+	return this.concat.apply(this, arguments).unique();
 };
 
 
