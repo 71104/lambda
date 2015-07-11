@@ -342,10 +342,9 @@ ObjectValue.unmarshal = function (value, dictionary) {
 	} else {
 		var unmarshalled = new ObjectValue(new Context());
 		dictionary.put(value, unmarshalled);
-		for (var key in value) {
-			/*jshint forin: false */
-			unmarshalled.context.overwrite(key, AbstractValue.unmarshal(value[key], dictionary));
-		}
+		getAllPropertyNames(value).forEach(function (name) {
+			unmarshalled.context.overwrite(name, AbstractValue.unmarshal(value[name], dictionary));
+		});
 		return unmarshalled;
 	}
 };

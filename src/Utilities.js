@@ -17,6 +17,16 @@ Array.prototype.union = function () {
 };
 
 
+function getAllPropertyNames(object) {
+	var names = [];
+	while (object) {
+		names = names.union(Object.getOwnPropertyNames(object));
+		object = Object.getPrototypeOf(object);
+	}
+	return names;
+}
+
+
 function Dictionary() {
 	this.entries = [];
 }
