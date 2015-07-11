@@ -270,22 +270,36 @@ ArrayValue.prototype.toString = function () {
 	}).join(', ') + ' }';
 };
 
-ArrayValue.prototype.marshal = function () {
-	return this.array.map(function (value) {
-		return value.marshal();
-	});
+ArrayValue.prototype.marshal = function (dictionary) {
+	if (!dictionary) {
+		dictionary = new Dictionary();
+	}
+	if (dictionary.has(this)) {
+		return dictionary.get(this);
+	} else {
+		var marshalled = [];
+		dictionary.put(this, marshalled);
+		this.array.forEach(function (value) {
+			marshalled.push(value.marshal(dictionary));
+		});
+		return marshalled;
+	}
 };
 
 ArrayValue.unmarshal = function (value, dictionary) {
 	if (!dictionary) {
 		dictionary = new Dictionary();
 	}
-	var unmarshalled = new ArrayValue();
-	dictionary.put(value, unmarshalled);
-	unmarshalled.array = value.map(function (element) {
-		return AbstractValue.unmarshal(element, dictionary);
-	});
-	return unmarshalled;
+	if (dictionary.has(value)) {
+		return dictionary.get(value);
+	} else {
+		var unmarshalled = new ArrayValue();
+		dictionary.put(value, unmarshalled);
+		unmarshalled.array = value.map(function (element) {
+			return AbstractValue.unmarshal(element, dictionary);
+		});
+		return unmarshalled;
+	}
 };
 
 
@@ -303,25 +317,37 @@ ObjectValue.prototype.toString = function () {
 	return 'object';
 };
 
-ObjectValue.prototype.marshal = function () {
-	var object = {};
-	this.context.forEach(function (name, value) {
-		object[name] = value.marshal();
-	});
-	return object;
+ObjectValue.prototype.marshal = function (dictionary) {
+	if (!dictionary) {
+		dictionary = new Dictionary();
+	}
+	if (dictionary.has(this)) {
+		return dictionary.get(this);
+	} else {
+		var object = {};
+		dictionary.put(this, object);
+		this.context.forEach(function (name, value) {
+			object[name] = value.marshal(dictionary);
+		});
+		return object;
+	}
 };
 
 ObjectValue.unmarshal = function (value, dictionary) {
 	if (!dictionary) {
 		dictionary = new Dictionary();
 	}
-	var unmarshalled = new ObjectValue(new Context());
-	dictionary.put(value, unmarshalled);
-	for (var key in value) {
-		/*jshint forin: false */
-		unmarshalled.context.overwrite(key, AbstractValue.unmarshal(value[key], dictionary));
+	if (dictionary.has(value)) {
+		return dictionary.get(value);
+	} else {
+		var unmarshalled = new ObjectValue(new Context());
+		dictionary.put(value, unmarshalled);
+		for (var key in value) {
+			/*jshint forin: false */
+			unmarshalled.context.overwrite(key, AbstractValue.unmarshal(value[key], dictionary));
+		}
+		return unmarshalled;
 	}
-	return unmarshalled;
 };
 
 
