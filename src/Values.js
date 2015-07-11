@@ -256,6 +256,19 @@ var ArrayValue = exports.ArrayValue = function (array) {
 				value = callback(value, array[i].marshal());
 			}
 			return value;
+		}),
+		sort: Closure.unmarshal(function (compare) {
+			return array.map(function (element) {
+				return element.marshal();
+			}).sort(function (a, b) {
+				if (!compare(a, b)) {
+					return 1;
+				} else if (!compare(b, a)) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
 		})
 	});
 };
