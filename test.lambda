@@ -1,0 +1,20 @@
+let range = fix f, a, b ->
+  if > a b
+  then {}
+  else (f a (- b 1)).concat b in
+ 
+let fibonacci = fix f, n ->
+  if or (= n 1) (= n 2)
+  then 1
+  else + (f (- n 1)) (f (- n 2)) in
+ 
+let square = n ->
+  ** n 2 in
+ 
+let main = fix f, a ->
+  f in
+ 
+main
+  (console.log ((range 1 5).map square))
+  (console.log ((range 1 5).map fibonacci))
+  (console.log "Ammazza, oh, cheffico!")
