@@ -260,12 +260,6 @@ NativeContext.prototype.top = function (name) {
 	return AbstractValue.unmarshal(this.object[name]);
 };
 
-NativeContext.prototype.forEach = function (callback, context) {
-	Object.getOwnPropertyNames(this.object).union(Object.keys(this.object)).forEach(function (name) {
-		callback.call(context || null, name, AbstractValue.unmarshal(this.object[name]));
-	}, this);
-};
-
 NativeContext.prototype.add = function (name, value) {
 	function NativeObject() {}
 	NativeObject.prototype = this.object;
