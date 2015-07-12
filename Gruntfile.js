@@ -56,8 +56,8 @@ module.exports = function (grunt) {
 		},
 		copy: {
 			dist: {
-				src: 'src/REPL.js',
-				dest: 'bin/REPL.js'
+				src: 'src/Main.js',
+				dest: 'bin/Main.js'
 			}
 		},
 		nodeunit: {
