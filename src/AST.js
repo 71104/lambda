@@ -561,10 +561,9 @@ TryCatchFinallyNode.prototype.compileExpression = function () {
 };
 
 
-var NativeNode = exports.NativeNode = function (nativeFunction, thisArgument, argumentNames) {
+var NativeNode = exports.NativeNode = function (nativeFunction, argumentNames) {
 	AbstractNode.call(this);
 	this.nativeFunction = nativeFunction;
-	this.thisArgument = thisArgument;
 	this.argumentNames = argumentNames;
 };
 
@@ -576,7 +575,13 @@ NativeNode.prototype.getFreeVariables = function () {
 
 NativeNode.prototype.evaluate = function (context) {
 	try {
-		return AbstractValue.unmarshal(this.nativeFunction.apply(this.thisArgument, this.argumentNames.map(function (name) {
+		return AbstractValue.unmarshal(this.nativeFunction.apply((function () {
+			if (context.has('this')) {
+				return context.top('this').marshal();
+			} else {
+				return null;
+			}
+		}()), this.argumentNames.map(function (name) {
 			if (context.has(name)) {
 				return context.top(name).marshal();
 			} else {

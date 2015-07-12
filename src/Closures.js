@@ -23,7 +23,13 @@ Closure.prototype.marshal = function () {
 			} else {
 				return node.evaluate(context).marshal();
 			}
-		}(node, context, 0));
+		}(node, (function (object) {
+			if (object !== this) {
+				return context.add('this', AbstractValue.unmarshal(this));
+			} else {
+				return context;
+			}
+		}(this)), 0));
 	};
 };
 
@@ -34,7 +40,7 @@ Closure.unmarshal = function (value, context) {
 			names.push(name);
 			return new LambdaNode(name, makeLambda(index + 1, names));
 		} else {
-			return new NativeNode(value, null, names);
+			return new NativeNode(value, names);
 		}
 	}(0, [])), context || new Context());
 };
