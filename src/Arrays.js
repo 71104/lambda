@@ -2,6 +2,12 @@ ArrayValue.prototype.prototype = new Context({
 	concat: Closure.unmarshal(function (other) {
 		return this.concat(other);
 	}),
+	indexOf: Closure.unmarshal(function (value) {
+		return this.indexOf(value);
+	}),
+	lastIndexOf: Closure.unmarshal(function (value) {
+		return this.lastIndexOf(value);
+	}),
 	join: Closure.unmarshal(function (glue) {
 		return this.join(glue);
 	}),
