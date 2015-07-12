@@ -13,6 +13,7 @@ module.exports = function (grunt) {
 					'src/Values.js',
 					'src/AST.js',
 					'src/Closures.js',
+					'src/Arrays.js',
 					'src/Operators.js',
 					'src/DefaultContext.js',
 					'src/Lexer.js',
