@@ -173,7 +173,9 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
-	if (left.is(ObjectValue)) {
+	if (left.is(NativeObjectValue)) {
+		return AbstractValue.unmarshal(left.object[this.name]);
+	} else if (left.is(ObjectValue)) {
 		if (left.context.has(this.name)) {
 			return left.context.top(this.name).bindThis(left);
 		} else {

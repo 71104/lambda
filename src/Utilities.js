@@ -15,39 +15,3 @@ Array.prototype.unique = function () {
 Array.prototype.union = function () {
 	return this.concat.apply(this, arguments).unique();
 };
-
-
-function Dictionary() {
-	this.entries = [];
-}
-
-Dictionary.prototype.has = function (key) {
-	return this.entries.some(function (entry) {
-		return entry.key === key;
-	});
-};
-
-Dictionary.prototype.get = function (key) {
-	return this.entries.reduce(function (result, entry) {
-		if (entry.key !== key) {
-			return result;
-		} else {
-			return entry.value;
-		}
-	}, undefined);
-};
-
-Dictionary.prototype.put = function (key, value) {
-	this.entries.push({
-		key: key,
-		value: value
-	});
-	return this;
-};
-
-Dictionary.prototype.erase = function (key) {
-	this.entries = this.entries.filter(function (entry) {
-		return entry.key !== key;
-	});
-	return this;
-};

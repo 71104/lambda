@@ -213,36 +213,16 @@ ArrayValue.prototype.toString = function () {
 	}).join(', ') + ' }';
 };
 
-ArrayValue.prototype.marshal = function (dictionary) {
-	if (!dictionary) {
-		dictionary = new Dictionary();
-	}
-	if (dictionary.has(this)) {
-		return dictionary.get(this);
-	} else {
-		var marshalled = [];
-		dictionary.put(this, marshalled);
-		this.array.forEach(function (value) {
-			marshalled.push(value.marshal(dictionary));
-		});
-		return marshalled;
-	}
+ArrayValue.prototype.marshal = function () {
+	return this.array.map(function (value) {
+		return value.marshal();
+	});
 };
 
-ArrayValue.unmarshal = function (value, dictionary) {
-	if (!dictionary) {
-		dictionary = new Dictionary();
-	}
-	if (dictionary.has(value)) {
-		return dictionary.get(value);
-	} else {
-		var unmarshalled = new ArrayValue();
-		dictionary.put(value, unmarshalled);
-		unmarshalled.array = value.map(function (element) {
-			return AbstractValue.unmarshal(element, dictionary);
-		});
-		return unmarshalled;
-	}
+ArrayValue.unmarshal = function (value) {
+	return new ArrayValue(value.map(function (element) {
+		return AbstractValue.unmarshal(element);
+	}));
 };
 
 
@@ -256,47 +236,37 @@ ObjectValue.prototype = Object.create(AbstractValue.prototype);
 ObjectValue.prototype.type = 'object';
 
 ObjectValue.prototype.toString = function () {
-	// TODO
 	return 'object';
 };
 
-ObjectValue.prototype.marshal = function (dictionary) {
-	if (!dictionary) {
-		dictionary = new Dictionary();
-	}
-	if (dictionary.has(this)) {
-		return dictionary.get(this);
-	} else {
-		var object = {};
-		dictionary.put(this, object);
-		this.context.forEach(function (name, value) {
-			object[name] = value.marshal(dictionary);
-		});
-		return object;
-	}
-};
-
-ObjectValue.unmarshal = function (value, dictionary) {
-	if (!dictionary) {
-		dictionary = new Dictionary();
-	}
-	if (dictionary.has(value)) {
-		return dictionary.get(value);
-	} else {
-		var unmarshalled = new ObjectValue(new Context());
-		dictionary.put(value, unmarshalled);
-		Object.getOwnPropertyNames(value).union(Object.keys(value)).forEach(function (name) {
-			unmarshalled.context.overwrite(name, AbstractValue.unmarshal(value[name], dictionary));
-		});
-		return unmarshalled;
-	}
+ObjectValue.prototype.marshal = function () {
+	var object = {};
+	this.context.forEach(function (name, value) {
+		object[name] = value.marshal();
+	});
+	return object;
 };
 
 
-AbstractValue.unmarshal = function (value, dictionary) {
-	if (!dictionary) {
-		dictionary = new Dictionary();
-	}
+var NativeObjectValue = exports.NativeObjectValue = function (object) {
+	AbstractValue.call(this);
+	this.object = object;
+};
+
+NativeObjectValue.prototype = Object.create(AbstractValue.prototype);
+
+NativeObjectValue.prototype.type = 'object';
+
+NativeObjectValue.prototype.toString = function () {
+	return 'object';
+};
+
+NativeObjectValue.prototype.marshal = function () {
+	return this.object;
+};
+
+
+AbstractValue.unmarshal = function (value) {
 	switch (typeof value) {
 	case 'undefined':
 		return UndefinedValue.INSTANCE;
@@ -311,14 +281,12 @@ AbstractValue.unmarshal = function (value, dictionary) {
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
-		} else if (dictionary.has(value)) {
-			return dictionary.get(value);
 		} else if (Array.isArray(value)) {
-			return ArrayValue.unmarshal(value, dictionary);
+			return ArrayValue.unmarshal(value);
 		} else if (value instanceof NativeComplexValue) {
 			return new ComplexValue(value.r, value.i);
 		} else {
-			return ObjectValue.unmarshal(value, dictionary);
+			return new NativeObjectValue(value);
 		}
 	}
 };
