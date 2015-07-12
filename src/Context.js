@@ -3,7 +3,7 @@ var Context = exports.Context = function (hash) {
 	if (hash) {
 		for (var name in hash) {
 			if (hash.hasOwnProperty(name)) {
-				this.overwrite(name, hash[name]);
+				this.hash[Context.PREFIX + name] = hash[name];
 			}
 		}
 	}
@@ -40,9 +40,4 @@ Context.prototype.add = function (name, value) {
 	var context = new Context();
 	context.hash = hash;
 	return context;
-};
-
-Context.prototype.overwrite = function (name, value) {
-	this.hash[Context.PREFIX + name] = value;
-	return this;
 };

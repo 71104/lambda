@@ -173,9 +173,7 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.evaluate = function (context) {
 	var left = this.left.evaluate(context);
-	if (left.is(NativeObjectValue)) {
-		return AbstractValue.unmarshal(left.object[this.name]);
-	} else if (left.is(ObjectValue)) {
+	if (left.isAny(ObjectValue, NativeObjectValue)) {
 		if (left.context.has(this.name)) {
 			return left.context.top(this.name).bindThis(left);
 		} else {
@@ -314,10 +312,18 @@ LetNode.prototype.evaluate = function (context) {
 	return this.body.evaluate((function augment(context, index) {
 		if (index < names.length - 1) {
 			var name = names[index];
-			if (context.has(name) && context.top(name).is(ObjectValue)) {
-				return context.add(name, new ObjectValue(augment(context.top(name).context, index + 1)));
+			if (context.has(name)) {
+				var object = context.top(name);
+				if (object.is(ObjectValue)) {
+					return context.add(name, new ObjectValue(augment(object.context, index + 1)));
+				} else if (object.is(NativeObjectValue)) {
+					return context.add(name, new NativeObjectValue(augment(object.context, index + 1)));
+				} else {
+					return context.add(name, new ObjectValue(augment(new Context(), index + 1)));
+				}
 			} else {
-				return context.add(name, new ObjectValue(augment(new Context(), index + 1)));
+				var evil = eval;
+				return augment(context.add(name, AbstractValue.unmarshal(evil('this')[name])), index);
 			}
 		} else if (index < names.length) {
 			return context.add(names[index], value);

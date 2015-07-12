@@ -248,9 +248,36 @@ ObjectValue.prototype.marshal = function () {
 };
 
 
-var NativeObjectValue = exports.NativeObjectValue = function (object) {
-	AbstractValue.call(this);
+var NativeContext = exports.NativeContext = function (object) {
 	this.object = object;
+};
+
+NativeContext.prototype.has = function (name) {
+	return name in this.object;
+};
+
+NativeContext.prototype.top = function (name) {
+	return AbstractValue.unmarshal(this.object[name]);
+};
+
+NativeContext.prototype.forEach = function (callback, context) {
+	Object.getOwnPropertyNames(this.object).union(Object.keys(this.object)).forEach(function (name) {
+		callback.call(context || null, name, AbstractValue.unmarshal(this.object[name]));
+	}, this);
+};
+
+NativeContext.prototype.add = function (name, value) {
+	function NativeObject() {}
+	NativeObject.prototype = this.object;
+	var object = new NativeObject();
+	object[name] = value.marshal();
+	return new NativeContext(object);
+};
+
+
+var NativeObjectValue = exports.NativeObjectValue = function (context) {
+	AbstractValue.call(this);
+	this.context = context;
 };
 
 NativeObjectValue.prototype = Object.create(AbstractValue.prototype);
@@ -262,7 +289,7 @@ NativeObjectValue.prototype.toString = function () {
 };
 
 NativeObjectValue.prototype.marshal = function () {
-	return this.object;
+	return this.context.object;
 };
 
 
@@ -286,7 +313,7 @@ AbstractValue.unmarshal = function (value) {
 		} else if (value instanceof NativeComplexValue) {
 			return new ComplexValue(value.r, value.i);
 		} else {
-			return new NativeObjectValue(value);
+			return new NativeObjectValue(new NativeContext(value));
 		}
 	}
 };
