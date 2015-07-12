@@ -23,13 +23,7 @@ Closure.prototype.marshal = function () {
 			} else {
 				return node.evaluate(context).marshal();
 			}
-		}(node, (function (object) {
-			if (object !== this) {
-				return context.add('this', AbstractValue.unmarshal(this));
-			} else {
-				return context;
-			}
-		}(this)), 0));
+		}(node, context.add('this', AbstractValue.unmarshal(this)), 0));
 	};
 };
 
