@@ -13,6 +13,10 @@ AbstractValue.prototype.isAny = function () {
 	return false;
 };
 
+AbstractValue.prototype.bindThis = function () {
+	return this;
+};
+
 
 var UndefinedValue = exports.UndefinedValue = function () {
 	AbstractValue.call(this);
