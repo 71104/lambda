@@ -170,6 +170,7 @@ var Closure = exports.Closure = function (lambda, context) {
 	AbstractValue.call(this);
 	this.lambda = lambda;
 	this.context = context;
+	this.prototype = this.prototype.add('length', new IntegerValue(this.getLength()));
 };
 
 Closure.prototype = Object.create(AbstractValue.prototype);

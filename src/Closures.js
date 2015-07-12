@@ -44,3 +44,13 @@ Closure.unmarshal = function (value, context) {
 		}
 	}(0, [])), context || new Context());
 };
+
+Closure.prototype.getLength = function () {
+	var length = 0;
+	for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+		length++;
+	}
+	return length;
+};
+
+Closure.prototype.prototype = new Context();
