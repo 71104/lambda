@@ -4,6 +4,10 @@ Closure.prototype.toString = function () {
 	return 'closure';
 };
 
+Closure.prototype.bindThis = function (value) {
+	return new Closure(this.lambda, this.context.add('this', value));
+};
+
 Closure.prototype.marshal = function () {
 	var length = 0;
 	for (var node = this.lambda; node.is(LambdaNode); node = node.body) {

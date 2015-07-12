@@ -172,15 +172,25 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
-	var left = this.left.evaluate(context);
+	var left = this.left.evaluate(context), field;
 	if (left.is(ObjectValue)) {
 		if (left.context.has(this.name)) {
-			return left.context.top(this.name);
+			field = left.context.top(this.name);
+			if (field.is(Closure)) {
+				return field.bindThis(left);
+			} else {
+				return field;
+			}
 		} else {
 			return UndefinedValue.INSTANCE;
 		}
 	} else if (left.isAny(ComplexValue, StringValue, ArrayValue, Closure) && left.prototype.has(this.name)) {
-		return left.prototype.top(this.name);
+		field = left.prototype.top(this.name);
+		if (field.is(Closure)) {
+			return field.bindThis(left);
+		} else {
+			return field;
+		}
 	}
 	throw new LambdaRuntimeError();
 };
