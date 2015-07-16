@@ -29,7 +29,7 @@ if (process.stdin.isTTY) {
 		try {
 			process.stdout.write(lambda(input).toString());
 		} catch (e) {
-			process.stderr.write(e);
+			process.stderr.write(e.toString());
 		}
 	});
 }
