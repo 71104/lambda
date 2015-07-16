@@ -27,9 +27,9 @@ if (process.stdin.isTTY) {
 		input += text;
 	}).on('end', function () {
 		try {
-			process.stdout.write(lambda(input).toString());
+			process.stdout.write(lambda(input).toString() + '\n');
 		} catch (e) {
-			process.stderr.write(e.toString());
+			process.stderr.write(e.toString() + '\n');
 		}
 	});
 }
