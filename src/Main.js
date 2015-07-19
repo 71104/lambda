@@ -2,9 +2,8 @@
 
 var lambda = (function () {
 	var Lambda = require('./lambda.js');
-	var context = new Lambda.DefaultContext();
 	return function (input) {
-		return (new Lambda.Parser(input)).parse().evaluate(context);
+		return (new Lambda.Parser(input)).parse().evaluate(Lambda.DefaultContext.INSTANCE);
 	};
 }());
 
