@@ -137,10 +137,6 @@ module.exports.testUnmarshalTrue = function (test) {
 	test.done();
 };
 
-/**
- * XXX unmarshalling whole number produce FloatValue's, see bug #7
- */
-/*
 module.exports.testUnmarshalInteger1 = function (test) {
 	var value = Lambda.AbstractValue.unmarshal(0);
 	test.ok(value.is(Lambda.IntegerValue));
@@ -154,7 +150,6 @@ module.exports.testUnmarshalInteger2 = function (test) {
 	test.ok(value.value === 4321);
 	test.done();
 };
-*/
 
 module.exports.testUnmarshalComplex1 = function (test) {
 	var value = Lambda.AbstractValue.unmarshal((new Lambda.ComplexValue(0, 0)).marshal());
