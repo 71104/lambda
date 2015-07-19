@@ -233,9 +233,19 @@ module.exports.testUnmarshalTwoArgFunction = function (test) {
 
 module.exports.testUnmarshalEmptyArray = function (test) {
 	var value = Lambda.AbstractValue.unmarshal([]);
-	test.ok(value.is(Lambda.ArrayValue));
+	test.ok(value.is(Lambda.NativeArrayValue));
 	test.ok(value.array.length === 0);
 	test.done();
 };
 
 // TODO test more array and object unmarshalling, including nesting and recursion
+
+module.exports.testUnmarshalCyclicArray = function (test) {
+	var array = [];
+	array.push(array);
+	var value = Lambda.AbstractValue.unmarshal(array);
+	test.ok(value.is(Lambda.NativeArrayValue));
+	test.ok(value.array.length === 1);
+	test.ok(value.array[0] === array);
+	test.done();
+};

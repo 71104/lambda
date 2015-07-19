@@ -219,10 +219,25 @@ ArrayValue.prototype.marshal = function () {
 	});
 };
 
-ArrayValue.unmarshal = function (value) {
-	return new ArrayValue(value.map(function (element) {
-		return AbstractValue.unmarshal(element);
-	}));
+
+var NativeArrayValue = exports.NativeArrayValue = function (array) {
+	AbstractValue.call(this);
+	this.array = array;
+	this.prototype = this.prototype.add('length', new IntegerValue(array.length));
+};
+
+NativeArrayValue.prototype = Object.create(AbstractValue.prototype);
+
+NativeArrayValue.prototype.type = 'array';
+
+NativeArrayValue.prototype.toString = function () {
+	return '{ ' + this.array.map(function (element) {
+		return AbstractValue.unmarshal(element).toString();
+	}).join(', ') + ' }';
+};
+
+NativeArrayValue.prototype.marshal = function () {
+	return this.array;
 };
 
 
@@ -303,7 +318,7 @@ AbstractValue.unmarshal = function (value) {
 		if (value === null) {
 			return NullValue.INSTANCE;
 		} else if (Array.isArray(value)) {
-			return ArrayValue.unmarshal(value);
+			return new NativeArrayValue(value);
 		} else if (value instanceof NativeComplexValue) {
 			return new ComplexValue(value.r, value.i);
 		} else {

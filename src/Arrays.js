@@ -1,4 +1,4 @@
-ArrayValue.prototype.prototype = new Context({
+ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Context({
 	slice: Closure.unmarshal(function (begin, end) {
 		return this.slice(begin, end);
 	}),

@@ -183,7 +183,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
 		} else {
 			return UndefinedValue.INSTANCE;
 		}
-	} else if (left.isAny(ComplexValue, StringValue, ArrayValue, Closure) && left.prototype.has(this.name)) {
+	} else if (left.isAny(ComplexValue, StringValue, ArrayValue, NativeArrayValue, Closure) && left.prototype.has(this.name)) {
 		return left.prototype.top(this.name).bindThis(left);
 	}
 	throw new LambdaRuntimeError();
@@ -212,12 +212,16 @@ SubscriptNode.prototype.getFreeVariables = function () {
 
 SubscriptNode.prototype.evaluate = function (context) {
 	var value = this.expression.evaluate(context);
-	if (value.isAny(ArrayValue, StringValue)) {
+	if (value.isAny(ArrayValue, NativeArrayValue, StringValue)) {
 		var index = this.index.evaluate(context);
 		if (index.is(IntegerValue)) {
 			if (value.is(ArrayValue)) {
 				if (index.value >= 0 && index.value < value.array.length) {
 					return value.array[index.value];
+				}
+			} else if (value.is(NativeArrayValue)) {
+				if (index.value >= 0 && index.value < value.array.length) {
+					return AbstractValue.unmarshal(value.array[index.value]);
 				}
 			} else if (value.is(StringValue)) {
 				if (index.value >= 0 && index.value < value.value.length) {
