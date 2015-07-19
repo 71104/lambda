@@ -81,6 +81,13 @@ module.exports.testVariable2 = function (test) {
 	test.done();
 };
 
+module.exports.testVariable3 = function (test) {
+	var ast = parse('+');
+	test.ok(ast.is(Lambda.VariableNode));
+	test.ok(ast.name === '+');
+	test.done();
+};
+
 module.exports.testFix = function (test) {
 	var ast = parse('fix');
 	test.ok(ast.is(Lambda.FixNode));

@@ -18,6 +18,12 @@ Parser.prototype.parseString = function () {
 	return new LiteralNode(new StringValue(this.lexer.expect('string')));
 };
 
+Parser.prototype.parseVariable = function () {
+	var label = this.lexer.label();
+	this.lexer.next();
+	return new VariableNode(label);
+};
+
 Parser.prototype.parseClass0 = function () {
 	switch (this.lexer.token()) {
 	case 'keyword:null':
@@ -49,9 +55,7 @@ Parser.prototype.parseClass0 = function () {
 	case 'symbol':
 	case 'equal':
 	case 'asterisk':
-		var label = this.lexer.label();
-		this.lexer.next();
-		return this.parseVariable(label);
+		return this.parseVariable();
 	case 'keyword:fix':
 		this.lexer.next();
 		return FixNode.INSTANCE;
