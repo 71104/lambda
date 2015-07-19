@@ -135,4 +135,13 @@ var Lexer = exports.Lexer = function (input) {
 	this.label = function () {
 		return label;
 	};
+
+	this.expect = function (expectedToken) {
+		if (expectedToken !== token) {
+			throw new LambdaSyntaxError();
+		}
+		var currentLabel = label;
+		next();
+		return currentLabel;
+	};
 };
