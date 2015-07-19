@@ -7,7 +7,7 @@ Parser.prototype.parseInteger = function () {
 };
 
 Parser.prototype.parseComplex = function () {
-	return new LiteralNode(new ComplexValue(this.lexer.expect('complex')));
+	return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')));
 };
 
 Parser.prototype.parseFloat = function () {

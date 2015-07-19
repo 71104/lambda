@@ -42,6 +42,15 @@ module.exports.testInteger = function (test) {
 	test.done();
 };
 
+module.exports.testComplex = function (test) {
+	var ast = parse('3i');
+	test.ok(ast.is(Lambda.LiteralNode));
+	test.ok(ast.value.is(Lambda.ComplexValue));
+	test.ok(ast.value.real === 0);
+	test.ok(ast.value.imaginary === 3);
+	test.done();
+};
+
 module.exports.testFloat = function (test) {
 	var ast = parse('3.14');
 	test.ok(ast.is(Lambda.LiteralNode));
@@ -177,6 +186,61 @@ module.exports.testMultiplePolymorphicLambda2 = function (test) {
 	test.ok(ast.body.body.is(Lambda.LiteralNode));
 	test.ok(ast.body.body.value.is(Lambda.BooleanValue));
 	test.ok(ast.body.body.value.value === false);
+	test.done();
+};
+
+module.exports.testIf1 = function (test) {
+	var ast = parse('if x then y else z');
+	test.ok(ast.is(Lambda.IfNode));
+	test.ok(ast.condition.is(Lambda.VariableNode));
+	test.ok(ast.condition.name === 'x');
+	test.ok(ast.thenExpression.is(Lambda.VariableNode));
+	test.ok(ast.thenExpression.name === 'y');
+	test.ok(ast.elseExpression.is(Lambda.VariableNode));
+	test.ok(ast.elseExpression.name === 'z');
+	test.done();
+};
+
+module.exports.testIf2 = function (test) {
+	var ast = parse('if 0 then 5i else "hello"');
+	test.ok(ast.is(Lambda.IfNode));
+	test.ok(ast.condition.is(Lambda.LiteralNode));
+	test.ok(ast.condition.value.is(Lambda.IntegerValue));
+	test.ok(ast.condition.value.value === 0);
+	test.ok(ast.thenExpression.is(Lambda.LiteralNode));
+	test.ok(ast.thenExpression.value.is(Lambda.ComplexValue));
+	test.ok(ast.thenExpression.value.real === 0);
+	test.ok(ast.thenExpression.value.imaginary === 5);
+	test.ok(ast.elseExpression.is(Lambda.LiteralNode));
+	test.ok(ast.elseExpression.value.is(Lambda.StringValue));
+	test.ok(ast.elseExpression.value.value === 'hello');
+	test.done();
+};
+
+module.exports.testNestedIfs = function (test) {
+	var ast = parse('if if a then b else c then if d then e else f else if g then h else i');
+	test.ok(ast.is(Lambda.IfNode));
+	test.ok(ast.condition.is(Lambda.IfNode));
+	test.ok(ast.condition.condition.is(Lambda.VariableNode));
+	test.ok(ast.condition.condition.name === 'a');
+	test.ok(ast.condition.thenExpression.is(Lambda.VariableNode));
+	test.ok(ast.condition.thenExpression.name === 'b');
+	test.ok(ast.condition.elseExpression.is(Lambda.VariableNode));
+	test.ok(ast.condition.elseExpression.name === 'c');
+	test.ok(ast.thenExpression.is(Lambda.IfNode));
+	test.ok(ast.thenExpression.condition.is(Lambda.VariableNode));
+	test.ok(ast.thenExpression.condition.name === 'd');
+	test.ok(ast.thenExpression.thenExpression.is(Lambda.VariableNode));
+	test.ok(ast.thenExpression.thenExpression.name === 'e');
+	test.ok(ast.thenExpression.elseExpression.is(Lambda.VariableNode));
+	test.ok(ast.thenExpression.elseExpression.name === 'f');
+	test.ok(ast.elseExpression.is(Lambda.IfNode));
+	test.ok(ast.elseExpression.condition.is(Lambda.VariableNode));
+	test.ok(ast.elseExpression.condition.name === 'g');
+	test.ok(ast.elseExpression.thenExpression.is(Lambda.VariableNode));
+	test.ok(ast.elseExpression.thenExpression.name === 'h');
+	test.ok(ast.elseExpression.elseExpression.is(Lambda.VariableNode));
+	test.ok(ast.elseExpression.elseExpression.name === 'i');
 	test.done();
 };
 
