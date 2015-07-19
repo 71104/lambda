@@ -346,7 +346,7 @@ LetNode.prototype.compileExpression = function () {
 		// XXX not implemented yet
 		throw new LambdaInternalError();
 	} else {
-		return '(function(' + this.name + '){' + this.body.compileStatement() + '}(' + this.expression.compileExpression() + '))';
+		return '(function(' + this.names[0] + '){' + this.body.compileStatement() + '}(' + this.expression.compileExpression() + '))';
 	}
 };
 
@@ -355,7 +355,7 @@ LetNode.prototype.compileStatement = function () {
 		// XXX not implemented yet
 		throw new LambdaInternalError();
 	} else {
-		return 'var ' + this.name + '=' + this.expression.compileExpression() + ';' + this.body.compileStatement();
+		return 'var ' + this.names[0] + '=' + this.expression.compileExpression() + ';' + this.body.compileStatement();
 	}
 };
 
