@@ -1,4 +1,7 @@
 ArrayValue.prototype.prototype = new Context({
+	slice: Closure.unmarshal(function (begin, end) {
+		return this.slice(begin, end);
+	}),
 	concat: Closure.unmarshal(function (other) {
 		return this.concat(other);
 	}),
