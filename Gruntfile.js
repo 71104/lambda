@@ -65,6 +65,7 @@ module.exports = function (grunt) {
 				'test/lexer.js',
 				'test/parser.js',
 				'test/free.js',
+				'test/marshal.js',
 			]
 		}
 	});
