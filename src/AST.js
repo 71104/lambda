@@ -319,7 +319,7 @@ LetNode.prototype.evaluate = function (context) {
 				} else if (object.is(NativeObjectValue)) {
 					return context.add(name, new NativeObjectValue(augment(object.context, index + 1)));
 				} else {
-					return context.add(name, new ObjectValue(augment(new Context(), index + 1)));
+					return context.add(name, new ObjectValue(augment(Context.EMPTY, index + 1)));
 				}
 			} else {
 				var evil = eval;

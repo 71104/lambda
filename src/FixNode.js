@@ -29,7 +29,7 @@ FixNode.Z_COMBINATOR = (new LambdaNode('f', new ApplicationNode(
 			new VariableNode('v')
 			))
 		))
-	))).evaluate(new Context());
+	))).evaluate(Context.EMPTY);
 
 FixNode.prototype.evaluate = function () {
 	return FixNode.Z_COMBINATOR;

@@ -59,7 +59,7 @@ module.exports.testMarshalString3 = function (test) {
 
 module.exports.testMarshalClosure1 = function (test) {
 	var ast = new Lambda.LambdaNode('x', new Lambda.LiteralNode(Lambda.NullValue.INSTANCE));
-	var value = (new Lambda.Closure(ast, new Lambda.Context())).marshal();
+	var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
 	test.ok(typeof value === 'function');
 	test.ok(value(null) === null);
 	test.ok(value(123.456) === null);
@@ -68,7 +68,7 @@ module.exports.testMarshalClosure1 = function (test) {
 
 module.exports.testMarshalClosure2 = function (test) {
 	var ast = new Lambda.LambdaNode('x', new Lambda.VariableNode('x'));
-	var value = (new Lambda.Closure(ast, new Lambda.Context())).marshal();
+	var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
 	test.ok(typeof value === 'function');
 	test.ok(value(null) === null);
 	test.ok(value(123.456) === 123.456);
@@ -103,7 +103,7 @@ module.exports.testMarshalArray2 = function (test) {
 };
 
 module.exports.testMarshalEmptyObject = function (test) {
-	var value = (new Lambda.ObjectValue(new Lambda.Context())).marshal();
+	var value = (new Lambda.ObjectValue(Lambda.Context.EMPTY)).marshal();
 	test.ok(typeof value === 'object' && value !== null);
 	for (var key in value) {
 		test.ok(false);

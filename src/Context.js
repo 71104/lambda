@@ -41,3 +41,5 @@ Context.prototype.add = function (name, value) {
 	context.hash = hash;
 	return context;
 };
+
+Context.EMPTY = new Context();

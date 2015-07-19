@@ -36,7 +36,7 @@ Closure.unmarshal = function (value, context) {
 		} else {
 			return new NativeNode(value, names);
 		}
-	}(0, [])), context || new Context());
+	}(0, [])), context || Context.EMPTY);
 };
 
 Closure.prototype.getLength = function () {

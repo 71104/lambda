@@ -1,8 +1,6 @@
 var DefaultContext = exports.DefaultContext = function () {
-	var emptyContext = new Context();
-
 	function evaluate(Operator) {
-		return (new Operator()).evaluate(emptyContext);
+		return (new Operator()).evaluate(Context.EMPTY);
 	}
 
 	Context.call(this, {
