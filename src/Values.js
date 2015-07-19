@@ -309,7 +309,12 @@ AbstractValue.unmarshal = function (value) {
 	case 'boolean':
 		return BooleanValue.unmarshal(value);
 	case 'number':
-		return new FloatValue(value);
+		if (value % 1) {
+			return new FloatValue(value);
+		} else {
+			return new IntegerValue(~~value);
+		}
+		break;
 	case 'string':
 		return new StringValue(value);
 	case 'function':
@@ -324,5 +329,6 @@ AbstractValue.unmarshal = function (value) {
 		} else {
 			return new NativeObjectValue(new NativeContext(value));
 		}
+		break;
 	}
 };
