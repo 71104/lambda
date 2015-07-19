@@ -13,6 +13,10 @@ AbstractNode.prototype.isAny = function () {
 	return false;
 };
 
+AbstractNode.prototype.compile = function () {
+	return '(function(){"use strict";' + this.compileStatement() + '}());';
+};
+
 
 var LiteralNode = exports.LiteralNode = function (value) {
 	AbstractNode.call(this);
@@ -335,7 +339,8 @@ LetNode.prototype.evaluate = function (context) {
 
 LetNode.prototype.compileExpression = function () {
 	if (this.names.length > 1) {
-		// TODO
+		// XXX not implemented yet
+		throw new LambdaInternalError();
 	} else {
 		return '(function(' + this.name + '){' + this.body.compileStatement() + '}(' + this.expression.compileExpression() + '))';
 	}
@@ -343,7 +348,8 @@ LetNode.prototype.compileExpression = function () {
 
 LetNode.prototype.compileStatement = function () {
 	if (this.names.length > 1) {
-		// TODO
+		// XXX not implemented yet
+		throw new LambdaInternalError();
 	} else {
 		return 'var ' + this.name + '=' + this.expression.compileExpression() + ';' + this.body.compileStatement();
 	}

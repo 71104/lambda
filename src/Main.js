@@ -1,10 +1,29 @@
 #!/usr/bin/env node
 
+var compile = false;
+
+for (var i = 2; i < process.argv.length; i++) {
+	var arg = process.argv[i];
+	if (arg.substr(0, 1) !== '-') {
+		process.exit(1);
+	}
+	if (arg.indexOf('c') > 0) {
+		compile = true;
+	}
+}
+
 var lambda = (function () {
 	var Lambda = require('./lambda.js');
-	return function (input) {
-		return (new Lambda.Parser(input)).parse().evaluate(Lambda.DefaultContext.INSTANCE);
-	};
+	if (compile) {
+		return function (input) {
+			return (new Lambda.Parser(input)).parse().compile();
+		};
+	} else {
+		var context = Lambda.DefaultContext.INSTANCE.add('require', Lambda.AbstractValue.unmarshal(require));
+		return function (input) {
+			return (new Lambda.Parser(input)).parse().evaluate(context);
+		};
+	}
 }());
 
 if (process.stdin.isTTY) {
