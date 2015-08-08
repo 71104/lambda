@@ -1,4 +1,4 @@
-var Context = exports.Context = function (hash) {
+function Context(hash) {
 	this.hash = {};
 	if (hash) {
 		for (var name in hash) {
@@ -7,7 +7,9 @@ var Context = exports.Context = function (hash) {
 			}
 		}
 	}
-};
+}
+
+exports.Context = Context;
 
 Context.PREFIX = 'LAMBDA ';
 

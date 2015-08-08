@@ -12,14 +12,13 @@ module.exports = function (grunt) {
 					'src/Context.js',
 					'src/Values.js',
 					'src/AST.js',
-					'src/Closures.js',
 					'src/FixNode.js',
-					'src/Arrays.js',
 					'src/Operators.js',
 					'src/DefaultContext.js',
 					'src/Lexer.js',
 					'src/Parser.js',
 					'src/Bootstrap.js',
+					'src/Arrays.js',
 				],
 				dest: 'bin/lambda.js'
 			}

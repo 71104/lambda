@@ -1,4 +1,6 @@
-var AbstractValue = exports.AbstractValue = function () {};
+function AbstractValue() {}
+
+exports.AbstractValue = AbstractValue;
 
 AbstractValue.prototype.is = function (Class) {
 	return this instanceof Class;
@@ -18,9 +20,11 @@ AbstractValue.prototype.bindThis = function () {
 };
 
 
-var UndefinedValue = exports.UndefinedValue = function () {
+function UndefinedValue() {
 	AbstractValue.call(this);
-};
+}
+
+exports.UndefinedValue = UndefinedValue;
 
 UndefinedValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -35,9 +39,11 @@ UndefinedValue.prototype.marshal = function () {};
 UndefinedValue.INSTANCE = new UndefinedValue();
 
 
-var NullValue = exports.NullValue = function () {
+function NullValue() {
 	AbstractValue.call(this);
-};
+}
+
+exports.NullValue = NullValue;
 
 NullValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -54,10 +60,12 @@ NullValue.prototype.marshal = function () {
 NullValue.INSTANCE = new NullValue();
 
 
-var BooleanValue = exports.BooleanValue = function (value) {
+function BooleanValue(value) {
 	AbstractValue.call(this);
 	this.value = !!value;
-};
+}
+
+exports.BooleanValue = BooleanValue;
 
 BooleanValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -87,10 +95,12 @@ BooleanValue.unmarshal = function (value) {
 };
 
 
-var IntegerValue = exports.IntegerValue = function (value) {
+function IntegerValue(value) {
 	AbstractValue.call(this);
 	this.value = ~~value;
-};
+}
+
+exports.IntegerValue = IntegerValue;
 
 IntegerValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -105,10 +115,12 @@ IntegerValue.prototype.marshal = function () {
 };
 
 
-var FloatValue = exports.FloatValue = function (value) {
+function FloatValue(value) {
 	AbstractValue.call(this);
 	this.value = value * 1;
-};
+}
+
+exports.FloatValue = FloatValue;
 
 FloatValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -137,7 +149,7 @@ NativeComplexValue.prototype.toString = function () {
 };
 
 
-var ComplexValue = exports.ComplexValue = function (real, imaginary) {
+function ComplexValue(real, imaginary) {
 	AbstractValue.call(this);
 	real = real * 1;
 	imaginary = imaginary * 1;
@@ -147,7 +159,9 @@ var ComplexValue = exports.ComplexValue = function (real, imaginary) {
 		real: new FloatValue(real),
 		imaginary: new FloatValue(imaginary)
 	});
-};
+}
+
+exports.ComplexValue = ComplexValue;
 
 ComplexValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -166,23 +180,76 @@ ComplexValue.prototype.marshal = function () {
 };
 
 
-var Closure = exports.Closure = function (lambda, context) {
+function Closure(lambda, context) {
 	AbstractValue.call(this);
 	this.lambda = lambda;
 	this.context = context;
 	this.prototype = this.prototype.add('length', new IntegerValue(this.getLength()));
-};
+}
+
+exports.Closure = Closure;
 
 Closure.prototype = Object.create(AbstractValue.prototype);
 
+Closure.prototype.type = 'closure';
 
-var StringValue = exports.StringValue = function (value) {
+Closure.prototype.toString = function () {
+	return 'closure';
+};
+
+Closure.prototype.bindThis = function (value) {
+	return new Closure(this.lambda, this.context.add('this', value));
+};
+
+Closure.prototype.marshal = function () {
+	var length = 0;
+	for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+		length++;
+	}
+	node = this.lambda;
+	var context = this.context;
+	return function () {
+		var values = arguments;
+		return (function augment(node, context, index) {
+			if (index < length) {
+				return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
+			} else {
+				return node.evaluate(context).marshal();
+			}
+		}(node, context.add('this', AbstractValue.unmarshal(this)), 0));
+	};
+};
+
+Closure.unmarshal = function (value, context) {
+	return new Closure((function makeLambda(index, names) {
+		if (index < Math.max(value.length, 1)) {
+			var name = '' + index;
+			names.push(name);
+			return new LambdaNode(name, makeLambda(index + 1, names));
+		} else {
+			return new NativeNode(value, names);
+		}
+	}(0, [])), context || Context.EMPTY);
+};
+
+Closure.prototype.getLength = function () {
+	var length = 0;
+	for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+		length++;
+	}
+	return length;
+};
+
+
+function StringValue(value) {
 	AbstractValue.call(this);
 	this.value = '' + value;
 	this.prototype = new Context({
 		length: new IntegerValue(value.length)
 	});
-};
+}
+
+exports.StringValue = StringValue;
 
 StringValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -197,11 +264,13 @@ StringValue.prototype.marshal = function () {
 };
 
 
-var ArrayValue = exports.ArrayValue = function (array) {
+function ArrayValue(array) {
 	AbstractValue.call(this);
 	this.array = array = array || [];
 	this.prototype = this.prototype.add('length', new IntegerValue(array.length));
-};
+}
+
+exports.ArrayValue = ArrayValue;
 
 ArrayValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -220,11 +289,13 @@ ArrayValue.prototype.marshal = function () {
 };
 
 
-var NativeArrayValue = exports.NativeArrayValue = function (array) {
+function NativeArrayValue(array) {
 	AbstractValue.call(this);
 	this.array = array;
 	this.prototype = this.prototype.add('length', new IntegerValue(array.length));
-};
+}
+
+exports.NativeArrayValue = NativeArrayValue;
 
 NativeArrayValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -241,10 +312,12 @@ NativeArrayValue.prototype.marshal = function () {
 };
 
 
-var ObjectValue = exports.ObjectValue = function (context) {
+function ObjectValue(context) {
 	AbstractValue.call(this);
 	this.context = context;
-};
+}
+
+exports.ObjectValue = ObjectValue;
 
 ObjectValue.prototype = Object.create(AbstractValue.prototype);
 
@@ -263,9 +336,11 @@ ObjectValue.prototype.marshal = function () {
 };
 
 
-var NativeContext = exports.NativeContext = function (object) {
+function NativeContext(object) {
 	this.object = object;
-};
+}
+
+exports.NativeContext = NativeContext;
 
 NativeContext.prototype.has = function (name) {
 	return name in this.object;
@@ -284,10 +359,12 @@ NativeContext.prototype.add = function (name, value) {
 };
 
 
-var NativeObjectValue = exports.NativeObjectValue = function (context) {
+function NativeObjectValue(context) {
 	AbstractValue.call(this);
 	this.context = context;
-};
+}
+
+exports.NativeObjectValue = NativeObjectValue;
 
 NativeObjectValue.prototype = Object.create(AbstractValue.prototype);
 

@@ -1,6 +1,8 @@
-var Parser = exports.Parser = function (input) {
+function Parser(input) {
 	this.lexer = new Lexer(input);
-};
+}
+
+exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
 	return new LiteralNode(new IntegerValue(this.lexer.expect('integer')));

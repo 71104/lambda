@@ -1,4 +1,4 @@
-var Lexer = exports.Lexer = function (input) {
+function Lexer(input) {
 	var token, label;
 
 	function match(re) {
@@ -144,4 +144,6 @@ var Lexer = exports.Lexer = function (input) {
 		next();
 		return currentLabel;
 	};
-};
+}
+
+exports.Lexer = Lexer;

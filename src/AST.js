@@ -1,4 +1,6 @@
-var AbstractNode = exports.AbstractNode = function () {};
+function AbstractNode() {}
+
+exports.AbstractNode = AbstractNode;
 
 AbstractNode.prototype.is = function (Class) {
 	return this instanceof Class;
@@ -18,10 +20,12 @@ AbstractNode.prototype.compile = function () {
 };
 
 
-var LiteralNode = exports.LiteralNode = function (value) {
+function LiteralNode(value) {
 	AbstractNode.call(this);
 	this.value = value;
-};
+}
+
+exports.LiteralNode = LiteralNode;
 
 LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -42,10 +46,12 @@ LiteralNode.prototype.compileStatement = function () {
 };
 
 
-var ArrayLiteralNode = exports.ArrayLiteralNode = function (expressions) {
+function ArrayLiteralNode(expressions) {
 	AbstractNode.call(this);
 	this.expressions = expressions;
-};
+}
+
+exports.ArrayLiteralNode = ArrayLiteralNode;
 
 ArrayLiteralNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -76,10 +82,12 @@ ArrayLiteralNode.prototype.compileStatement = function () {
 };
 
 
-var VariableNode = exports.VariableNode = function (name) {
+function VariableNode(name) {
 	AbstractNode.call(this);
 	this.name = name;
-};
+}
+
+exports.VariableNode = VariableNode;
 
 VariableNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -105,9 +113,11 @@ VariableNode.prototype.compileStatement = function () {
 };
 
 
-var ThisNode = exports.ThisNode = function () {
+function ThisNode() {
 	AbstractNode.call(this);
-};
+}
+
+exports.ThisNode = ThisNode;
 
 ThisNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -131,12 +141,12 @@ ThisNode.prototype.compileStatement = function () {
 	return 'return this;';
 };
 
-ThisNode.INSTANCE = new ThisNode();
 
-
-var ErrorNode = exports.ErrorNode = function () {
+function ErrorNode() {
 	AbstractNode.call(this);
-};
+}
+
+exports.ErrorNode = ErrorNode;
 
 ErrorNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -160,14 +170,14 @@ ErrorNode.prototype.compileStatement = function () {
 	return 'return error;';
 };
 
-ErrorNode.INSTANCE = new ErrorNode();
 
-
-var FieldAccessNode = exports.FieldAccessNode = function (left, name) {
+function FieldAccessNode(left, name) {
 	AbstractNode.call(this);
 	this.left = left;
 	this.name = name;
-};
+}
+
+exports.FieldAccessNode = FieldAccessNode;
 
 FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -198,11 +208,13 @@ FieldAccessNode.prototype.compileStatement = function () {
 };
 
 
-var SubscriptNode = exports.SubscriptNode = function (expression, index) {
+function SubscriptNode(expression, index) {
 	AbstractNode.call(this);
 	this.expression = expression;
 	this.index = index;
-};
+}
+
+exports.SubscriptNode = SubscriptNode;
 
 SubscriptNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -242,11 +254,13 @@ SubscriptNode.prototype.compileStatement = function () {
 };
 
 
-var LambdaNode = exports.LambdaNode = function (name, body) {
+function LambdaNode(name, body) {
 	AbstractNode.call(this);
 	this.name = name;
 	this.body = body;
-};
+}
+
+exports.LambdaNode = LambdaNode;
 
 LambdaNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -269,11 +283,13 @@ LambdaNode.prototype.compileStatement = function () {
 };
 
 
-var ApplicationNode = exports.ApplicationNode = function (left, right) {
+function ApplicationNode(left, right) {
 	AbstractNode.call(this);
 	this.left = left;
 	this.right = right;
-};
+}
+
+exports.ApplicationNode = ApplicationNode;
 
 ApplicationNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -299,12 +315,14 @@ ApplicationNode.prototype.compileStatement = function () {
 };
 
 
-var LetNode = exports.LetNode = function (names, expression, body) {
+function LetNode(names, expression, body) {
 	AbstractNode.call(this);
 	this.names = names;
 	this.expression = expression;
 	this.body = body;
-};
+}
+
+exports.LetNode = LetNode;
 
 LetNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -360,12 +378,14 @@ LetNode.prototype.compileStatement = function () {
 };
 
 
-var IfNode = exports.IfNode = function (condition, thenExpression, elseExpression) {
+function IfNode(condition, thenExpression, elseExpression) {
 	AbstractNode.call(this);
 	this.condition = condition;
 	this.thenExpression = thenExpression;
 	this.elseExpression = elseExpression;
-};
+}
+
+exports.IfNode = IfNode;
 
 IfNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -397,10 +417,12 @@ IfNode.prototype.compileStatement = function () {
 };
 
 
-var ThrowNode = exports.ThrowNode = function (expression) {
+function ThrowNode(expression) {
 	AbstractNode.call(this);
 	this.expression = expression;
-};
+}
+
+exports.ThrowNode = ThrowNode;
 
 ThrowNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -421,11 +443,13 @@ ThrowNode.prototype.compileStatement = function () {
 };
 
 
-var TryCatchNode = exports.TryCatchNode = function (tryExpression, catchExpression) {
+function TryCatchNode(tryExpression, catchExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.catchExpression = catchExpression;
-};
+}
+
+exports.TryCatchNode = TryCatchNode;
 
 TryCatchNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -457,11 +481,13 @@ TryCatchNode.prototype.compileStatement = function () {
 };
 
 
-var TryFinallyNode = exports.TryFinallyNode = function (tryExpression, finallyExpression) {
+function TryFinallyNode(tryExpression, finallyExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.finallyExpression = finallyExpression;
-};
+}
+
+exports.TryFinallyNode = TryFinallyNode;
 
 TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -487,12 +513,14 @@ TryFinallyNode.prototype.compileStatement = function () {
 };
 
 
-var TryCatchFinallyNode = exports.TryCatchFinallyNode = function (tryExpression, catchExpression, finallyExpression) {
+function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) {
 	AbstractNode.call(this);
 	this.tryExpression = tryExpression;
 	this.catchExpression = catchExpression;
 	this.finallyExpression = finallyExpression;
-};
+}
+
+exports.TryCatchFinallyNode = TryCatchFinallyNode;
 
 TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -531,11 +559,13 @@ TryCatchFinallyNode.prototype.compileExpression = function () {
 };
 
 
-var NativeNode = exports.NativeNode = function (nativeFunction, argumentNames) {
+function NativeNode(nativeFunction, argumentNames) {
 	AbstractNode.call(this);
 	this.nativeFunction = nativeFunction;
 	this.argumentNames = argumentNames;
-};
+}
+
+exports.NativeNode = NativeNode;
 
 NativeNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -564,14 +594,16 @@ NativeNode.prototype.evaluate = function (context) {
 };
 
 
-var SemiNativeNode = exports.SemiNativeNode = function (overloads, ariety) {
+function SemiNativeNode(overloads, ariety) {
 	AbstractNode.call(this);
 	this.overloads = overloads;
 	this.argumentNames = [];
 	for (var i = 0; i < ariety; i++) {
 		this.argumentNames.push('' + i);
 	}
-};
+}
+
+exports.SemiNativeNode = SemiNativeNode;
 
 SemiNativeNode.prototype = Object.create(AbstractNode.prototype);
 
@@ -603,15 +635,19 @@ SemiNativeNode.prototype.evaluate = function (context) {
 };
 
 
-var UnaryOperatorNode = exports.UnaryOperatorNode = function (overloads) {
+function UnaryOperatorNode(overloads) {
 	LambdaNode.call(this, '0', new SemiNativeNode(overloads, 1));
-};
+}
+
+exports.UnaryOperatorNode = UnaryOperatorNode;
 
 UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
 
 
-var BinaryOperatorNode = exports.BinaryOperatorNode = function (overloads) {
+function BinaryOperatorNode(overloads) {
 	LambdaNode.call(this, '0', new LambdaNode('1', new SemiNativeNode(overloads, 2)));
-};
+}
+
+exports.BinaryOperatorNode = BinaryOperatorNode;
 
 BinaryOperatorNode.prototype = Object.create(LambdaNode.prototype);

@@ -1,4 +1,4 @@
-var DefaultContext = exports.DefaultContext = function () {
+function DefaultContext() {
 	function evaluate(Operator) {
 		return (new Operator()).evaluate(Context.EMPTY);
 	}
@@ -29,6 +29,8 @@ var DefaultContext = exports.DefaultContext = function () {
 		'or': evaluate(LogicalOrOperator),
 		'xor': evaluate(LogicalXorOperator)
 	});
-};
+}
+
+exports.DefaultContext = DefaultContext;
 
 DefaultContext.prototype = Object.create(Context.prototype);
