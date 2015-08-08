@@ -44,4 +44,18 @@ Context.prototype.add = function (name, value) {
 	return context;
 };
 
+Context.prototype.addAll = function (hash) {
+	function Hash() {}
+	Hash.prototype = this.hash;
+	var child = new Hash();
+	for (var name in hash) {
+		if (hash.hasOwnProperty(name)) {
+			child[Context.PREFIX + name] = hash[name];
+		}
+	}
+	var context = new Context();
+	context.hash = child;
+	return context;
+};
+
 Context.EMPTY = new Context();

@@ -1,5 +1,11 @@
 Closure.prototype.prototype = new Context();
 
+Closure.prototype.prototype = Closure.prototype.prototype.addAll({
+	apply: Closure.unmarshal(function (parameters) {
+		return this.apply(null, parameters);
+	})
+});
+
 ThisNode.INSTANCE = new ThisNode();
 
 ErrorNode.INSTANCE = new ErrorNode();
