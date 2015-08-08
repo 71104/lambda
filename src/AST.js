@@ -574,23 +574,31 @@ NativeNode.prototype.getFreeVariables = function () {
 };
 
 NativeNode.prototype.evaluate = function (context) {
-	try {
-		return AbstractValue.unmarshal(this.nativeFunction.apply((function () {
-			if (context.has('this')) {
-				return context.top('this').marshal();
+	var thisValue = (function () {
+		if (context.has('this')) {
+			return context.top('this').marshal();
+		} else {
+			return null;
+		}
+	}());
+	var argumentValues = this.argumentNames.map(function (name) {
+		if (context.has(name)) {
+			return context.top(name).marshal();
+		} else {
+			throw new LambdaInternalError();
+		}
+	});
+	return AbstractValue.unmarshal(function () {
+		try {
+			return this.nativeFunction.apply(thisValue, argumentValues);
+		} catch (e) {
+			if (e instanceof LambdaError) {
+				throw e;
 			} else {
-				return null;
+				throw new LambdaUserError(AbstractValue.unmarshal(e));
 			}
-		}()), this.argumentNames.map(function (name) {
-			if (context.has(name)) {
-				return context.top(name).marshal();
-			} else {
-				throw new LambdaInternalError();
-			}
-		})));
-	} catch (e) {
-		throw new LambdaUserError(AbstractValue.unmarshal(e));
-	}
+		}
+	}.call(this));
 };
 
 
