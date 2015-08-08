@@ -132,8 +132,13 @@ Parser.prototype.parseLambdaOrVariable = function (terminators) {
 	var name = this.lexer.label();
 	switch (this.lexer.next()) {
 	case 'comma':
-		this.lexer.next();
-		return new LambdaNode(name, this.parseLambdaPartial(terminators));
+		if (terminators.contains('comma')) {
+			return this.parseSubscriptOrFieldAccess(new VariableNode(name));
+		} else {
+			this.lexer.next();
+			return new LambdaNode(name, this.parseLambdaPartial(terminators));
+		}
+		break;
 	case 'arrow':
 		this.lexer.next();
 		return new LambdaNode(name, this.parseClass3(terminators));
