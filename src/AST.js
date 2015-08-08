@@ -78,7 +78,7 @@ ArrayLiteralNode.prototype.compileExpression = function () {
 ArrayLiteralNode.prototype.compileStatement = function () {
 	return 'return[' + this.expressions.map(function (expression) {
 		return expression.compileExpression();
-	}) + '];';
+	}).join(',') + '];';
 };
 
 
