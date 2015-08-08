@@ -1,0 +1,6 @@
+let http = require "http" in
+
+let server = http.createServer request, response ->
+	response.end.apply {"Oh hai!"} in
+
+server.listen 8080

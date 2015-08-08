@@ -1,0 +1,9 @@
+let main = fix f, x -> f in
+
+let add = y -> + this.x y in
+let o1.x = 123, o1.add = add in
+let o2.x = 456, o2.add = add in
+
+main
+	(console.log (o1.add 321))
+	(console.log (o2.add 321))
