@@ -19,9 +19,8 @@ var lambda = (function () {
 			return (new Lambda.Parser(input)).parse().compile();
 		};
 	} else {
-		var context = Lambda.DefaultContext.INSTANCE.add('require', Lambda.AbstractValue.unmarshal(require));
 		return function (input) {
-			return (new Lambda.Parser(input)).parse().evaluate(context);
+			return (new Lambda.Parser(input)).parse().evaluate(Lambda.DefaultContext.INSTANCE);
 		};
 	}
 }());
