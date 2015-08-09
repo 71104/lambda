@@ -12,7 +12,6 @@ module.exports = function (grunt) {
 					'src/Context.js',
 					'src/Values.js',
 					'src/AST.js',
-					'src/FixNode.js',
 					'src/Operators.js',
 					'src/DefaultContext.js',
 					'src/Lexer.js',
