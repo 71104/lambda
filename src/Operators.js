@@ -563,8 +563,9 @@ function ComparisonOperator() {
 				} else {
 					for (var i = 0; i < x.array.length; i++) {
 						// TODO
+						throw new LambdaInternalError();
 					}
-					return true;
+					return BooleanValue.TRUE;
 				}
 			}
 		},
@@ -574,6 +575,7 @@ function ComparisonOperator() {
 			},
 			'object': function () {
 				// TODO
+				throw new LambdaInternalError();
 			}
 		}
 	});
@@ -659,8 +661,9 @@ function NegatedComparisonOperator() {
 				} else {
 					for (var i = 0; i < x.array.length; i++) {
 						// TODO
+						throw new LambdaInternalError();
 					}
-					return false;
+					return BooleanValue.FALSE;
 				}
 			}
 		},
@@ -670,6 +673,7 @@ function NegatedComparisonOperator() {
 			},
 			'object': function () {
 				// TODO
+				throw new LambdaInternalError();
 			}
 		}
 	});
