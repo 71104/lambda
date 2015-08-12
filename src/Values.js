@@ -226,7 +226,7 @@ Closure.prototype.marshal = function () {
 					}
 				}()).marshal();
 			}
-		}(node, context.add('this', AbstractValue.unmarshal(this)), 0));
+		}(node, context, 0));
 	};
 };
 

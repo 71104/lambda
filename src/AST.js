@@ -95,13 +95,6 @@ VariableNode.prototype.getFreeVariables = function () {
 	return [this.name];
 };
 
-function getGlobalValue(name) {
-	try {
-		/*jshint evil: true */
-		return eval(name);
-	} catch (e) {}
-}
-
 VariableNode.prototype.evaluate = function (context) {
 	if (context.has(this.name)) {
 		return context.top(this.name);
@@ -379,8 +372,7 @@ LetNode.prototype.evaluate = function (context) {
 					return context.add(name, new ObjectValue(augment(Context.EMPTY, index + 1)));
 				}
 			} else {
-				var evil = eval;
-				return augment(context.add(name, AbstractValue.unmarshal(evil('this')[name])), index);
+				return augment(context.add(name, AbstractValue.unmarshal(getGlobalValue(name))), index);
 			}
 		} else if (index < names.length) {
 			return context.add(names[index], value);

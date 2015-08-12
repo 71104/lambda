@@ -15,3 +15,10 @@ Array.prototype.unique = function () {
 Array.prototype.union = function () {
 	return this.concat.apply(this, arguments).unique();
 };
+
+function getGlobalValue(name) {
+	try {
+		/*jshint evil: true */
+		return eval(name);
+	} catch (e) {}
+}
