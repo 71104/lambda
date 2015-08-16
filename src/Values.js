@@ -251,6 +251,56 @@ Closure.prototype.getLength = function () {
 };
 
 
+function LazyValue(expression, context) {
+	AbstractValue.call(this);
+	this.expression = expression;
+	this.context = context;
+}
+
+exports.LazyValue = LazyValue;
+
+LazyValue.prototype = Object.create(AbstractValue.prototype);
+
+LazyValue.prototype.type = 'lazy';
+
+LazyValue.prototype.toString = function () {
+	return 'lazy';
+};
+
+LazyValue.prototype.marshal = function () {
+	var node = this.expression;
+	var context = this.context;
+	return function () {
+		return (function () {
+			try {
+				return node.evaluate(context);
+			} catch (e) {
+				if (e instanceof LambdaUserError) {
+					throw e.value.marshal();
+				} else {
+					throw e;
+				}
+			}
+		}()).marshal();
+	};
+};
+
+LazyValue.unmarshal = function (value, context) {
+	return new LazyNode(new NativeNode(value, []), context || Context.EMPTY);
+};
+
+LazyValue.evaluate = function (evaluate) {
+	return function (context) {
+		var value = evaluate.call(this, context);
+		if (value.is(LazyValue)) {
+			return value.expression.evaluate(value.context);
+		} else {
+			return value;
+		}
+	};
+};
+
+
 function StringValue(value) {
 	AbstractValue.call(this);
 	this.value = '' + value;
