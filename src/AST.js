@@ -95,13 +95,13 @@ VariableNode.prototype.getFreeVariables = function () {
 	return [this.name];
 };
 
-VariableNode.prototype.evaluate = LazyValue.evaluate(function (context) {
+VariableNode.prototype.evaluate = function (context) {
 	if (context.has(this.name)) {
-		return context.top(this.name);
+		return LazyValue.evaluate(context.top(this.name));
 	} else {
-		return AbstractValue.unmarshal(getGlobalValue(this.name));
+		return LazyValue.evaluate(AbstractValue.unmarshal(getGlobalValue(this.name)));
 	}
-});
+};
 
 VariableNode.prototype.compileExpression = function () {
 	return this.name;
@@ -209,19 +209,16 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 	return this.left.getFreeVariables();
 };
 
-FieldAccessNode.prototype.evaluate = LazyValue.evaluate(function (context) {
-	var left = this.left.evaluate(context);
-	if (left.isAny(ObjectValue, NativeObjectValue)) {
-		if (left.context.has(this.name)) {
-			return left.context.top(this.name).bindThis(left);
-		} else {
-			return UndefinedValue.INSTANCE;
-		}
+FieldAccessNode.prototype.evaluate = function (context) {
+	var left = LazyValue.evaluate(this.left.evaluate(context));
+	if (left.isAny(ObjectValue, NativeObjectValue) && left.context.has(this.name)) {
+		return LazyValue.evaluate(left.context.top(this.name).bindThis(left));
 	} else if (left.isAny(ComplexValue, StringValue, ArrayValue, NativeArrayValue, Closure) && left.prototype.has(this.name)) {
-		return left.prototype.top(this.name).bindThis(left);
+		return LazyValue.evaluate(left.prototype.top(this.name).bindThis(left));
+	} else {
+		throw new LambdaRuntimeError();
 	}
-	throw new LambdaRuntimeError();
-});
+};
 
 FieldAccessNode.prototype.compileExpression = function () {
 	return '(' + this.left.compileExpression() + ').' + this.name;
@@ -246,28 +243,28 @@ SubscriptNode.prototype.getFreeVariables = function () {
 	return this.expression.getFreeVariables().union(this.index.getFreeVariables());
 };
 
-SubscriptNode.prototype.evaluate = LazyValue.evaluate(function (context) {
-	var value = this.expression.evaluate(context);
+SubscriptNode.prototype.evaluate = function (context) {
+	var value = LazyValue.evaluate(this.expression.evaluate(context));
 	if (value.isAny(ArrayValue, NativeArrayValue, StringValue)) {
 		var index = this.index.evaluate(context);
 		if (index.is(IntegerValue)) {
 			if (value.is(ArrayValue)) {
 				if (index.value >= 0 && index.value < value.array.length) {
-					return value.array[index.value];
+					return LazyValue.evaluate(value.array[index.value]);
 				}
 			} else if (value.is(NativeArrayValue)) {
 				if (index.value >= 0 && index.value < value.array.length) {
-					return AbstractValue.unmarshal(value.array[index.value]);
+					return LazyValue.evaluate(AbstractValue.unmarshal(value.array[index.value]));
 				}
 			} else if (value.is(StringValue)) {
 				if (index.value >= 0 && index.value < value.value.length) {
-					return value.value[index.value];
+					return LazyValue.evaluate(value.value[index.value]);
 				}
 			}
 		}
 	}
 	throw new LambdaRuntimeError();
-});
+};
 
 SubscriptNode.prototype.compileExpression = function () {
 	return '(' + this.expression.compileExpression() + ')[' + this.index.compileExpression() + ']';

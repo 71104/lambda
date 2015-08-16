@@ -204,8 +204,8 @@ module.exports.testUnmarshalString2 = function (test) {
 
 module.exports.testUnmarshalNoArgFunction = function (test) {
 	var value = Lambda.AbstractValue.unmarshal(function () {});
-	test.ok(value.is(Lambda.Closure));
-	test.ok(value.lambda.body.is(Lambda.NativeNode));
+	test.ok(value.is(Lambda.LazyValue));
+	test.ok(value.expression.is(Lambda.NativeNode));
 	test.done();
 };
 

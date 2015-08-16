@@ -1,6 +1,9 @@
 Closure.prototype.prototype = new Context();
 
 Closure.prototype.prototype = Closure.prototype.prototype.addAll({
+	length: LazyValue.unmarshal(function () {
+		return this.length;
+	}),
 	apply: Closure.unmarshal(function (parameters) {
 		return this.apply(null, parameters);
 	})

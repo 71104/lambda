@@ -184,7 +184,6 @@ function Closure(lambda, context) {
 	AbstractValue.call(this);
 	this.lambda = lambda;
 	this.context = context;
-	this.prototype = this.prototype.add('length', new IntegerValue(this.getLength()));
 }
 
 exports.Closure = Closure;
@@ -267,6 +266,10 @@ LazyValue.prototype.toString = function () {
 	return 'lazy';
 };
 
+LazyValue.prototype.bindThis = function (value) {
+	return new LazyValue(this.expression, this.context.add('this', value));
+};
+
 LazyValue.prototype.marshal = function () {
 	var node = this.expression;
 	var context = this.context;
@@ -286,18 +289,15 @@ LazyValue.prototype.marshal = function () {
 };
 
 LazyValue.unmarshal = function (value, context) {
-	return new LazyNode(new NativeNode(value, []), context || Context.EMPTY);
+	return new LazyValue(new NativeNode(value, []), context || Context.EMPTY);
 };
 
-LazyValue.evaluate = function (evaluate) {
-	return function (context) {
-		var value = evaluate.call(this, context);
-		if (value.is(LazyValue)) {
-			return value.expression.evaluate(value.context);
-		} else {
-			return value;
-		}
-	};
+LazyValue.evaluate = function (value) {
+	if (value.is(LazyValue)) {
+		return value.expression.evaluate(value.context);
+	} else {
+		return value;
+	}
 };
 
 
@@ -455,7 +455,12 @@ AbstractValue.unmarshal = function (value) {
 	case 'string':
 		return new StringValue(value);
 	case 'function':
-		return Closure.unmarshal(value);
+		if (value.length > 0) {
+			return Closure.unmarshal(value);
+		} else {
+			return LazyValue.unmarshal(value);
+		}
+		break;
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
