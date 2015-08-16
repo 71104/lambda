@@ -1,4 +1,7 @@
 ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Context({
+	length: LazyValue.unmarshal(function () {
+		return this.length;
+	}),
 	slice: Closure.unmarshal(function (begin, end) {
 		return this.slice(begin, end);
 	}),
@@ -48,6 +51,9 @@ ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Cont
 		return this.reduceRight(function (value, element) {
 			return callback(value, element);
 		}, value);
+	}),
+	reverse: LazyValue.unmarshal(function () {
+		return this.slice().reverse();
 	}),
 	sort: Closure.unmarshal(function (compare) {
 		return this.sort(function (a, b) {

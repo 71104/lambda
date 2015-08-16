@@ -327,7 +327,6 @@ StringValue.prototype.marshal = function () {
 function ArrayValue(array) {
 	AbstractValue.call(this);
 	this.array = array = array || [];
-	this.prototype = this.prototype.add('length', new IntegerValue(array.length));
 }
 
 exports.ArrayValue = ArrayValue;
@@ -352,7 +351,6 @@ ArrayValue.prototype.marshal = function () {
 function NativeArrayValue(array) {
 	AbstractValue.call(this);
 	this.array = array;
-	this.prototype = this.prototype.add('length', new IntegerValue(array.length));
 }
 
 exports.NativeArrayValue = NativeArrayValue;
