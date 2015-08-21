@@ -99,7 +99,9 @@ VariableNode.prototype.evaluate = function (context) {
 	if (context.has(this.name)) {
 		return LazyValue.evaluate(context.top(this.name));
 	} else {
-		return LazyValue.evaluate(AbstractValue.unmarshal(getGlobalValue(this.name)));
+		return LazyValue.evaluate(AbstractValue.unmarshal(getGlobalValue(this.name, function () {
+			throw new LambdaRuntimeError();
+		})));
 	}
 };
 
@@ -395,7 +397,13 @@ LetNode.prototype.evaluate = function (context) {
 					return context.add(name, new ObjectValue(augment(Context.EMPTY, index + 1)));
 				}
 			} else {
-				return augment(context.add(name, AbstractValue.unmarshal(getGlobalValue(name))), index);
+				return augment(context.add(name, (function () {
+					try {
+						return AbstractValue.unmarshal(getGlobalValue(name));
+					} catch (e) {
+						return new ObjectValue(Context.EMPTY);
+					}
+				}())), index);
 			}
 		} else if (index < names.length) {
 			return context.add(names[index], value);

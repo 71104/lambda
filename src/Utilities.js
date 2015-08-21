@@ -16,9 +16,15 @@ Array.prototype.union = function () {
 	return this.concat.apply(this, arguments).unique();
 };
 
-function getGlobalValue(name) {
+function getGlobalValue(name, fallback) {
 	try {
 		/*jshint evil: true */
 		return eval(name);
-	} catch (e) {}
+	} catch (e) {
+		if (fallback) {
+			return fallback();
+		} else {
+			throw e;
+		}
+	}
 }

@@ -372,7 +372,7 @@ NativeArrayValue.prototype.marshal = function () {
 
 function ObjectValue(context) {
 	AbstractValue.call(this);
-	this.context = context;
+	this.context = context || Context.EMPTY;
 }
 
 exports.ObjectValue = ObjectValue;
