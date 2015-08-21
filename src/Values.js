@@ -453,12 +453,7 @@ AbstractValue.unmarshal = function (value) {
 	case 'string':
 		return new StringValue(value);
 	case 'function':
-		if (value.length > 0) {
-			return Closure.unmarshal(value);
-		} else {
-			return LazyValue.unmarshal(value);
-		}
-		break;
+		return Closure.unmarshal(value);
 	case 'object':
 		if (value === null) {
 			return NullValue.INSTANCE;
