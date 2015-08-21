@@ -1,9 +1,9 @@
 function Context(hash) {
-	this.hash = {};
+	this.hash = Object.create(null);
 	if (hash) {
 		for (var name in hash) {
 			if (hash.hasOwnProperty(name)) {
-				this.hash[Context.PREFIX + name] = hash[name];
+				this.hash[name] = hash[name];
 			}
 		}
 	}
@@ -11,14 +11,11 @@ function Context(hash) {
 
 exports.Context = Context;
 
-Context.PREFIX = 'LAMBDA ';
-
 Context.prototype.has = function (name) {
-	return (Context.PREFIX + name) in this.hash;
+	return name in this.hash;
 };
 
 Context.prototype.top = function (name) {
-	name = Context.PREFIX + name;
 	if (name in this.hash) {
 		return this.hash[name];
 	} else {
@@ -28,9 +25,7 @@ Context.prototype.top = function (name) {
 
 Context.prototype.forEach = function (callback, context) {
 	for (var name in this.hash) {
-		if (name.substr(0, Context.PREFIX.length) === Context.PREFIX) {
-			callback.call(context || null, name.substr(Context.PREFIX.length), this.hash[name]);
-		}
+		callback.call(context, name, this.hash[name]);
 	}
 };
 
@@ -38,7 +33,7 @@ Context.prototype.add = function (name, value) {
 	function Hash() {}
 	Hash.prototype = this.hash;
 	var hash = new Hash();
-	hash[Context.PREFIX + name] = value;
+	hash[name] = value;
 	var context = new Context();
 	context.hash = hash;
 	return context;
@@ -50,7 +45,7 @@ Context.prototype.addAll = function (hash) {
 	var child = new Hash();
 	for (var name in hash) {
 		if (hash.hasOwnProperty(name)) {
-			child[Context.PREFIX + name] = hash[name];
+			child[name] = hash[name];
 		}
 	}
 	var context = new Context();
