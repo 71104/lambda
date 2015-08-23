@@ -656,9 +656,9 @@ NativeNode.prototype.evaluate = function (context) {
 };
 
 
-function SemiNativeNode(overloads, ariety) {
+function SemiNativeNode(evaluator, ariety) {
 	AbstractNode.call(this);
-	this.overloads = overloads;
+	this.evaluator = evaluator;
 	this.argumentNames = [];
 	for (var i = 0; i < ariety; i++) {
 		this.argumentNames.push('' + i);
@@ -674,6 +674,13 @@ SemiNativeNode.prototype.getFreeVariables = function () {
 };
 
 SemiNativeNode.prototype.evaluate = function (context) {
+	var thisValue = (function () {
+		if (context.has('this')) {
+			return context.top('this');
+		} else {
+			return null;
+		}
+	}());
 	var argumentValues = this.argumentNames.map(function (name) {
 		if (context.has(name)) {
 			return context.top(name);
@@ -681,24 +688,50 @@ SemiNativeNode.prototype.evaluate = function (context) {
 			throw new LambdaInternalError();
 		}
 	});
-	var overload = this.overloads;
-	argumentValues.forEach(function (argument) {
-		for (var key in overload) {
-			if (overload.hasOwnProperty(key)) {
-				if ((new RegExp('^(' + key + ')$')).test(argument.type)) {
-					overload = overload[key];
-					return;
-				}
+	return this.evaluator.apply(thisValue, argumentValues);
+};
+
+SemiNativeNode.makeValue = function (evaluator) {
+	var node = new SemiNativeNode(evaluator, evaluator.length);
+	if (evaluator.length > 0) {
+		return new Closure((function makeLambda(count) {
+			if (count > 0) {
+				return new LambdaNode('' + (count - 1), makeLambda(count - 1));
+			} else {
+				return node;
 			}
-		}
-		throw new LambdaRuntimeError();
-	});
-	return overload.apply(null, argumentValues);
+		}(evaluator.length)), Context.EMPTY);
+	} else {
+		return new LazyValue(node, Context.EMPTY);
+	}
 };
 
 
+function OperatorNode(overloads, ariety) {
+	SemiNativeNode.call(this, function () {
+		var overload = overloads;
+		[].forEach.call(arguments, function (argument) {
+			for (var key in overload) {
+				if (overload.hasOwnProperty(key)) {
+					if ((new RegExp('^(' + key + ')$')).test(argument.type)) {
+						overload = overload[key];
+						return;
+					}
+				}
+			}
+			throw new LambdaRuntimeError();
+		});
+		return overload.apply(null, arguments);
+	}, ariety);
+}
+
+exports.OperatorNode = OperatorNode;
+
+OperatorNode.prototype = Object.create(SemiNativeNode.prototype);
+
+
 function UnaryOperatorNode(overloads) {
-	LambdaNode.call(this, '0', new SemiNativeNode(overloads, 1));
+	LambdaNode.call(this, '0', new OperatorNode(overloads, 1));
 }
 
 exports.UnaryOperatorNode = UnaryOperatorNode;
@@ -707,7 +740,7 @@ UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
 
 
 function BinaryOperatorNode(overloads) {
-	LambdaNode.call(this, '0', new LambdaNode('1', new SemiNativeNode(overloads, 2)));
+	LambdaNode.call(this, '0', new LambdaNode('1', new OperatorNode(overloads, 2)));
 }
 
 exports.BinaryOperatorNode = BinaryOperatorNode;
