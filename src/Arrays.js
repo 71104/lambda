@@ -6,13 +6,69 @@ ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Cont
 		return this.slice(begin, end);
 	}),
 	concat: Closure.unmarshal(function (other) {
-		return this.concat(other);
+		var result = this.slice();
+		for (var i = 0; i < other.length; i++) {
+			result.push(other[i]);
+		}
+		return result;
 	}),
-	indexOf: Closure.unmarshal(function (value) {
-		return this.indexOf(value);
+	indexOf: Closure.unmarshal(function (compare) {
+		for (var i = 0; i < this.length; i++) {
+			if (compare(this[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}),
-	lastIndexOf: Closure.unmarshal(function (value) {
-		return this.lastIndexOf(value);
+	lastIndexOf: Closure.unmarshal(function (compare) {
+		for (var i = this.length - 1; i >= 0; i--) {
+			if (compare(this[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}),
+	contains: Closure.unmarshal(function (compare) {
+		for (var i = 0; i < this.length; i++) {
+			if (compare(this[i])) {
+				return true;
+			}
+		}
+		return false;
+	}),
+	unique: Closure.unmarshal(function (compare) {
+		var result = [];
+		function contains(element) {
+			for (var i = 0; i < result.length; i++) {
+				if (compare(result[i], element)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		for (var i = 0; i < this.length; i++) {
+			if (!contains(this[i])) {
+				result.push(this[i]);
+			}
+		}
+		return result;
+	}),
+	union: Closure.unmarshal(function (other, compare) {
+		var result = this.slice();
+		function contains(element) {
+			for (var i = 0; i < result.length; i++) {
+				if (compare(result[i], element)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		for (var i = 0; i < other.length; i++) {
+			if (!contains(other[i])) {
+				result.push(other[i]);
+			}
+		}
+		return result;
 	}),
 	join: Closure.unmarshal(function (glue) {
 		return this.join(glue);
