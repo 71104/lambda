@@ -30,9 +30,7 @@ Context.prototype.forEach = function (callback, context) {
 };
 
 Context.prototype.add = function (name, value) {
-	function Hash() {}
-	Hash.prototype = this.hash;
-	var hash = new Hash();
+	var hash = Object.create(this.hash);
 	hash[name] = value;
 	var context = new Context();
 	context.hash = hash;
@@ -40,9 +38,7 @@ Context.prototype.add = function (name, value) {
 };
 
 Context.prototype.addAll = function (hash) {
-	function Hash() {}
-	Hash.prototype = this.hash;
-	var child = new Hash();
+	var child = Object.create(this.hash);
 	for (var name in hash) {
 		if (hash.hasOwnProperty(name)) {
 			child[name] = hash[name];

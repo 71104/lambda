@@ -155,10 +155,6 @@ function ComplexValue(real, imaginary) {
 	imaginary = imaginary * 1;
 	this.real = real;
 	this.imaginary = imaginary;
-	this.prototype = new Context({
-		real: new FloatValue(real),
-		imaginary: new FloatValue(imaginary)
-	});
 }
 
 exports.ComplexValue = ComplexValue;
@@ -406,9 +402,7 @@ NativeContext.prototype.top = function (name) {
 };
 
 NativeContext.prototype.add = function (name, value) {
-	function NativeObject() {}
-	NativeObject.prototype = this.object;
-	var object = new NativeObject();
+	var object = Object.create(this.object);
 	object[name] = value.marshal();
 	return new NativeContext(object);
 };

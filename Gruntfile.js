@@ -17,8 +17,9 @@ module.exports = function (grunt) {
 					'src/Lexer.js',
 					'src/Parser.js',
 					'src/Bootstrap.js',
-					'src/Arrays.js',
+					'src/Complex.js',
 					'src/Strings.js',
+					'src/Arrays.js',
 				],
 				dest: 'bin/lambda.js'
 			}
