@@ -304,9 +304,6 @@ LazyValue.evaluate = function (value) {
 function StringValue(value) {
 	AbstractValue.call(this);
 	this.value = '' + value;
-	this.prototype = new Context({
-		length: new IntegerValue(value.length)
-	});
 }
 
 exports.StringValue = StringValue;
