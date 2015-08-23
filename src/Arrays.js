@@ -65,5 +65,23 @@ ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Cont
 				return 0;
 			}
 		});
+	}),
+	search: Closure.unmarshal(function (compare) {
+		var array = this;
+		return (function search(i, j) {
+			if (j < i) {
+				return -1;
+			} else {
+				var k = (i + j) >>> 1;
+				var result = compare(array[k]);
+				if (result < 0) {
+					return search(i, k - 1);
+				} else if (result > 0) {
+					return search(k + 1, j);
+				} else {
+					return k;
+				}
+			}
+		}(0, array.length - 1));
 	})
 });
