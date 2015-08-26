@@ -7,7 +7,7 @@ for (var i = 2; i < process.argv.length; i++) {
 	if (arg.substr(0, 1) !== '-') {
 		process.exit(1);
 	}
-	if (arg.indexOf('c') > 0) {
+	if (arg.contains('c')) {
 		compile = true;
 	}
 }

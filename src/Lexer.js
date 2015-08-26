@@ -48,7 +48,7 @@ function Lexer(input) {
 		if (match(/^(\s|(#.*\n))+/)) {
 			return next();
 		} else if (match(/^[A-Za-z_\$][A-Za-z0-9_\$]*/)) {
-			if (keywords.indexOf(label) < 0) {
+			if (!keywords.contains(label)) {
 				return token = 'identifier';
 			} else {
 				return token = 'keyword:' + label;
