@@ -3,7 +3,13 @@ ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Cont
 		return this.length;
 	}),
 	slice: Closure.unmarshal(function (begin, end) {
-		return this.slice(begin, end);
+		if (begin < 0 || begin >= this.length) {
+			throw new Error('start index out of bounds: ' + begin + ' (length is ' + this.length + ')');
+		} else if (end < 0 || end >= this.length) {
+			throw new Error('end index out of bounds: ' + end + ' (length is ' + this.length + ')');
+		} else {
+			return this.slice(begin, end);
+		}
 	}),
 	concat: Closure.unmarshal(function (other) {
 		var result = this.slice();
@@ -73,7 +79,7 @@ ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Cont
 	join: Closure.unmarshal(function (glue) {
 		return this.join(glue);
 	}),
-	forEach: Closure.unmarshal(function (callback) {
+	each: Closure.unmarshal(function (callback) {
 		this.forEach(function (element) {
 			callback(element);
 		});
