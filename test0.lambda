@@ -1,7 +1,7 @@
 let range = fix (f, a, b ->
   if > a b
   then {}
-  else (f a (- b 1)).concat b) in
+  else (f a (- b 1)).concat {b}) in
  
 let fibonacci = fix (f, n ->
   if or (= n 1) (= n 2)

@@ -13,7 +13,7 @@ in
 let range = fix (f, a, b ->
   if > a b
   then {}
-  else (f a (- b 1)).concat b)
+  else (f a (- b 1)).concat {b})
 in
 
 (range 1 100).map (n ->
