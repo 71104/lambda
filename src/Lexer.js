@@ -1,4 +1,8 @@
 function Lexer(input) {
+	var offset = 0;
+	var line = 0;
+	var column = 0;
+
 	var token, label;
 
 	function match(re) {
@@ -6,6 +10,14 @@ function Lexer(input) {
 		if (result) {
 			label = result[0];
 			input = input.substr(label.length);
+			offset += label.length;
+			line += (label.match(/\n/g) || []).length;
+			var i = label.lastIndexOf('\n');
+			if (i < 0) {
+				column += label.length;
+			} else {
+				column = label.length - 1 - i;
+			}
 			return true;
 		} else {
 			return false;
@@ -124,12 +136,24 @@ function Lexer(input) {
 
 	this.next = next;
 
-	this.end = function () {
-		return token === 'end';
+	this.offset = function () {
+		return offset;
+	};
+
+	this.coordinates = function () {
+		return {
+			offset: offset,
+			line: line,
+			column: column
+		};
 	};
 
 	this.token = function () {
 		return token;
+	};
+
+	this.end = function () {
+		return token === 'end';
 	};
 
 	this.label = function () {
