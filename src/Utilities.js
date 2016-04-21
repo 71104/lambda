@@ -1,30 +1,30 @@
-Array.prototype.contains = function() {
-    return this.indexOf.apply(this, arguments) >= 0;
+Array.prototype.contains = function () {
+  return this.indexOf.apply(this, arguments) >= 0;
 };
 
-Array.prototype.unique = function() {
-    var array = [];
-    for (var i = 0; i < this.length; i++) {
-        if (array.indexOf(this[i]) < 0) {
-            array.push(this[i]);
-        }
+Array.prototype.unique = function () {
+  var array = [];
+  for (var i = 0; i < this.length; i++) {
+    if (array.indexOf(this[i]) < 0) {
+      array.push(this[i]);
     }
-    return array;
+  }
+  return array;
 };
 
-Array.prototype.union = function() {
-    return this.concat.apply(this, arguments).unique();
+Array.prototype.union = function () {
+  return this.concat.apply(this, arguments).unique();
 };
 
 function getGlobalValue(name, fallback) {
-    try {
-        /*jshint evil: true */
-        return eval(name);
-    } catch (e) {
-        if (fallback) {
-            return fallback();
-        } else {
-            throw e;
-        }
+  try {
+    /*jshint evil: true */
+    return eval(name);
+  } catch (e) {
+    if (fallback) {
+      return fallback();
+    } else {
+      throw e;
     }
+  }
 }

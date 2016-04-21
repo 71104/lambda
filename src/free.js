@@ -1,23 +1,23 @@
 var Lambda = require('../bin/lambda.js');
 
 function isSubSet(set1, set2) {
-    return set1.every(function(element1) {
-        return set2.some(function(element2) {
-            return element1 === element2;
-        });
+  return set1.every(function (element1) {
+    return set2.some(function (element2) {
+      return element1 === element2;
     });
+  });
 }
 
 function matchSets(set1, set2) {
-    return isSubSet(set1, set2) && isSubSet(set2, set1);
+  return isSubSet(set1, set2) && isSubSet(set2, set1);
 }
 
 function testSet(expression, variables) {
-    return function(test) {
-        var ast = (new Lambda.Parser(expression)).parse();
-        test.ok(matchSets(ast.getFreeVariables(), variables));
-        test.done();
-    };
+  return function (test) {
+    var ast = (new Lambda.Parser(expression)).parse();
+    test.ok(matchSets(ast.getFreeVariables(), variables));
+    test.done();
+  };
 }
 
 module.exports.testUndefinedLiteral = testSet('undefined', []);

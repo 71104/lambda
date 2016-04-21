@@ -21,17 +21,11 @@ gulp.task('test', ['default'], function () {
 gulp.task('beautify', ['beautify-src', 'beautify-test']);
 
 gulp.task('beautify-src', function () {
-  return gulp.src('src/*.js').pipe(beautify({
-    indentSize: 2,
-    end_with_newline: true
-  })).pipe(gulp.dest('src'));
+  return gulp.src('src/*.js').pipe(beautify()).pipe(gulp.dest('src'));
 });
 
 gulp.task('beautify-test', function () {
-  return gulp.src('test/*.js').pipe(beautify({
-    indentSize: 2,
-    end_with_newline: true
-  })).pipe(gulp.dest('test'));
+  return gulp.src('test/*.js').pipe(beautify()).pipe(gulp.dest('test'));
 });
 
 gulp.task('bin', function () {
