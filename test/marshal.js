@@ -106,7 +106,9 @@ module.exports.testMarshalEmptyObject = function (test) {
   var value = (new Lambda.ObjectValue(Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'object' && value !== null);
   for (var key in value) {
-    test.ok(false);
+    if (value.hasOwnProperty(key)) {
+      test.ok(false);
+    }
   }
   test.done();
 };
@@ -211,6 +213,7 @@ module.exports.testUnmarshalNoArgFunction = function (test) {
 };
 
 module.exports.testUnmarshalOneArgFunction = function (test) {
+  // jshint unused: false
   var value = Lambda.AbstractValue.unmarshal(function (x) {});
   test.ok(value.is(Lambda.Closure));
   test.ok(value.lambda.is(Lambda.LambdaNode));
@@ -219,6 +222,7 @@ module.exports.testUnmarshalOneArgFunction = function (test) {
 };
 
 module.exports.testUnmarshalTwoArgFunction = function (test) {
+  // jshint unused: false
   var value = Lambda.AbstractValue.unmarshal(function (x, y) {});
   test.ok(value.is(Lambda.Closure));
   test.ok(value.lambda.is(Lambda.LambdaNode));

@@ -1,0 +1,13 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "forin": true,
+  "futurehostile": true,
+  "latedef": true,
+  "noarg": true,
+  "nonbsp": true,
+  "strict": false,
+  "undef": true,
+  "unused": true,
+  "boss": true
+}

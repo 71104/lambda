@@ -25,6 +25,7 @@ Context.prototype.top = function (name) {
 
 Context.prototype.forEach = function (callback, context) {
   for (var name in this._hash) {
+    // jshint forin: false
     callback.call(context, name, this._hash[name]);
   }
 };

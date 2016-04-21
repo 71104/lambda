@@ -58,9 +58,19 @@ gulp.task('concat', ['bin'], function () {
   ]).pipe(concat('lambda.js')).pipe(gulp.dest('bin'));
 });
 
-gulp.task('lint', ['concat'], function () {
+gulp.task('lint', ['lint-src', 'lint-test']);
+
+gulp.task('lint-src', ['concat'], function () {
   return gulp.src('bin/lambda.js').pipe(jshint({
-    // TODO
+    predef: {
+      exports: false
+    }
+  })).pipe(jshint.reporter('default'));
+});
+
+gulp.task('lint-test', ['concat'], function () {
+  return gulp.src('test/*.js').pipe(jshint({
+    node: true
   })).pipe(jshint.reporter('default'));
 });
 
