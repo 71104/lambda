@@ -3,9 +3,15 @@ function DefaultContext() {
     return (new Operator()).evaluate(Context.EMPTY);
   }
 
+  var seq = (new ApplicationNode(
+    FixNode.INSTANCE,
+    new LambdaNode('f', new LambdaNode('x', new VariableNode('f')))
+  )).evaluate(Context.EMPTY);
+
   Context.call(this, {
     'typeof': evaluate(TypeOfOperator),
     'not': evaluate(LogicalNotOperator),
+    'seq': seq,
     '~': evaluate(BitwiseNotOperator),
     '+': evaluate(PlusOperator),
     '-': evaluate(MinusOperator),
