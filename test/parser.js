@@ -155,7 +155,7 @@ module.exports.testSubscript2 = function (test) {
 };
 
 module.exports.testPolymorphicLambda1 = function (test) {
-  var ast = parse('x -> y');
+  var ast = parse('fn x -> y');
   test.ok(ast.is(Lambda.LambdaNode));
   test.ok(ast.name === 'x');
   test.ok(ast.body.is(Lambda.VariableNode));
@@ -164,7 +164,7 @@ module.exports.testPolymorphicLambda1 = function (test) {
 };
 
 module.exports.testPolymorphicLambda2 = function (test) {
-  var ast = parse('y -> x');
+  var ast = parse('fn y -> x');
   test.ok(ast.is(Lambda.LambdaNode));
   test.ok(ast.name === 'y');
   test.ok(ast.body.is(Lambda.VariableNode));
@@ -173,7 +173,7 @@ module.exports.testPolymorphicLambda2 = function (test) {
 };
 
 module.exports.testMultiplePolymorphicLambda1 = function (test) {
-  var ast = parse('x, y -> 0');
+  var ast = parse('fn x, y -> 0');
   test.ok(ast.is(Lambda.LambdaNode));
   test.ok(ast.name === 'x');
   test.ok(ast.body.is(Lambda.LambdaNode));
@@ -185,7 +185,7 @@ module.exports.testMultiplePolymorphicLambda1 = function (test) {
 };
 
 module.exports.testMultiplePolymorphicLambda2 = function (test) {
-  var ast = parse('y, x -> false');
+  var ast = parse('fn y, x -> false');
   test.ok(ast.is(Lambda.LambdaNode));
   test.ok(ast.name === 'y');
   test.ok(ast.body.is(Lambda.LambdaNode));

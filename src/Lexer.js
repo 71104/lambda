@@ -43,6 +43,7 @@ function Lexer(input) {
     'complex',
     'string',
     'regex',
+    'fn',
     'let',
     'in',
     'if',

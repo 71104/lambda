@@ -128,23 +128,9 @@ Parser.prototype.parseLambdaPartial = function (terminators) {
   }
 };
 
-Parser.prototype.parseLambdaOrVariable = function (terminators) {
-  var name = this.lexer.label();
-  switch (this.lexer.next()) {
-  case 'comma':
-    if (terminators.contains('comma')) {
-      return this.parseSubscriptOrFieldAccess(new VariableNode(name));
-    } else {
-      this.lexer.next();
-      return new LambdaNode(name, this.parseLambdaPartial(terminators));
-    }
-    break;
-  case 'arrow':
-    this.lexer.next();
-    return new LambdaNode(name, this.parseClass3(terminators));
-  default:
-    return this.parseSubscriptOrFieldAccess(new VariableNode(name));
-  }
+Parser.prototype.parseLambda = function (terminators) {
+  this.lexer.expect('keyword:fn');
+  return this.parseLambdaPartial(terminators);
 };
 
 Parser.prototype.parseLetPartial = function (terminators) {
@@ -214,8 +200,8 @@ Parser.prototype.parseTry = function (terminators) {
 
 Parser.prototype.parseClass2 = function (terminators) {
   switch (this.lexer.token()) {
-  case 'identifier':
-    return this.parseLambdaOrVariable(terminators);
+  case 'keyword:fn':
+    return this.parseLambda(terminators);
   case 'keyword:let':
     return this.parseLet(terminators);
   case 'keyword:if':
