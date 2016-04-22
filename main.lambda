@@ -1,4 +1,4 @@
-let main = fix (f, x -> f) in
+let main = fix fn f, x -> f in
 
 main
     (console.log "hello 1")

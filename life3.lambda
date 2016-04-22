@@ -1,61 +1,58 @@
 # generates an array of n natural numbers
-let range = (fix range, n ->
-	if > n 0
-	then (range (- n 1)).concat {- n 1}
-	else {}) in
-
-# sequential execution
-let seq = (fix f, x -> f) in
+let range = fix fn range, n ->
+  if > n 0
+  then (range (- n 1)).concat {- n 1}
+  else {} in
 
 # prints a grid
-let print = (grid, next -> seq
-	(grid.forEach row ->
-		console.log ((row.map cell ->
-			if != 0 cell
-			then "*"
-			else " ").join ""))
-	(next grid)) in
+let print = fn grid, next -> seq
+  (grid.forEach fn row ->
+    console.log ((row.map fn cell ->
+      if != 0 cell
+      then "*"
+      else " ").join ""))
+  (next grid) in
 
 # wraps coordinates
-let mod = (i, n -> % (+ (% i n) n) n) in
+let mod = fn i, n -> % (+ (% i n) n) n in
 
 # samples a circular array at the given index
-let get = (array, i -> array[mod i array.length]) in
+let get = fn array, i -> array[mod i array.length] in
 
 # returns the count of live neighbors of the specified coordinates
-let liveNeighbors = (grid, i, j ->
-	{
-		get (get grid (- i 1)) (- j 1),
-		get (get grid (- i 1)) j,
-		get (get grid (- i 1)) (+ j 1),
-		get (get grid i) (- j 1),
-		get (get grid i) (+ j 1),
-		get (get grid (+ i 1)) (- j 1),
-		get (get grid (+ i 1)) j,
-		get (get grid (+ i 1)) (+ j 1)
-	}.reduce + 0) in
+let liveNeighbors = fn grid, i, j ->
+  {
+    get (get grid (- i 1)) (- j 1),
+    get (get grid (- i 1)) j,
+    get (get grid (- i 1)) (+ j 1),
+    get (get grid i) (- j 1),
+    get (get grid i) (+ j 1),
+    get (get grid (+ i 1)) (- j 1),
+    get (get grid (+ i 1)) j,
+    get (get grid (+ i 1)) (+ j 1)
+  }.reduce + 0 in
 
 # steps a grid to the next state
-let step = (grid ->
-	(range grid.length).map i ->
-		(range grid[i].length).map j ->
-			let liveCount = liveNeighbors grid i j in
-				if != 0 grid[i][j]
-				then if or (= 2 liveCount) (= 3 liveCount) then 1 else 0
-				else if = 3 liveCount then 1 else 0) in
+let step = fn grid ->
+  (range grid.length).map fn i ->
+    (range grid[i].length).map fn j ->
+      let liveCount = liveNeighbors grid i j in
+        if != 0 grid[i][j]
+        then if or (= 2 liveCount) (= 3 liveCount) then 1 else 0
+        else if = 3 liveCount then 1 else 0 in
 
 # initial state
 let grid = {
-	{0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-	{1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+  {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+  {1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 } in
 
-print grid (fix f, grid -> print (step grid) f)
+print grid (fix fn f, grid -> print (step grid) f)
