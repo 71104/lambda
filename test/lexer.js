@@ -36,7 +36,6 @@ module.exports.testOrKeyword = testTokens('or', ['keyword:or']);
 module.exports.testXorKeyword = testTokens('xor', ['keyword:xor']);
 module.exports.testFixKeyword = testTokens('fix', ['keyword:fix']);
 module.exports.testThisKeyword = testTokens('this', ['keyword:this']);
-module.exports.testNewKeyword = testTokens('new', ['keyword:new']);
 module.exports.testBoolKeyword = testTokens('bool', ['keyword:bool']);
 module.exports.testUnknownKeyword = testTokens('unknown', ['keyword:unknown']);
 module.exports.testIntKeyword = testTokens('int', ['keyword:int']);
@@ -44,6 +43,7 @@ module.exports.testFloatKeyword = testTokens('float', ['keyword:float']);
 module.exports.testFloatKeyword = testTokens('complex', ['keyword:complex']);
 module.exports.testStringKeyword = testTokens('string', ['keyword:string']);
 module.exports.testRegexKeyword = testTokens('regex', ['keyword:regex']);
+module.exports.testRegexKeyword = testTokens('fn', ['keyword:fn']);
 module.exports.testLetKeyword = testTokens('let', ['keyword:let']);
 module.exports.testInKeyword = testTokens('in', ['keyword:in']);
 module.exports.testIfKeyword = testTokens('if', ['keyword:if']);
@@ -174,6 +174,13 @@ module.exports.testFloat6 = testTokens('923.657', [{
   type: 'float',
   label: 923.657
 }]);
+module.exports.testFloat7 = testTokens('34.56.str', [{
+  type: 'float',
+  label: 34.56
+}, 'point', {
+  type: 'identifier',
+  label: 'str'
+}]);
 
 module.exports.testInteger1 = testTokens('0', [{
   type: 'integer',
@@ -186,6 +193,13 @@ module.exports.testInteger2 = testTokens('2', [{
 module.exports.testInteger3 = testTokens('489', [{
   type: 'integer',
   label: 489
+}]);
+module.exports.testInteger4 = testTokens('12.str', [{
+  type: 'integer',
+  label: 12
+}, 'point', {
+  type: 'identifier',
+  label: 'str'
 }]);
 
 module.exports.testEmptyString = testTokens('""', [{

@@ -35,7 +35,6 @@ function Lexer(input) {
     'xor',
     'fix',
     'this',
-    'new',
     'bool',
     'unknown',
     'int',
