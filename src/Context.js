@@ -53,6 +53,7 @@ Context.prototype.addAll = function (hash) {
 Context.prototype.extend = function (context) {
   var child = Object.create(this._hash);
   for (var name in context._hash) {
+    // jshint forin: false
     child[name] = context._hash[name];
   }
   var result = new Context();
