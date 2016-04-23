@@ -23,6 +23,15 @@ Context.prototype.top = function (name) {
   }
 };
 
+Context.prototype.names = function () {
+  var names = [];
+  for (var name in this._hash) {
+    // jshint forin: false
+    names.push(name);
+  }
+  return names;
+};
+
 Context.prototype.forEach = function (callback, context) {
   for (var name in this._hash) {
     // jshint forin: false
