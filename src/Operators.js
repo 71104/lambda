@@ -39,26 +39,9 @@ BitwiseNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 function PlusOperator() {
   BinaryOperatorNode.call(this, {
-    'undefined': {
-      'string': function (x, y) {
-        return new StringValue('undefined' + y.value);
-      }
-    },
-    'null': {
-      'string': function (x, y) {
-        return new StringValue('null' + y.value);
-      }
-    },
     'bool': {
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value, y.value);
-      },
-      'string': function (x, y) {
-        if (x.value) {
-          return new StringValue('true' + y.value);
-        } else {
-          return new StringValue('false' + y.value);
-        }
       }
     },
     'int': {
@@ -70,9 +53,6 @@ function PlusOperator() {
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value + y.real, y.imaginary);
-      },
-      'string': function (x, y) {
-        return new StringValue(('' + x.value) + y.value);
       }
     },
     'float': {
@@ -81,9 +61,6 @@ function PlusOperator() {
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value + y.real, y.imaginary);
-      },
-      'string': function (x, y) {
-        return new StringValue(('' + x.value) + y.value);
       }
     },
     'complex': {
@@ -92,31 +69,9 @@ function PlusOperator() {
       },
       'complex': function (x, y) {
         return new ComplexValue(x.real + y.real, x.imaginary + y.imaginary);
-      },
-      'string': function (x, y) {
-        return new StringValue(x.toString() + y.value);
       }
     },
     'string': {
-      'undefined': function (x) {
-        return new StringValue(x.value + 'undefined');
-      },
-      'null': function (x) {
-        return new StringValue(x.value + 'null');
-      },
-      'bool': function (x, y) {
-        if (y.value) {
-          return new StringValue(x.value + 'true');
-        } else {
-          return new StringValue(x.value + 'false');
-        }
-      },
-      'int|float': function (x, y) {
-        return new StringValue(x.value + y.value);
-      },
-      'complex': function (x, y) {
-        return new StringValue(x.value + y.toString());
-      },
       'string': function (x, y) {
         return new StringValue(x.value + y.value);
       }
@@ -329,6 +284,11 @@ function LessThanOperator() {
       'int|float': function (x, y) {
         return BooleanValue.unmarshal(x.value < y.value);
       }
+    },
+    'string': {
+      'string': function (x, y) {
+        return BooleanValue.unmarshal(x.value < y.value);
+      }
     }
   });
 }
@@ -347,6 +307,11 @@ function LessThanOrEqualOperator() {
     },
     'int|float': {
       'int|float': function (x, y) {
+        return BooleanValue.unmarshal(x.value <= y.value);
+      }
+    },
+    'string': {
+      'string': function (x, y) {
         return BooleanValue.unmarshal(x.value <= y.value);
       }
     }
@@ -369,6 +334,11 @@ function GreaterThanOperator() {
       'int|float': function (x, y) {
         return BooleanValue.unmarshal(x.value > y.value);
       }
+    },
+    'string': {
+      'string': function (x, y) {
+        return BooleanValue.unmarshal(x.value > y.value);
+      }
     }
   });
 }
@@ -387,6 +357,11 @@ function GreaterThanOrEqualOperator() {
     },
     'int|float': {
       'int|float': function (x, y) {
+        return BooleanValue.unmarshal(x.value >= y.value);
+      }
+    },
+    'string': {
+      'string': function (x, y) {
         return BooleanValue.unmarshal(x.value >= y.value);
       }
     }
