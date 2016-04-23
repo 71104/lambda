@@ -70,7 +70,7 @@ let grid.advance_n_steps = fix fn f, g, n ->
 in
 
 let grid.print = fn g ->
-    g.forEach fn r ->
+    g.each fn r ->
         console.log (r.reduce (fn a, v -> + a (if = v 1 then "*" else " ")) "")
 in
 
@@ -83,7 +83,7 @@ let m = {{0, 1, 0, 0, 0, 0, 0},
          {0, 0, 0, 0, 0, 0, 0}}
 in
 
-(range 0 10).forEach fn n ->
+(range 0 10).each fn n ->
     seq
         (console.log (+ "Round #" n))
         (console.log "")

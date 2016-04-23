@@ -6,7 +6,7 @@ let range = fix fn range, n ->
 
 # prints a grid
 let print = fn grid, next -> seq
-  (grid.forEach fn row ->
+  (grid.each fn row ->
     console.log ((row.map fn cell ->
       if != 0 cell
       then "*"
