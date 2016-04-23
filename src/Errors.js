@@ -1,10 +1,9 @@
 function LambdaError(message) {
-  this.message = Error(message).toString();
+  this._error = Error(message);
+  this.message = message;
 }
 
 exports.Error = LambdaError;
-
-LambdaError.prototype = Object.create(Error.prototype);
 
 LambdaError.prototype.toString = function () {
   return this.message;
@@ -27,6 +26,15 @@ function LambdaSyntaxError() {
 exports.SyntaxError = LambdaSyntaxError;
 
 LambdaSyntaxError.prototype = Object.create(LambdaError.prototype);
+
+
+function LambdaTypeError() {
+  LambdaError.call(this, 'type error');
+}
+
+exports.TypeError = LambdaTypeError;
+
+LambdaTypeError.prototype = Object.create(LambdaError.prototype);
 
 
 function LambdaRuntimeError() {

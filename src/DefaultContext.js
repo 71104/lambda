@@ -5,7 +5,7 @@ function DefaultContext() {
 
   var seq = (new ApplicationNode(
     FixNode.INSTANCE,
-    new LambdaNode('f', new LambdaNode('x', new VariableNode('f')))
+    new LambdaNode('f', null, new LambdaNode('x', null, new VariableNode('f')))
   )).evaluate(Context.EMPTY);
 
   Context.call(this, {
@@ -28,7 +28,6 @@ function DefaultContext() {
     '^': evaluate(BitwiseXorOperator),
     '<<': evaluate(LeftShiftOperator),
     '>>': evaluate(RightShiftOperator),
-    '>>>': evaluate(UnsignedRightShiftOperator),
     '=': evaluate(ComparisonOperator),
     '!=': evaluate(NegatedComparisonOperator),
     'and': evaluate(LogicalAndOperator),

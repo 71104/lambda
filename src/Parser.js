@@ -5,7 +5,7 @@ function Parser(input) {
 exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
-  return new LiteralNode(new IntegerValue(this.lexer.expect('integer')));
+  return new LiteralNode(new UnsignedIntegerValue(this.lexer.expect('integer')));
 };
 
 Parser.prototype.parseComplex = function () {
@@ -114,15 +114,76 @@ Parser.prototype.parseClass1 = function () {
   return this.parseSubscriptOrFieldAccess(this.parseClass0());
 };
 
+Parser.prototype.parseTypeClass0 = function () {
+  var token = this.lexer.token();
+  this.lexer.next();
+  switch (token) {
+  case 'keyword:undefined':
+    return UndefinedType.INSTANCE;
+  case 'keyword:null':
+    return NullType.INSTANCE;
+  case 'keyword:bool':
+    return BooleanType.INSTANCE;
+  case 'keyword:complex':
+    return ComplexType.INSTANCE;
+  case 'keyword:float':
+    return FloatType.INSTANCE;
+  case 'keyword:int':
+    return IntegerType.INSTANCE;
+  case 'keyword:uint':
+    return UnsignedIntegerType.INSTANCE;
+  case 'keyword:string':
+    return StringType.INSTANCE;
+  case 'keyword:unknown':
+    return UnknownType.INSTANCE;
+  case 'left':
+    var type = this.parseTypeClass2();
+    this.lexer.expect('right');
+    return type;
+  default:
+    throw new LambdaSyntaxError();
+  }
+};
+
+Parser.prototype.parseTypeClass1 = function () {
+  var type = this.parseTypeClass0();
+  while (this.lexer.token() === 'asterisk') {
+    type = new ArrayType(type);
+    this.lexer.next();
+  }
+  return type;
+};
+
+Parser.prototype.parseTypeClass2 = function () {
+  var left = this.parseTypeClass1();
+  if (this.lexer.token() !== 'arrow') {
+    return left;
+  } else {
+    this.lexer.next();
+    return new LambdaType(left, this.parseTypeClass2());
+  }
+};
+
+Parser.prototype.parseType = function () {
+  return this.parseTypeClass2();
+};
+
 Parser.prototype.parseLambdaPartial = function (terminators) {
   var name = this.lexer.expect('identifier');
+  var type = function () {
+    if (this.lexer.token() !== 'colon') {
+      return null;
+    } else {
+      return this.parseType(['comma', 'arrow']);
+    }
+  }.call(this);
   switch (this.lexer.token()) {
   case 'comma':
     this.lexer.next();
-    return new LambdaNode(name, this.parseLambdaPartial(terminators));
+    return new LambdaNode(name, type, this.parseLambdaPartial(terminators));
   case 'arrow':
     this.lexer.next();
-    return new LambdaNode(name, this.parseClass3(terminators));
+    return new LambdaNode(name, type, this.parseClass3(terminators));
   default:
     throw new LambdaSyntaxError();
   }

@@ -95,6 +95,14 @@ VariableNode.prototype.getFreeVariables = function () {
   return [this.name];
 };
 
+VariableNode.prototype.getType = function (context) {
+  if (context.hash(this.name)) {
+    return context.top(this.name);
+  } else {
+    return UnknownType.INSTANCE;
+  }
+};
+
 VariableNode.prototype.evaluate = function (context) {
   if (context.has(this.name)) {
     return LazyValue.evaluate(context.top(this.name));
@@ -126,6 +134,10 @@ FixNode.prototype.getFreeVariables = function () {
   return [];
 };
 
+FixNode.prototype.getType = function () {
+  return FixNode.TYPE;
+};
+
 FixNode.prototype.evaluate = function () {
   return FixNode.Z_COMBINATOR;
 };
@@ -149,6 +161,14 @@ ThisNode.prototype = Object.create(AbstractNode.prototype);
 
 ThisNode.prototype.getFreeVariables = function () {
   return ['this'];
+};
+
+ThisNode.prototype.getType = function (context) {
+  if (context.has('this')) {
+    return context.top('this');
+  } else {
+    throw new LambdaTypeError();
+  }
 };
 
 ThisNode.prototype.evaluate = function (context) {
@@ -180,6 +200,14 @@ ErrorNode.prototype.getFreeVariables = function () {
   return ['error'];
 };
 
+ErrorNode.prototype.getType = function (context) {
+  if (context.has('error')) {
+    return context.top('error');
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
 ErrorNode.prototype.evaluate = function (context) {
   if (context.has('error')) {
     return context.top('error');
@@ -209,6 +237,15 @@ FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
 
 FieldAccessNode.prototype.getFreeVariables = function () {
   return this.left.getFreeVariables();
+};
+
+FieldAccessNode.prototype.getType = function (context) {
+  var left = this.left.getType(context);
+  if (left.is(PrototypedType) && left.context.has(this.name)) {
+    return left.context.top(this.name);
+  } else {
+    throw new LambdaTypeError();
+  }
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
@@ -243,6 +280,19 @@ SubscriptNode.prototype.getFreeVariables = function () {
   return this.expression.getFreeVariables().union(this.index.getFreeVariables());
 };
 
+SubscriptNode.prototype.getType = function (context) {
+  if (this.index.getType(context).isSubTypeOf(IntegerType.INSTANCE)) {
+    var expression = this.expression.getType(context);
+    if (expression.is(IndexedType)) {
+      return expression.inner;
+    } else {
+      throw new LambdaTypeError();
+    }
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
 SubscriptNode.prototype.evaluate = function (context) {
   var value = LazyValue.evaluate(this.expression.evaluate(context));
   if (value.isAny(ArrayValue, NativeArrayValue, StringValue)) {
@@ -275,9 +325,10 @@ SubscriptNode.prototype.compileStatement = function () {
 };
 
 
-function LambdaNode(name, body) {
+function LambdaNode(name, type, body) {
   AbstractNode.call(this);
   this.name = name;
+  this.type = type;
   this.body = body;
 }
 
@@ -289,6 +340,15 @@ LambdaNode.prototype.getFreeVariables = function () {
   return this.body.getFreeVariables().filter(function (name) {
     return name !== this.name;
   }, this);
+};
+
+LambdaNode.prototype.getType = function (context) {
+  if (this.type) {
+    return new LambdaType(this.type, this.body.getType(context.add(this.name, this.type)));
+  } else {
+    var left = new VariableType(this.name);
+    return new ForEachType(this.name, new LambdaType(left, this.body.getType(context.add(this.name, left))));
+  }
 };
 
 LambdaNode.prototype.evaluate = function (context) {
@@ -315,6 +375,10 @@ LazyNode.prototype = Object.create(AbstractNode.prototype);
 
 LazyNode.prototype.getFreeVariables = function () {
   return this.expression.getFreeVariables();
+};
+
+LazyNode.prototype.getType = function (context) {
+  return this.expression.getType(context);
 };
 
 LazyNode.prototype.evaluate = function (context) {
@@ -379,10 +443,34 @@ LetNode.prototype.getFreeVariables = function () {
   }, this));
 };
 
+LetNode.prototype.getType = function (context) {
+  var names = this.names;
+  var expression = this.expression.getType(context);
+  return this.body.getType(function augment(context, index) {
+    if (index < names.length - 1) {
+      var name = names[index];
+      if (context.has(name)) {
+        var object = context.top(name);
+        if (object.is(PrototypedType)) {
+          return context.add(name, new ObjectType(augment(object.context, index + 1)));
+        } else {
+          return context.add(name, new ObjectType(augment(Context.EMPTY, index + 1)));
+        }
+      } else {
+        return augment(context.add(name, UnknownType.INSTANCE), index);
+      }
+    } else if (index < names.length) {
+      return context.add(names[index], expression);
+    } else {
+      throw new LambdaInternalError();
+    }
+  }(context, 0));
+};
+
 LetNode.prototype.evaluate = function (context) {
   var names = this.names;
   var value = this.expression.evaluate(context);
-  return this.body.evaluate((function augment(context, index) {
+  return this.body.evaluate(function augment(context, index) {
     if (index < names.length - 1) {
       var name = names[index];
       if (context.has(name)) {
@@ -408,7 +496,7 @@ LetNode.prototype.evaluate = function (context) {
     } else {
       throw new LambdaInternalError();
     }
-  }(context, 0)));
+  }(context, 0));
 };
 
 LetNode.prototype.compileExpression = function () {
@@ -689,21 +777,6 @@ SemiNativeNode.prototype.evaluate = function (context) {
   return this.evaluator.apply(thisValue, argumentValues);
 };
 
-SemiNativeNode.makeValue = function (evaluator) {
-  var node = new SemiNativeNode(evaluator, evaluator.length);
-  if (evaluator.length > 0) {
-    return new Closure((function makeLambda(count) {
-      if (count > 0) {
-        return new LambdaNode('' + (count - 1), makeLambda(count - 1));
-      } else {
-        return node;
-      }
-    }(evaluator.length)), Context.EMPTY);
-  } else {
-    return new LazyValue(node, Context.EMPTY);
-  }
-};
-
 
 function OperatorNode(overloads, ariety) {
   SemiNativeNode.call(this, function () {
@@ -728,8 +801,10 @@ exports.OperatorNode = OperatorNode;
 OperatorNode.prototype = Object.create(SemiNativeNode.prototype);
 
 
+// TODO: operators are not completely polymorphic, they must typed correctly.
+
 function UnaryOperatorNode(overloads) {
-  LambdaNode.call(this, '0', new OperatorNode(overloads, 1));
+  LambdaNode.call(this, '0', null, new OperatorNode(overloads, 1));
 }
 
 exports.UnaryOperatorNode = UnaryOperatorNode;
@@ -738,7 +813,7 @@ UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
 
 
 function BinaryOperatorNode(overloads) {
-  LambdaNode.call(this, '0', new LambdaNode('1', new OperatorNode(overloads, 2)));
+  LambdaNode.call(this, '0', null, new LambdaNode('1', null, new OperatorNode(overloads, 2)));
 }
 
 exports.BinaryOperatorNode = BinaryOperatorNode;

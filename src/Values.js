@@ -215,6 +215,29 @@ BooleanValue.unmarshal = function (value) {
 };
 
 
+function UnsignedIntegerValue(value) {
+  ObjectValue.call(this);
+  this.value = ~~value;
+  if (this.value < 0) {
+    throw new LambdaInternalError();
+  }
+}
+
+exports.UnsignedIntegerValue = UnsignedIntegerValue;
+
+UnsignedIntegerValue.prototype = Object.create(ObjectValue.prototype);
+
+UnsignedIntegerValue.prototype.type = 'uint';
+
+UnsignedIntegerValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+UnsignedIntegerValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
 function IntegerValue(value) {
   ObjectValue.call(this);
   this.value = ~~value;
@@ -349,7 +372,7 @@ Closure.unmarshal = function (value, context) {
     if (index < Math.max(value.length, 1)) {
       var name = '' + index;
       names.push(name);
-      return new LambdaNode(name, makeLambda(index + 1, names));
+      return new LambdaNode(name, UndefinedType.INSTANCE, makeLambda(index + 1, names));
     } else {
       return new NativeNode(value, names);
     }

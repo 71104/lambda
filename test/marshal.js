@@ -58,7 +58,7 @@ module.exports.testMarshalString3 = function (test) {
 };
 
 module.exports.testMarshalClosure1 = function (test) {
-  var ast = new Lambda.LambdaNode('x', new Lambda.LiteralNode(Lambda.NullValue.INSTANCE));
+  var ast = new Lambda.LambdaNode('x', null, new Lambda.LiteralNode(Lambda.NullValue.INSTANCE));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
   test.ok(value(null) === null);
@@ -67,7 +67,7 @@ module.exports.testMarshalClosure1 = function (test) {
 };
 
 module.exports.testMarshalClosure2 = function (test) {
-  var ast = new Lambda.LambdaNode('x', new Lambda.VariableNode('x'));
+  var ast = new Lambda.LambdaNode('x', null, new Lambda.VariableNode('x'));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
   test.ok(value(null) === null);

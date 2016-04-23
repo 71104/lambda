@@ -1,3 +1,15 @@
+StringType.prototype.context = new Context({
+  length: UnsignedIntegerType.INSTANCE,
+  substring: new LambdaType(
+    UnsignedIntegerType.INSTANCE,
+    new LambdaType(
+      UnsignedIntegerType.INSTANCE,
+      StringType.INSTANCE)),
+  prefix: new LambdaType(UnsignedIntegerType.INSTANCE, StringType.INSTANCE),
+  suffix: new LambdaType(UnsignedIntegerType.INSTANCE, StringType.INSTANCE)
+    // TODO
+});
+
 StringValue.prototype.context = ObjectValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;

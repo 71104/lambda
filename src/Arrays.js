@@ -1,3 +1,8 @@
+ArrayType.prototype.context = new Context({
+  length: UnsignedIntegerType.INSTANCE
+    // TODO
+});
+
 ArrayValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;

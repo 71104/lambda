@@ -1,3 +1,7 @@
+IndexedType.prototype.context = new Context({
+  length: UnsignedIntegerType.INSTANCE
+});
+
 BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     if (this.valueOf()) {
@@ -5,6 +9,12 @@ BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
     } else {
       return 'false';
     }
+  })
+});
+
+UnsignedIntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
+  str: LazyValue.unmarshal(function () {
+    return '' + this;
   })
 });
 
@@ -42,10 +52,18 @@ ThisNode.INSTANCE = new ThisNode();
 
 ErrorNode.INSTANCE = new ErrorNode();
 
-FixNode.Z_COMBINATOR = (new LambdaNode('f', new ApplicationNode(
-  new LambdaNode('x', new ApplicationNode(
+FixNode.TYPE = new ForEachType('T', new LambdaType(
+  new LambdaType(
+    new VariableType('T'),
+    new VariableType('T')
+  ),
+  new VariableType('T')
+));
+
+FixNode.Z_COMBINATOR = (new LambdaNode('f', null, new ApplicationNode(
+  new LambdaNode('x', null, new ApplicationNode(
     new VariableNode('f'),
-    new LambdaNode('v', new ApplicationNode(
+    new LambdaNode('v', null, new ApplicationNode(
       new ApplicationNode(
         new VariableNode('x'),
         new VariableNode('x')
@@ -53,9 +71,9 @@ FixNode.Z_COMBINATOR = (new LambdaNode('f', new ApplicationNode(
       new VariableNode('v')
     ))
   )),
-  new LambdaNode('x', new ApplicationNode(
+  new LambdaNode('x', null, new ApplicationNode(
     new VariableNode('f'),
-    new LambdaNode('v', new ApplicationNode(
+    new LambdaNode('v', null, new ApplicationNode(
       new ApplicationNode(
         new VariableNode('x'),
         new VariableNode('x')

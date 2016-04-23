@@ -37,6 +37,7 @@ function Lexer(input) {
     'this',
     'bool',
     'unknown',
+    'uint',
     'int',
     'float',
     'complex',
@@ -114,8 +115,6 @@ function Lexer(input) {
         .replace(/\\t/g, '\t')
         .replace(/\\v/g, '\v');
       return token = 'string';
-    } else if (match(/^>>>/)) {
-      return token = 'symbol';
     } else if (match(/^(<<|>>|\!\=|<\=|>\=|\*\*)/)) {
       return token = 'symbol';
     } else if (match(/^(<|>|\+|\-|\/|\%|\~|\&|\||\^)/)) {
