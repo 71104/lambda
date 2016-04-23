@@ -5,13 +5,12 @@ let range = fix fn range, n ->
   else {} in
 
 # prints a grid
-let print = fn grid, next -> seq
+let print = fn grid ->
   (grid.each fn row ->
     console.log ((row.map fn cell ->
       if != 0 cell
       then "*"
-      else " ").join ""))
-  (next grid) in
+      else " ").join "")) in
 
 # wraps coordinates
 let mod = fn i, n -> % (+ (% i n) n) n in
@@ -20,7 +19,7 @@ let mod = fn i, n -> % (+ (% i n) n) n in
 let get = fn array, i -> array[mod i array.length] in
 
 # returns the count of live neighbors of the specified coordinates
-let liveNeighbors = fn grid, i, j ->
+let live_neighbors = fn grid, i, j ->
   {
     get (get grid (- i 1)) (- j 1),
     get (get grid (- i 1)) j,
@@ -36,10 +35,10 @@ let liveNeighbors = fn grid, i, j ->
 let step = fn grid ->
   (range grid.length).map fn i ->
     (range grid[i].length).map fn j ->
-      let liveCount = liveNeighbors grid i j in
+      let live_count = live_neighbors grid i j in
         if != 0 grid[i][j]
-        then if or (= 2 liveCount) (= 3 liveCount) then 1 else 0
-        else if = 3 liveCount then 1 else 0 in
+        then if or (= 2 live_count) (= 3 live_count) then 1 else 0
+        else if = 3 live_count then 1 else 0 in
 
 # initial state
 let grid = {
@@ -55,4 +54,7 @@ let grid = {
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 } in
 
-print grid (fix fn f, grid -> print (step grid) f)
+(fix fn f, grid ->
+  seq
+    (print grid)
+    (f (step grid))) grid
