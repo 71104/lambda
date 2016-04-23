@@ -215,8 +215,6 @@ FieldAccessNode.prototype.evaluate = function (context) {
   var left = LazyValue.evaluate(this.left.evaluate(context));
   if (left.isAny(ObjectValue, NativeObjectValue) && left.context.has(this.name)) {
     return LazyValue.evaluate(left.context.top(this.name).bindThis(left));
-  } else if (left.isAny(ComplexValue, StringValue, ArrayValue, NativeArrayValue, Closure) && left.prototype.has(this.name)) {
-    return LazyValue.evaluate(left.prototype.top(this.name).bindThis(left));
   } else {
     throw new LambdaRuntimeError();
   }
@@ -349,7 +347,7 @@ ApplicationNode.prototype.getFreeVariables = function () {
 ApplicationNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   if (left.is(Closure)) {
-    return left.lambda.body.evaluate(left.context.add(left.lambda.name, this.right.evaluate(context)));
+    return left.lambda.body.evaluate(left.capture.add(left.lambda.name, this.right.evaluate(context)));
   } else {
     throw new LambdaRuntimeError();
   }

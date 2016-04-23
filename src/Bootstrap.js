@@ -1,9 +1,38 @@
-Closure.prototype.prototype = new Context();
+BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
+  str: LazyValue.unmarshal(function () {
+    if (this.valueOf()) {
+      return 'true';
+    } else {
+      return 'false';
+    }
+  })
+});
 
-Closure.prototype.prototype = Closure.prototype.prototype.addAll({
-  length: LazyValue.unmarshal(function () {
-    return this.length;
+IntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
+  str: LazyValue.unmarshal(function () {
+    return '' + this;
+  })
+});
+
+FloatValue.prototype.context = ObjectValue.prototype.context.addAll({
+  str: LazyValue.unmarshal(function () {
+    return '' + this;
+  })
+});
+
+ComplexValue.prototype.context = ObjectValue.prototype.context.addAll({
+  real: LazyValue.unmarshal(function () {
+    return this.r;
   }),
+  imaginary: LazyValue.unmarshal(function () {
+    return this.i;
+  }),
+  str: LazyValue.unmarshal(function () {
+    return this.toString();
+  })
+});
+
+Closure.prototype.context = ObjectValue.prototype.context.addAll({
   apply: Closure.unmarshal(function (parameters) {
     return this.apply(null, parameters);
   })

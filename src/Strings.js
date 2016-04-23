@@ -1,4 +1,4 @@
-StringValue.prototype.prototype = new Context({
+StringValue.prototype.context = ObjectValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),

@@ -50,4 +50,14 @@ Context.prototype.addAll = function (hash) {
   return context;
 };
 
+Context.prototype.extend = function (context) {
+  var child = Object.create(this._hash);
+  for (var name in context._hash) {
+    child[name] = context._hash[name];
+  }
+  var result = new Context();
+  result._hash = child;
+  return result;
+};
+
 Context.EMPTY = new Context();

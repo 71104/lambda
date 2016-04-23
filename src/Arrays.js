@@ -1,4 +1,4 @@
-ArrayValue.prototype.prototype = NativeArrayValue.prototype.prototype = new Context({
+ArrayValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),

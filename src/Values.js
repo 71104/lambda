@@ -20,232 +20,6 @@ AbstractValue.prototype.bindThis = function () {
 };
 
 
-function UndefinedValue() {
-  AbstractValue.call(this);
-}
-
-exports.UndefinedValue = UndefinedValue;
-
-UndefinedValue.prototype = Object.create(AbstractValue.prototype);
-
-UndefinedValue.prototype.type = 'undefined';
-
-UndefinedValue.prototype.toString = function () {
-  return 'undefined';
-};
-
-UndefinedValue.prototype.marshal = function () {};
-
-UndefinedValue.INSTANCE = new UndefinedValue();
-
-
-function NullValue() {
-  AbstractValue.call(this);
-}
-
-exports.NullValue = NullValue;
-
-NullValue.prototype = Object.create(AbstractValue.prototype);
-
-NullValue.prototype.type = 'null';
-
-NullValue.prototype.toString = function () {
-  return 'null';
-};
-
-NullValue.prototype.marshal = function () {
-  return null;
-};
-
-NullValue.INSTANCE = new NullValue();
-
-
-function BooleanValue(value) {
-  AbstractValue.call(this);
-  this.value = !!value;
-}
-
-exports.BooleanValue = BooleanValue;
-
-BooleanValue.prototype = Object.create(AbstractValue.prototype);
-
-BooleanValue.prototype.type = 'bool';
-
-BooleanValue.prototype.toString = function () {
-  if (this.value) {
-    return 'true';
-  } else {
-    return 'false';
-  }
-};
-
-BooleanValue.prototype.marshal = function () {
-  return this.value;
-};
-
-BooleanValue.TRUE = new BooleanValue(true);
-BooleanValue.FALSE = new BooleanValue(false);
-
-BooleanValue.unmarshal = function (value) {
-  if (value) {
-    return BooleanValue.TRUE;
-  } else {
-    return BooleanValue.FALSE;
-  }
-};
-
-
-function IntegerValue(value) {
-  AbstractValue.call(this);
-  this.value = ~~value;
-}
-
-exports.IntegerValue = IntegerValue;
-
-IntegerValue.prototype = Object.create(AbstractValue.prototype);
-
-IntegerValue.prototype.type = 'int';
-
-IntegerValue.prototype.toString = function () {
-  return '' + this.value;
-};
-
-IntegerValue.prototype.marshal = function () {
-  return this.value;
-};
-
-
-function FloatValue(value) {
-  AbstractValue.call(this);
-  this.value = value * 1;
-}
-
-exports.FloatValue = FloatValue;
-
-FloatValue.prototype = Object.create(AbstractValue.prototype);
-
-FloatValue.prototype.type = 'float';
-
-FloatValue.prototype.toString = function () {
-  return '' + this.value;
-};
-
-FloatValue.prototype.marshal = function () {
-  return this.value;
-};
-
-
-function NativeComplexValue(real, imaginary) {
-  this.r = real;
-  this.i = imaginary;
-}
-
-NativeComplexValue.prototype.toString = function () {
-  if (this.i < 0) {
-    return this.r + '-' + -this.i + 'i';
-  } else {
-    return this.r + '+' + this.i + 'i';
-  }
-};
-
-
-function ComplexValue(real, imaginary) {
-  AbstractValue.call(this);
-  real = real * 1;
-  imaginary = imaginary * 1;
-  this.real = real;
-  this.imaginary = imaginary;
-}
-
-exports.ComplexValue = ComplexValue;
-
-ComplexValue.prototype = Object.create(AbstractValue.prototype);
-
-ComplexValue.prototype.type = 'complex';
-
-ComplexValue.prototype.toString = function () {
-  if (this.imaginary < 0) {
-    return this.real + '-' + -this.imaginary + 'i';
-  } else {
-    return this.real + '+' + this.imaginary + 'i';
-  }
-};
-
-ComplexValue.prototype.marshal = function () {
-  return new NativeComplexValue(this.real, this.imaginary);
-};
-
-
-function Closure(lambda, context) {
-  AbstractValue.call(this);
-  this.lambda = lambda;
-  this.context = context;
-}
-
-exports.Closure = Closure;
-
-Closure.prototype = Object.create(AbstractValue.prototype);
-
-Closure.prototype.type = 'closure';
-
-Closure.prototype.toString = function () {
-  return 'closure';
-};
-
-Closure.prototype.bindThis = function (value) {
-  return new Closure(this.lambda, this.context.add('this', value));
-};
-
-Closure.prototype.marshal = function () {
-  var length = 0;
-  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
-    length++;
-  }
-  node = this.lambda;
-  var context = this.context;
-  return function () {
-    var values = arguments;
-    return (function augment(node, context, index) {
-      if (index < length) {
-        return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
-      } else {
-        return (function () {
-          try {
-            return node.evaluate(context);
-          } catch (e) {
-            if (e instanceof LambdaUserError) {
-              throw e.value.marshal();
-            } else {
-              throw e;
-            }
-          }
-        }()).marshal();
-      }
-    }(node, context, 0));
-  };
-};
-
-Closure.unmarshal = function (value, context) {
-  return new Closure((function makeLambda(index, names) {
-    if (index < Math.max(value.length, 1)) {
-      var name = '' + index;
-      names.push(name);
-      return new LambdaNode(name, makeLambda(index + 1, names));
-    } else {
-      return new NativeNode(value, names);
-    }
-  }(0, [])), context || Context.EMPTY);
-};
-
-Closure.prototype.getLength = function () {
-  var length = 0;
-  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
-    length++;
-  }
-  return length;
-};
-
-
 function LazyValue(expression, context) {
   AbstractValue.call(this);
   this.expression = expression;
@@ -297,75 +71,30 @@ LazyValue.evaluate = function (value) {
 };
 
 
-function StringValue(value) {
+function UndefinedValue() {
   AbstractValue.call(this);
-  this.value = '' + value;
 }
 
-exports.StringValue = StringValue;
+exports.UndefinedValue = UndefinedValue;
 
-StringValue.prototype = Object.create(AbstractValue.prototype);
+UndefinedValue.prototype = Object.create(AbstractValue.prototype);
 
-StringValue.prototype.type = 'string';
+UndefinedValue.prototype.type = 'undefined';
 
-StringValue.prototype.toString = function () {
-  return '\"' + this.value.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"') + '\"';
+UndefinedValue.prototype.toString = function () {
+  return 'undefined';
 };
 
-StringValue.prototype.marshal = function () {
-  return this.value;
-};
+UndefinedValue.prototype.marshal = function () {};
 
-
-function ArrayValue(array) {
-  AbstractValue.call(this);
-  this.array = array = array || [];
-}
-
-exports.ArrayValue = ArrayValue;
-
-ArrayValue.prototype = Object.create(AbstractValue.prototype);
-
-ArrayValue.prototype.type = 'array';
-
-ArrayValue.prototype.toString = function () {
-  return '{ ' + this.array.map(function (element) {
-    return element.toString();
-  }).join(', ') + ' }';
-};
-
-ArrayValue.prototype.marshal = function () {
-  return this.array.map(function (value) {
-    return value.marshal();
-  });
-};
-
-
-function NativeArrayValue(array) {
-  AbstractValue.call(this);
-  this.array = array;
-}
-
-exports.NativeArrayValue = NativeArrayValue;
-
-NativeArrayValue.prototype = Object.create(AbstractValue.prototype);
-
-NativeArrayValue.prototype.type = 'array';
-
-NativeArrayValue.prototype.toString = function () {
-  return '{ ' + this.array.map(function (element) {
-    return AbstractValue.unmarshal(element).toString();
-  }).join(', ') + ' }';
-};
-
-NativeArrayValue.prototype.marshal = function () {
-  return this.array;
-};
+UndefinedValue.INSTANCE = new UndefinedValue();
 
 
 function ObjectValue(context) {
   AbstractValue.call(this);
-  this.context = context || Context.EMPTY;
+  if (context) {
+    this.context = this.context.extend(context);
+  }
 }
 
 exports.ObjectValue = ObjectValue;
@@ -373,6 +102,8 @@ exports.ObjectValue = ObjectValue;
 ObjectValue.prototype = Object.create(AbstractValue.prototype);
 
 ObjectValue.prototype.type = 'object';
+
+ObjectValue.prototype.context = Context.EMPTY;
 
 ObjectValue.prototype.toString = function () {
   return 'object';
@@ -425,6 +156,278 @@ NativeObjectValue.prototype.toString = function () {
 
 NativeObjectValue.prototype.marshal = function () {
   return this.context.object;
+};
+
+
+function NullValue() {
+  AbstractValue.call(this);
+}
+
+exports.NullValue = NullValue;
+
+NullValue.prototype = Object.create(AbstractValue.prototype);
+
+NullValue.prototype.type = 'null';
+
+NullValue.prototype.toString = function () {
+  return 'null';
+};
+
+NullValue.prototype.marshal = function () {
+  return null;
+};
+
+NullValue.INSTANCE = new NullValue();
+
+
+function BooleanValue(value) {
+  ObjectValue.call(this);
+  this.value = !!value;
+}
+
+exports.BooleanValue = BooleanValue;
+
+BooleanValue.prototype = Object.create(ObjectValue.prototype);
+
+BooleanValue.prototype.type = 'bool';
+
+BooleanValue.prototype.toString = function () {
+  if (this.value) {
+    return 'true';
+  } else {
+    return 'false';
+  }
+};
+
+BooleanValue.prototype.marshal = function () {
+  return this.value;
+};
+
+BooleanValue.TRUE = new BooleanValue(true);
+BooleanValue.FALSE = new BooleanValue(false);
+
+BooleanValue.unmarshal = function (value) {
+  if (value) {
+    return BooleanValue.TRUE;
+  } else {
+    return BooleanValue.FALSE;
+  }
+};
+
+
+function IntegerValue(value) {
+  ObjectValue.call(this);
+  this.value = ~~value;
+}
+
+exports.IntegerValue = IntegerValue;
+
+IntegerValue.prototype = Object.create(ObjectValue.prototype);
+
+IntegerValue.prototype.type = 'int';
+
+IntegerValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+IntegerValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
+function FloatValue(value) {
+  ObjectValue.call(this);
+  this.value = value * 1;
+}
+
+exports.FloatValue = FloatValue;
+
+FloatValue.prototype = Object.create(ObjectValue.prototype);
+
+FloatValue.prototype.type = 'float';
+
+FloatValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+FloatValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
+function NativeComplexValue(real, imaginary) {
+  this.r = real;
+  this.i = imaginary;
+}
+
+NativeComplexValue.prototype.toString = function () {
+  if (this.i < 0) {
+    return this.r + '-' + -this.i + 'i';
+  } else {
+    return this.r + '+' + this.i + 'i';
+  }
+};
+
+
+function ComplexValue(real, imaginary) {
+  ObjectValue.call(this);
+  this.real = real * 1;
+  this.imaginary = imaginary * 1;
+}
+
+exports.ComplexValue = ComplexValue;
+
+ComplexValue.prototype = Object.create(ObjectValue.prototype);
+
+ComplexValue.prototype.type = 'complex';
+
+ComplexValue.prototype.toString = function () {
+  if (this.imaginary < 0) {
+    return this.real + '-' + -this.imaginary + 'i';
+  } else {
+    return this.real + '+' + this.imaginary + 'i';
+  }
+};
+
+ComplexValue.prototype.marshal = function () {
+  return new NativeComplexValue(this.real, this.imaginary);
+};
+
+
+function Closure(lambda, context) {
+  ObjectValue.call(this);
+  this.lambda = lambda;
+  this.capture = context;
+  this.context = this.context.add('length', new IntegerValue(this.getLength()));
+}
+
+exports.Closure = Closure;
+
+Closure.prototype = Object.create(ObjectValue.prototype);
+
+Closure.prototype.type = 'closure';
+
+Closure.prototype.toString = function () {
+  return 'closure';
+};
+
+Closure.prototype.bindThis = function (value) {
+  return new Closure(this.lambda, this.capture.add('this', value));
+};
+
+Closure.prototype.marshal = function () {
+  var length = 0;
+  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+    length++;
+  }
+  node = this.lambda;
+  var context = this.capture;
+  return function () {
+    var values = arguments;
+    return (function augment(node, context, index) {
+      if (index < length) {
+        return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
+      } else {
+        return (function () {
+          try {
+            return node.evaluate(context);
+          } catch (e) {
+            if (e instanceof LambdaUserError) {
+              throw e.value.marshal();
+            } else {
+              throw e;
+            }
+          }
+        }()).marshal();
+      }
+    }(node, context, 0));
+  };
+};
+
+Closure.unmarshal = function (value, context) {
+  return new Closure((function makeLambda(index, names) {
+    if (index < Math.max(value.length, 1)) {
+      var name = '' + index;
+      names.push(name);
+      return new LambdaNode(name, makeLambda(index + 1, names));
+    } else {
+      return new NativeNode(value, names);
+    }
+  }(0, [])), context || Context.EMPTY);
+};
+
+Closure.prototype.getLength = function () {
+  var length = 0;
+  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+    length++;
+  }
+  return length;
+};
+
+
+function StringValue(value) {
+  ObjectValue.call(this);
+  this.value = '' + value;
+}
+
+exports.StringValue = StringValue;
+
+StringValue.prototype = Object.create(ObjectValue.prototype);
+
+StringValue.prototype.type = 'string';
+
+StringValue.prototype.toString = function () {
+  return '\"' + this.value.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"') + '\"';
+};
+
+StringValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
+function ArrayValue(array) {
+  ObjectValue.call(this);
+  this.array = array = array || [];
+}
+
+exports.ArrayValue = ArrayValue;
+
+ArrayValue.prototype = Object.create(ObjectValue.prototype);
+
+ArrayValue.prototype.type = 'array';
+
+ArrayValue.prototype.toString = function () {
+  return '{ ' + this.array.map(function (element) {
+    return element.toString();
+  }).join(', ') + ' }';
+};
+
+ArrayValue.prototype.marshal = function () {
+  return this.array.map(function (value) {
+    return value.marshal();
+  });
+};
+
+
+function NativeArrayValue(array) {
+  ObjectValue.call(this);
+  this.array = array;
+}
+
+exports.NativeArrayValue = NativeArrayValue;
+
+NativeArrayValue.prototype = Object.create(ObjectValue.prototype);
+
+NativeArrayValue.prototype.type = 'array';
+
+NativeArrayValue.prototype.toString = function () {
+  return '{ ' + this.array.map(function (element) {
+    return AbstractValue.unmarshal(element).toString();
+  }).join(', ') + ' }';
+};
+
+NativeArrayValue.prototype.marshal = function () {
+  return this.array;
 };
 
 
