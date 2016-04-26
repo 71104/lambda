@@ -17,7 +17,7 @@ The value domain is similar to JavaScript's: other than closures it contains `un
 The following Fibonacci implementation gives an idea of several implementation choices:
 
 ```lambda
-let fibonacci = fix fn f, n: uint ->
+let fibonacci = fix fn f, n: int ->
   if < n 2
   then 1
   else + (f (- n 1)) (f (- n 2)) in
