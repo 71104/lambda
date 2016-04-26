@@ -4,7 +4,7 @@ An effort to create the perfect programming language. **Currently in alpha stage
 
 ## Technical Description
 
-Lambda is an eagerly evaluated [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) with [Hindley-Milner static type system](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system) and a few additions.
+Lambda is an [eagerly evaluated](https://en.wikipedia.org/wiki/Eager_evaluation) [lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) with [Hindley-Milner static type system](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system) and a few additions.
 
 The main addition is the [Z combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Strict_fixed_point_combinator) provided as a global predefined term called `fix`. Without this, the language is not Turing-complete because the type system prevents some types of computations.
 
