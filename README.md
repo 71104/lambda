@@ -10,7 +10,7 @@ The main addition is the [Z combinator](https://en.wikipedia.org/wiki/Fixed-poin
 
 The definition of the Z combinator can't be typed, as it would cause infinite recursion of the typing rules. `fix` is arbitrarily typed as _∀T . (T → T) → T_, which is the most generic type that satisfies the fix-point equation.
 
-The value domain is similar to JavaScript's: other than closures it contains `undefined`, `null`, booleans, strings, numbers, arrays, and even objects. In this way, interaction with JavaScript APIs provided by the underlying platform is possible. When doing so, Lambda automatically marshals and unmarshals values so as to compensate for differences between the two domains.
+The value domain is similar to JavaScript's: other than closures it contains `undefined`, `null`, booleans, strings, numbers, arrays, and even objects. In this way, interaction with JavaScript APIs provided by the underlying platform is possible. Lambda automatically marshals and unmarshals values so as to compensate for differences between the two domains.
 
 ## Example
 
