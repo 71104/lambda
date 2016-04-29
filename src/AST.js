@@ -801,7 +801,7 @@ exports.OperatorNode = OperatorNode;
 OperatorNode.prototype = Object.create(SemiNativeNode.prototype);
 
 
-// TODO: operators are not completely polymorphic, they must typed correctly.
+// TODO: operators are not completely polymorphic, they must be typed correctly.
 
 function UnaryOperatorNode(overloads) {
   LambdaNode.call(this, '0', null, new OperatorNode(overloads, 1));

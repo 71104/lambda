@@ -10,9 +10,8 @@ function DefaultContext() {
 
   Context.call(this, {
     'typeof': evaluate(TypeOfOperator),
-    'not': evaluate(LogicalNotOperator),
+    'not': evaluate(NotOperator),
     'seq': seq,
-    '~': evaluate(BitwiseNotOperator),
     '+': evaluate(PlusOperator),
     '-': evaluate(MinusOperator),
     '*': evaluate(MultiplyOperator),
@@ -23,16 +22,13 @@ function DefaultContext() {
     '<=': evaluate(LessThanOrEqualOperator),
     '>': evaluate(GreaterThanOperator),
     '>=': evaluate(GreaterThanOrEqualOperator),
-    '&': evaluate(BitwiseAndOperator),
-    '|': evaluate(BitwiseOrOperator),
-    '^': evaluate(BitwiseXorOperator),
     '<<': evaluate(LeftShiftOperator),
     '>>': evaluate(RightShiftOperator),
     '=': evaluate(ComparisonOperator),
     '!=': evaluate(NegatedComparisonOperator),
-    'and': evaluate(LogicalAndOperator),
-    'or': evaluate(LogicalOrOperator),
-    'xor': evaluate(LogicalXorOperator)
+    'and': evaluate(AndOperator),
+    'or': evaluate(OrOperator),
+    'xor': evaluate(XorOperator)
   });
 }
 

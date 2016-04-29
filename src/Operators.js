@@ -11,33 +11,20 @@ exports.TypeOfOperator = TypeOfOperator;
 TypeOfOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 
-function LogicalNotOperator() {
+function NotOperator() {
   UnaryOperatorNode.call(this, {
     'bool': function (x) {
       return BooleanValue.unmarshal(!x.value);
-    }
-  });
-}
-
-exports.LogicalNotOperator = LogicalNotOperator;
-
-LogicalNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
-
-
-function BitwiseNotOperator() {
-  UnaryOperatorNode.call(this, {
-    'uint': function (x) {
-      return new UnsignedIntegerValue(~x.value);
     },
-    'int': function (x) {
+    'uint|int': function (x) {
       return new IntegerValue(~x.value);
     }
   });
 }
 
-exports.BitwiseNotOperator = BitwiseNotOperator;
+exports.NotOperator = NotOperator;
 
-BitwiseNotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
+NotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 
 function PlusOperator() {
@@ -456,51 +443,6 @@ exports.GreaterThanOrEqualOperator = GreaterThanOrEqualOperator;
 GreaterThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
-function BitwiseAndOperator() {
-  BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value & y.value);
-      }
-    }
-  });
-}
-
-exports.BitwiseAndOperator = BitwiseAndOperator;
-
-BitwiseAndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
-
-
-function BitwiseOrOperator() {
-  BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value | y.value);
-      }
-    }
-  });
-}
-
-exports.BitwiseOrOperator = BitwiseOrOperator;
-
-BitwiseOrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
-
-
-function BitwiseXorOperator() {
-  BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value ^ y.value);
-      }
-    }
-  });
-}
-
-exports.BitwiseXorOperator = BitwiseXorOperator;
-
-BitwiseXorOperator.prototype = Object.create(BinaryOperatorNode.prototype);
-
-
 function LeftShiftOperator() {
   BinaryOperatorNode.call(this, {
     'uint': {
@@ -737,46 +679,61 @@ exports.NegatedComparisonOperator = NegatedComparisonOperator;
 NegatedComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
-function LogicalAndOperator() {
+function AndOperator() {
   BinaryOperatorNode.call(this, {
     'bool': {
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value && y.value);
       }
+    },
+    'uint|int': {
+      'uint|int': function (x, y) {
+        return new IntegerValue(x.value & y.value);
+      }
     }
   });
 }
 
-exports.LogicalAndOperator = LogicalAndOperator;
+exports.AndOperator = AndOperator;
 
-LogicalAndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+AndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 
-function LogicalOrOperator() {
+function OrOperator() {
   BinaryOperatorNode.call(this, {
     'bool': {
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value || y.value);
       }
-    }
-  });
-}
-
-exports.LogicalOrOperator = LogicalOrOperator;
-
-LogicalOrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
-
-
-function LogicalXorOperator() {
-  BinaryOperatorNode.call(this, {
-    'bool': {
-      'bool': function (x, y) {
-        return BooleanValue.unmarshal(x.value !== y.value);
+    },
+    'uint|int': {
+      'uint|int': function (x, y) {
+        return new IntegerValue(x.value | y.value);
       }
     }
   });
 }
 
-exports.LogicalXorOperator = LogicalXorOperator;
+exports.OrOperator = OrOperator;
 
-LogicalXorOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+OrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+
+
+function XorOperator() {
+  BinaryOperatorNode.call(this, {
+    'bool': {
+      'bool': function (x, y) {
+        return BooleanValue.unmarshal(x.value !== y.value);
+      }
+    },
+    'uint|int': {
+      'uint|int': function (x, y) {
+        return new IntegerValue(x.value ^ y.value);
+      }
+    }
+  });
+}
+
+exports.XorOperator = XorOperator;
+
+XorOperator.prototype = Object.create(BinaryOperatorNode.prototype);

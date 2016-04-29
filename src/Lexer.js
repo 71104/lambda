@@ -117,7 +117,7 @@ function Lexer(input) {
       return token = 'string';
     } else if (match(/^(<<|>>|\!\=|<\=|>\=|\*\*)/)) {
       return token = 'symbol';
-    } else if (match(/^(<|>|\+|\-|\/|\%|\~|\&|\||\^)/)) {
+    } else if (match(/^(<|>|\+|\-|\/|\%)/)) {
       return token = 'symbol';
     } else if (match(/^\*/)) {
       return token = 'asterisk';
