@@ -156,7 +156,7 @@ Parser.prototype.parseTypeClass1 = function () {
 
 Parser.prototype.parseTypeClass2 = function () {
   var left = this.parseTypeClass1();
-  if (this.lexer.token() !== 'arrow') {
+  if (this.lexer.token() !== 'fat-arrow') {
     return left;
   } else {
     this.lexer.next();
