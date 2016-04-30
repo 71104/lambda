@@ -18,6 +18,7 @@ Array.prototype.union = function () {
 
 function getGlobalValue(name, fallback) {
   try {
+    // jshint evil: true
     return (new Function('name', 'return eval(name);'))(name);
   } catch (e) {
     if (fallback) {
