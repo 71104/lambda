@@ -147,11 +147,18 @@ Parser.prototype.parseTypeClass0 = function () {
 
 Parser.prototype.parseTypeClass1 = function () {
   var type = this.parseTypeClass0();
-  while (this.lexer.token() === 'asterisk') {
-    type = new ArrayType(type);
+  while (true) {
+    var token = this.lexer.token();
+    var label = this.lexer.label();
+    if (token === 'asterisk') {
+      type = new ArrayType(type);
+    } else if (token === 'symbol' && label === '**') {
+      type = new ArrayType(new ArrayType(type));
+    } else {
+      return type;
+    }
     this.lexer.next();
   }
-  return type;
 };
 
 Parser.prototype.parseTypeClass2 = function () {
