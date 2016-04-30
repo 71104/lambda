@@ -174,6 +174,7 @@ Parser.prototype.parseLambdaPartial = function (terminators) {
     if (this.lexer.token() !== 'colon') {
       return null;
     } else {
+      this.lexer.next();
       return this.parseType(['comma', 'arrow']);
     }
   }.call(this);
