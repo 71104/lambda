@@ -1,25 +1,25 @@
 # generates an array of n natural numbers
-let range = fix fn range, n: int ->
+let range = fix fn range, n: integer ->
   if > n 0
   then (range (- n 1)).concat {- n 1}
   else {} in
 
 # prints a grid
-let print = fn grid: uint** ->
-  (grid.each fn row: uint* ->
-    console.log ((row.map fn cell: uint ->
+let print = fn grid: natural** ->
+  (grid.each fn row: natural* ->
+    console.log ((row.map fn cell: natural ->
       if != 0 cell
       then "*"
       else " ").join "")) in
 
 # wraps coordinates
-let mod = fn i: int, n: uint -> % (+ (% i n) n) n in
+let mod = fn i: integer, n: natural -> % (+ (% i n) n) n in
 
 # samples a circular array at the given index
-let get = fn array: uint*, i: int -> array[mod i array.length] in
+let get = fn array: natural*, i: integer -> array[mod i array.length] in
 
 # returns the count of live neighbors of the specified coordinates
-let live_neighbors = fn grid: uint**, i: int, j: int ->
+let live_neighbors = fn grid: natural**, i: integer, j: integer ->
   {
     get (get grid (- i 1)) (- j 1),
     get (get grid (- i 1)) j,
@@ -32,9 +32,9 @@ let live_neighbors = fn grid: uint**, i: int, j: int ->
   }.reduce + 0 in
 
 # steps a grid to the next state
-let step = fn grid: uint** ->
-  (range grid.length).map fn i: int ->
-    (range grid[i].length).map fn j: int ->
+let step = fn grid: natural** ->
+  (range grid.length).map fn i: integer ->
+    (range grid[i].length).map fn j: integer ->
       let live_count = live_neighbors grid i j in
         if != 0 grid[i][j]
         then if or (= 2 live_count) (= 3 live_count) then 1 else 0
@@ -54,7 +54,7 @@ let grid = {
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 } in
 
-(fix fn f, grid: uint** ->
+(fix fn f, grid: natural** ->
   seq
     (print grid)
     (f (step grid))) grid

@@ -1,4 +1,4 @@
-let fibonacci = fix fn f, n: int ->
+let fibonacci = fix fn f, n: integer ->
   if < n 2
   then 1
   else + (f (- n 1)) (f (- n 2)) in
