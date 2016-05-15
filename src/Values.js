@@ -118,27 +118,6 @@ ObjectValue.prototype.marshal = function () {
 };
 
 
-function NativeContext(object) {
-  this.object = object;
-}
-
-exports.NativeContext = NativeContext;
-
-NativeContext.prototype.has = function (name) {
-  return name in this.object;
-};
-
-NativeContext.prototype.top = function (name) {
-  return AbstractValue.unmarshal(this.object[name]);
-};
-
-NativeContext.prototype.add = function (name, value) {
-  var object = Object.create(this.object);
-  object[name] = value.marshal();
-  return new NativeContext(object);
-};
-
-
 function NativeObjectValue(context) {
   AbstractValue.call(this);
   this.context = context;

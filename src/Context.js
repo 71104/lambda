@@ -61,13 +61,57 @@ Context.prototype.addAll = function (hash) {
 
 Context.prototype.extend = function (context) {
   var child = Object.create(this._hash);
-  for (var name in context._hash) {
-    // jshint forin: false
-    child[name] = context._hash[name];
-  }
+  context.forEach(function (name, value) {
+    child[name] = value;
+  });
   var result = new Context();
   result._hash = child;
   return result;
 };
 
 Context.EMPTY = new Context();
+
+
+function NativeContext(object) {
+  this.object = object;
+}
+
+exports.NativeContext = NativeContext;
+
+NativeContext.prototype.has = function (name) {
+  return name in this.object;
+};
+
+NativeContext.prototype.top = function (name) {
+  return AbstractValue.unmarshal(this.object[name]);
+};
+
+NativeContext.prototype.names = function () {
+  var names = [];
+  for (var name in this.object) {
+    // jshint forin: false
+    names.push(name);
+  }
+  return names;
+};
+
+NativeContext.prototype.forEach = function (callback, context) {
+  for (var name in this.object) {
+    // jshint forin: false
+    callback.call(context, name, AbstractValue.unmarshal(this.object[name]));
+  }
+};
+
+NativeContext.prototype.add = function (name, value) {
+  var object = Object.create(this.object);
+  object[name] = value.marshal();
+  return new NativeContext(object);
+};
+
+NativeContext.prototype.extend = function (context) {
+  var child = Object.create(this.object);
+  context.forEach(function (name, value) {
+    child[name] = value;
+  });
+  return new NativeContext(child);
+};
