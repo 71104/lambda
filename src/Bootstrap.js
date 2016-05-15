@@ -1,5 +1,5 @@
 IndexedType.prototype.context = new Context({
-  length: UnsignedIntegerType.INSTANCE
+  length: NaturalType.INSTANCE
 });
 
 BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
@@ -12,7 +12,7 @@ BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-UnsignedIntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
+NaturalValue.prototype.context = ObjectValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })
@@ -24,7 +24,7 @@ IntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-FloatValue.prototype.context = ObjectValue.prototype.context.addAll({
+RealValue.prototype.context = ObjectValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })

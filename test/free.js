@@ -25,7 +25,7 @@ module.exports.testNullLiteral = testSet('null', []);
 module.exports.testTrueLiteral = testSet('true', []);
 module.exports.testFalseLiteral = testSet('false', []);
 module.exports.testIntegerLiteral = testSet('123', []);
-module.exports.testFloatLiteral = testSet('3.14', []);
+module.exports.testRealLiteral = testSet('3.14', []);
 module.exports.testComplexLiteral = testSet('5i', []);
 module.exports.testStringLiteral = testSet('"hello"', []);
 

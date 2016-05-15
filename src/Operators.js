@@ -16,7 +16,7 @@ function NotOperator() {
     'bool': function (x) {
       return BooleanValue.unmarshal(!x.value);
     },
-    'uint|int': function (x) {
+    'natural|integer': function (x) {
       return new IntegerValue(~x.value);
     }
   });
@@ -34,41 +34,41 @@ function PlusOperator() {
         return BooleanValue.unmarshal(x.value, y.value);
       }
     },
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value + y.value);
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(x.value + y.value);
       },
-      'int': function (x, y) {
+      'integer': function (x, y) {
         return new IntegerValue(x.value + y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value + y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value + y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value + y.real, y.imaginary);
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value + y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value + y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value + y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value + y.real, y.imaginary);
       }
     },
-    'float': {
-      'uint|int|float': function (x, y) {
-        return new FloatValue(x.value + y.value);
+    'real': {
+      'natural|integer|real': function (x, y) {
+        return new RealValue(x.value + y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value + y.real, y.imaginary);
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return new ComplexValue(x.real + y.value, x.imaginary);
       },
       'complex': function (x, y) {
@@ -100,38 +100,38 @@ function MinusOperator() {
         return BooleanValue.unmarshal(x.value && !y.value);
       }
     },
-    'uint': {
-      'uint|int': function (x, y) {
+    'natural': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value - y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value - y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value - y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value - y.real, -y.imaginary);
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value - y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value - y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value - y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value - y.real, -y.imaginary);
       }
     },
-    'float': {
-      'uint|int|float': function (x, y) {
-        return new FloatValue(x.value - y.value);
+    'real': {
+      'natural|integer|real': function (x, y) {
+        return new RealValue(x.value - y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value - y.real, -y.imaginary);
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return new ComplexValue(x.real - y.value, x.imaginary);
       },
       'complex': function (x, y) {
@@ -153,41 +153,41 @@ function MultiplyOperator() {
         return BooleanValue.unmarshal(x.value && y.value);
       }
     },
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value * y.value);
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(x.value * y.value);
       },
-      'int': function (x, y) {
+      'integer': function (x, y) {
         return new IntegerValue(x.value * y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value * y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value * y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value * y.real, x.value * y.imaginary);
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value * y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value * y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value * y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value * y.real, x.value * y.imaginary);
       }
     },
-    'float': {
-      'uint|int|float': function (x, y) {
-        return new FloatValue(x.value * y.value);
+    'real': {
+      'natural|integer|real': function (x, y) {
+        return new RealValue(x.value * y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(x.value * y.real, x.value * y.imaginary);
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return new ComplexValue(x.real * y.value, x.imaginary * y.value);
       },
       'complex': function (x, y) {
@@ -207,11 +207,11 @@ MultiplyOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function DivideOperator() {
   BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value / y.value);
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(x.value / y.value);
       },
-      'int': function (x, y) {
+      'integer': function (x, y) {
         var value = x.value / y.value;
         if (value < 0) {
           return new IntegerValue(Math.ceil(value));
@@ -219,8 +219,8 @@ function DivideOperator() {
           return new IntegerValue(Math.floor(value));
         }
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value / y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value / y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(
@@ -229,8 +229,8 @@ function DivideOperator() {
         );
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         var value = x.value / y.value;
         if (value < 0) {
           return new IntegerValue(Math.ceil(value));
@@ -238,8 +238,8 @@ function DivideOperator() {
           return new IntegerValue(Math.floor(value));
         }
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value / y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value / y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(
@@ -248,9 +248,9 @@ function DivideOperator() {
         );
       }
     },
-    'float': {
-      'uint|int|float': function (x, y) {
-        return new FloatValue(x.value / y.value);
+    'real': {
+      'natural|integer|real': function (x, y) {
+        return new RealValue(x.value / y.value);
       },
       'complex': function (x, y) {
         return new ComplexValue(
@@ -260,7 +260,7 @@ function DivideOperator() {
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return new ComplexValue(x.real / y.value, x.imaginary / y.value);
       },
       'complex': function (x, y) {
@@ -280,28 +280,28 @@ DivideOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function PowerOperator() {
   BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(Math.pow(x.value, y.value));
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(Math.pow(x.value, y.value));
       },
-      'int': function (x, y) {
+      'integer': function (x, y) {
         return new IntegerValue(Math.pow(x.value, y.value));
       },
-      'float': function (x, y) {
-        return new FloatValue(Math.pow(x.value, y.value));
+      'real': function (x, y) {
+        return new RealValue(Math.pow(x.value, y.value));
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(Math.pow(x.value, y.value));
       },
-      'float': function (x, y) {
-        return new FloatValue(Math.pow(x.value, y.value));
+      'real': function (x, y) {
+        return new RealValue(Math.pow(x.value, y.value));
       }
     },
-    'float': {
-      'uint|int|float': function (x, y) {
-        return new FloatValue(Math.pow(x.value, y.value));
+    'real': {
+      'natural|integer|real': function (x, y) {
+        return new RealValue(Math.pow(x.value, y.value));
       }
     }
   });
@@ -314,25 +314,25 @@ PowerOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function ModulusOperator() {
   BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint|int': function (x, y) {
-        return new UnsignedIntegerValue(x.value % y.value);
+    'natural': {
+      'natural|integer': function (x, y) {
+        return new NaturalValue(x.value % y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value % y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value % y.value);
       }
     },
-    'int': {
-      'uint|int': function (x, y) {
+    'integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value % y.value);
       },
-      'float': function (x, y) {
-        return new FloatValue(x.value % y.value);
+      'real': function (x, y) {
+        return new RealValue(x.value % y.value);
       }
     },
-    'float': {
-      'int|float': function (x, y) {
-        return new FloatValue(x.value % y.value);
+    'real': {
+      'integer|real': function (x, y) {
+        return new RealValue(x.value % y.value);
       }
     }
   });
@@ -350,8 +350,8 @@ function LessThanOperator() {
         return BooleanValue.unmarshal(!x.value && y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value < y.value);
       }
     },
@@ -375,8 +375,8 @@ function LessThanOrEqualOperator() {
         return BooleanValue.unmarshal(!x.value || y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value <= y.value);
       }
     },
@@ -400,8 +400,8 @@ function GreaterThanOperator() {
         return BooleanValue.unmarshal(x.value && !y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value > y.value);
       }
     },
@@ -425,8 +425,8 @@ function GreaterThanOrEqualOperator() {
         return BooleanValue.unmarshal(x.value || !y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value >= y.value);
       }
     },
@@ -445,13 +445,13 @@ GreaterThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototyp
 
 function LeftShiftOperator() {
   BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value << y.value);
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(x.value << y.value);
       }
     },
-    'int': {
-      'uint': function (x, y) {
+    'integer': {
+      'natural': function (x, y) {
         return new IntegerValue(x.value << y.value);
       }
     }
@@ -465,13 +465,13 @@ LeftShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function RightShiftOperator() {
   BinaryOperatorNode.call(this, {
-    'uint': {
-      'uint': function (x, y) {
-        return new UnsignedIntegerValue(x.value >>> y.value);
+    'natural': {
+      'natural': function (x, y) {
+        return new NaturalValue(x.value >>> y.value);
       }
     },
-    'int': {
-      'uint': function (x, y) {
+    'integer': {
+      'natural': function (x, y) {
         return new IntegerValue(x.value >> y.value);
       }
     }
@@ -524,8 +524,8 @@ function ComparisonOperator() {
         return BooleanValue.unmarshal(x.value === y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       },
       'complex': function (x, y) {
@@ -533,7 +533,7 @@ function ComparisonOperator() {
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!x.imaginary && x.real === y.value);
       },
       'complex': function (x, y) {
@@ -622,8 +622,8 @@ function NegatedComparisonOperator() {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
-    'uint|int|float': {
-      'uint|int|float': function (x, y) {
+    'natural|integer|real': {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       },
       'complex': function (x, y) {
@@ -631,7 +631,7 @@ function NegatedComparisonOperator() {
       }
     },
     'complex': {
-      'uint|int|float': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!!x.imaginary || x.real !== y.value);
       },
       'complex': function (x, y) {
@@ -686,8 +686,8 @@ function AndOperator() {
         return BooleanValue.unmarshal(x.value && y.value);
       }
     },
-    'uint|int': {
-      'uint|int': function (x, y) {
+    'natural|integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value & y.value);
       }
     }
@@ -706,8 +706,8 @@ function OrOperator() {
         return BooleanValue.unmarshal(x.value || y.value);
       }
     },
-    'uint|int': {
-      'uint|int': function (x, y) {
+    'natural|integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value | y.value);
       }
     }
@@ -726,8 +726,8 @@ function XorOperator() {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
-    'uint|int': {
-      'uint|int': function (x, y) {
+    'natural|integer': {
+      'natural|integer': function (x, y) {
         return new IntegerValue(x.value ^ y.value);
       }
     }

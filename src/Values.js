@@ -215,7 +215,7 @@ BooleanValue.unmarshal = function (value) {
 };
 
 
-function UnsignedIntegerValue(value) {
+function NaturalValue(value) {
   ObjectValue.call(this);
   this.value = ~~value;
   if (this.value < 0) {
@@ -223,17 +223,17 @@ function UnsignedIntegerValue(value) {
   }
 }
 
-exports.UnsignedIntegerValue = UnsignedIntegerValue;
+exports.NaturalValue = NaturalValue;
 
-UnsignedIntegerValue.prototype = Object.create(ObjectValue.prototype);
+NaturalValue.prototype = Object.create(ObjectValue.prototype);
 
-UnsignedIntegerValue.prototype.type = 'uint';
+NaturalValue.prototype.type = 'natural';
 
-UnsignedIntegerValue.prototype.toString = function () {
+NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-UnsignedIntegerValue.prototype.marshal = function () {
+NaturalValue.prototype.marshal = function () {
   return this.value;
 };
 
@@ -247,7 +247,7 @@ exports.IntegerValue = IntegerValue;
 
 IntegerValue.prototype = Object.create(ObjectValue.prototype);
 
-IntegerValue.prototype.type = 'int';
+IntegerValue.prototype.type = 'integer';
 
 IntegerValue.prototype.toString = function () {
   return '' + this.value;
@@ -258,22 +258,22 @@ IntegerValue.prototype.marshal = function () {
 };
 
 
-function FloatValue(value) {
+function RealValue(value) {
   ObjectValue.call(this);
   this.value = value * 1;
 }
 
-exports.FloatValue = FloatValue;
+exports.RealValue = RealValue;
 
-FloatValue.prototype = Object.create(ObjectValue.prototype);
+RealValue.prototype = Object.create(ObjectValue.prototype);
 
-FloatValue.prototype.type = 'float';
+RealValue.prototype.type = 'real';
 
-FloatValue.prototype.toString = function () {
+RealValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-FloatValue.prototype.marshal = function () {
+RealValue.prototype.marshal = function () {
   return this.value;
 };
 
@@ -462,7 +462,7 @@ AbstractValue.unmarshal = function (value) {
     return BooleanValue.unmarshal(value);
   case 'number':
     if (value % 1) {
-      return new FloatValue(value);
+      return new RealValue(value);
     } else {
       return new IntegerValue(~~value);
     }

@@ -5,15 +5,15 @@ function Parser(input) {
 exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
-  return new LiteralNode(new UnsignedIntegerValue(this.lexer.expect('integer')));
+  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')));
 };
 
 Parser.prototype.parseComplex = function () {
   return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')));
 };
 
-Parser.prototype.parseFloat = function () {
-  return new LiteralNode(new FloatValue(this.lexer.expect('float')));
+Parser.prototype.parseReal = function () {
+  return new LiteralNode(new RealValue(this.lexer.expect('real')));
 };
 
 Parser.prototype.parseString = function () {
@@ -44,8 +44,8 @@ Parser.prototype.parseClass0 = function () {
     return this.parseInteger();
   case 'complex':
     return this.parseComplex();
-  case 'float':
-    return this.parseFloat();
+  case 'real':
+    return this.parseReal();
   case 'string':
     return this.parseString();
   case 'identifier':
@@ -126,12 +126,12 @@ Parser.prototype.parseTypeClass0 = function () {
     return BooleanType.INSTANCE;
   case 'keyword:complex':
     return ComplexType.INSTANCE;
-  case 'keyword:float':
-    return FloatType.INSTANCE;
-  case 'keyword:int':
+  case 'keyword:real':
+    return RealType.INSTANCE;
+  case 'keyword:integer':
     return IntegerType.INSTANCE;
-  case 'keyword:uint':
-    return UnsignedIntegerType.INSTANCE;
+  case 'keyword:natural':
+    return NaturalType.INSTANCE;
   case 'keyword:string':
     return StringType.INSTANCE;
   case 'keyword:unknown':

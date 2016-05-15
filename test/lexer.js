@@ -38,9 +38,9 @@ module.exports.testFixKeyword = testTokens('fix', ['keyword:fix']);
 module.exports.testThisKeyword = testTokens('this', ['keyword:this']);
 module.exports.testBoolKeyword = testTokens('bool', ['keyword:bool']);
 module.exports.testUnknownKeyword = testTokens('unknown', ['keyword:unknown']);
-module.exports.testIntKeyword = testTokens('int', ['keyword:int']);
-module.exports.testFloatKeyword = testTokens('float', ['keyword:float']);
-module.exports.testFloatKeyword = testTokens('complex', ['keyword:complex']);
+module.exports.testIntKeyword = testTokens('integer', ['keyword:integer']);
+module.exports.testRealKeyword = testTokens('real', ['keyword:real']);
+module.exports.testRealKeyword = testTokens('complex', ['keyword:complex']);
 module.exports.testStringKeyword = testTokens('string', ['keyword:string']);
 module.exports.testRegexKeyword = testTokens('regex', ['keyword:regex']);
 module.exports.testRegexKeyword = testTokens('fn', ['keyword:fn']);
@@ -150,32 +150,32 @@ module.exports.testNonComplex = testTokens('i', [{
   label: 'i'
 }]);
 
-module.exports.testFloat1 = testTokens('0.0', [{
-  type: 'float',
+module.exports.testReal1 = testTokens('0.0', [{
+  type: 'real',
   label: 0
 }]);
-module.exports.testFloat2 = testTokens('3.14', [{
-  type: 'float',
+module.exports.testReal2 = testTokens('3.14', [{
+  type: 'real',
   label: 3.14
 }]);
-module.exports.testFloat3 = testTokens('10.0', [{
-  type: 'float',
+module.exports.testReal3 = testTokens('10.0', [{
+  type: 'real',
   label: 10
 }]);
-module.exports.testFloat4 = testTokens('578.000', [{
-  type: 'float',
+module.exports.testReal4 = testTokens('578.000', [{
+  type: 'real',
   label: 578
 }]);
-module.exports.testFloat5 = testTokens('214.030', [{
-  type: 'float',
+module.exports.testReal5 = testTokens('214.030', [{
+  type: 'real',
   label: 214.03
 }]);
-module.exports.testFloat6 = testTokens('923.657', [{
-  type: 'float',
+module.exports.testReal6 = testTokens('923.657', [{
+  type: 'real',
   label: 923.657
 }]);
-module.exports.testFloat7 = testTokens('34.56.str', [{
-  type: 'float',
+module.exports.testReal7 = testTokens('34.56.str', [{
+  type: 'real',
   label: 34.56
 }, 'point', {
   type: 'identifier',

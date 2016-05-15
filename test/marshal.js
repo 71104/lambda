@@ -37,8 +37,8 @@ module.exports.testMarshalComplex = function (test) {
   test.done();
 };
 
-module.exports.testMarshalFloat = function (test) {
-  test.ok((new Lambda.FloatValue(12.34)).marshal() === 12.34);
+module.exports.testMarshalReal = function (test) {
+  test.ok((new Lambda.RealValue(12.34)).marshal() === 12.34);
   test.done();
 };
 
@@ -169,16 +169,16 @@ module.exports.testUnmarshalComplex2 = function (test) {
   test.done();
 };
 
-module.exports.testUnmarshalFloat1 = function (test) {
+module.exports.testUnmarshalReal1 = function (test) {
   var value = Lambda.AbstractValue.unmarshal(43.21);
-  test.ok(value.is(Lambda.FloatValue));
+  test.ok(value.is(Lambda.RealValue));
   test.ok(value.value === 43.21);
   test.done();
 };
 
-module.exports.testUnmarshalFloat2 = function (test) {
+module.exports.testUnmarshalReal2 = function (test) {
   var value = Lambda.AbstractValue.unmarshal(12.34);
-  test.ok(value.is(Lambda.FloatValue));
+  test.ok(value.is(Lambda.RealValue));
   test.ok(value.value === 12.34);
   test.done();
 };

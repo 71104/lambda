@@ -37,9 +37,9 @@ function Lexer(input) {
     'this',
     'bool',
     'unknown',
-    'uint',
-    'int',
-    'float',
+    'natural',
+    'integer',
+    'real',
     'complex',
     'string',
     'regex',
@@ -93,7 +93,7 @@ function Lexer(input) {
       return token = 'complex';
     } else if (match(/^(0|[1-9][0-9]*)\.[0-9]+\b/)) {
       label = parseFloat(label);
-      return token = 'float';
+      return token = 'real';
     } else if (match(/^0[xX][0-9a-fA-F]+\b/)) {
       label = parseInt(label, 16);
       return token = 'integer';

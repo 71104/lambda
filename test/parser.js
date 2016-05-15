@@ -37,7 +37,7 @@ module.exports.testFalse = function (test) {
 module.exports.testInteger = function (test) {
   var ast = parse('1');
   test.ok(ast.is(Lambda.LiteralNode));
-  test.ok(ast.value.is(Lambda.UnsignedIntegerValue));
+  test.ok(ast.value.is(Lambda.NaturalValue));
   test.ok(ast.value.value === 1);
   test.done();
 };
@@ -51,10 +51,10 @@ module.exports.testComplex = function (test) {
   test.done();
 };
 
-module.exports.testFloat = function (test) {
+module.exports.testReal = function (test) {
   var ast = parse('3.14');
   test.ok(ast.is(Lambda.LiteralNode));
-  test.ok(ast.value.is(Lambda.FloatValue));
+  test.ok(ast.value.is(Lambda.RealValue));
   test.ok(ast.value.value === 3.14);
   test.done();
 };
@@ -179,7 +179,7 @@ module.exports.testMultiplePolymorphicLambda1 = function (test) {
   test.ok(ast.body.is(Lambda.LambdaNode));
   test.ok(ast.body.name === 'y');
   test.ok(ast.body.body.is(Lambda.LiteralNode));
-  test.ok(ast.body.body.value.is(Lambda.UnsignedIntegerValue));
+  test.ok(ast.body.body.value.is(Lambda.NaturalValue));
   test.ok(ast.body.body.value.value === 0);
   test.done();
 };
@@ -212,7 +212,7 @@ module.exports.testIf2 = function (test) {
   var ast = parse('if 0 then 5i else "hello"');
   test.ok(ast.is(Lambda.IfNode));
   test.ok(ast.condition.is(Lambda.LiteralNode));
-  test.ok(ast.condition.value.is(Lambda.UnsignedIntegerValue));
+  test.ok(ast.condition.value.is(Lambda.NaturalValue));
   test.ok(ast.condition.value.value === 0);
   test.ok(ast.thenExpression.is(Lambda.LiteralNode));
   test.ok(ast.thenExpression.value.is(Lambda.ComplexValue));

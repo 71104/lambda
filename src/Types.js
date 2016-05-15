@@ -162,22 +162,22 @@ ComplexType.prototype.isSubTypeOf = function (type) {
 ComplexType.INSTANCE = new ComplexType();
 
 
-function FloatType() {
+function RealType() {
   PrototypedType.call(this);
 }
 
-FloatType.prototype = Object.create(PrototypedType.prototype);
+RealType.prototype = Object.create(PrototypedType.prototype);
 
-FloatType.prototype.toString = function () {
-  return 'float';
+RealType.prototype.toString = function () {
+  return 'real';
 };
 
-FloatType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(FloatType, ComplexType, UndefinedType) ||
+RealType.prototype.isSubTypeOf = function (type) {
+  return type.isAny(RealType, ComplexType, UndefinedType) ||
     PrototypedType.prototype.isSubTypeOf.call(this, type);
 };
 
-FloatType.INSTANCE = new FloatType();
+RealType.INSTANCE = new RealType();
 
 
 function IntegerType() {
@@ -187,33 +187,33 @@ function IntegerType() {
 IntegerType.prototype = Object.create(PrototypedType.prototype);
 
 IntegerType.prototype.toString = function () {
-  return 'int';
+  return 'integer';
 };
 
 IntegerType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(IntegerType, FloatType, ComplexType, UndefinedType) ||
+  return type.isAny(IntegerType, RealType, ComplexType, UndefinedType) ||
     PrototypedType.prototype.isSubTypeOf.call(this, type);
 };
 
 IntegerType.INSTANCE = new IntegerType();
 
 
-function UnsignedIntegerType() {
+function NaturalType() {
   PrototypedType.call(this);
 }
 
-UnsignedIntegerType.prototype = Object.create(PrototypedType.prototype);
+NaturalType.prototype = Object.create(PrototypedType.prototype);
 
-UnsignedIntegerType.prototype.toString = function () {
-  return 'uint';
+NaturalType.prototype.toString = function () {
+  return 'natural';
 };
 
-UnsignedIntegerType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(UnsignedIntegerType, IntegerType, FloatType, ComplexType, UndefinedType) ||
+NaturalType.prototype.isSubTypeOf = function (type) {
+  return type.isAny(NaturalType, IntegerType, RealType, ComplexType, UndefinedType) ||
     PrototypedType.prototype.isSubTypeOf.call(this, type);
 };
 
-UnsignedIntegerType.INSTANCE = new UnsignedIntegerType();
+NaturalType.INSTANCE = new NaturalType();
 
 
 function StringType() {

@@ -1,5 +1,5 @@
 ArrayType.prototype.context = new Context({
-  length: UnsignedIntegerType.INSTANCE
+  length: NaturalType.INSTANCE
     // TODO
 });
 

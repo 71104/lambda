@@ -1,12 +1,12 @@
 StringType.prototype.context = new Context({
-  length: UnsignedIntegerType.INSTANCE,
+  length: NaturalType.INSTANCE,
   substring: new LambdaType(
-    UnsignedIntegerType.INSTANCE,
+    NaturalType.INSTANCE,
     new LambdaType(
-      UnsignedIntegerType.INSTANCE,
+      NaturalType.INSTANCE,
       StringType.INSTANCE)),
-  prefix: new LambdaType(UnsignedIntegerType.INSTANCE, StringType.INSTANCE),
-  suffix: new LambdaType(UnsignedIntegerType.INSTANCE, StringType.INSTANCE)
+  prefix: new LambdaType(NaturalType.INSTANCE, StringType.INSTANCE),
+  suffix: new LambdaType(NaturalType.INSTANCE, StringType.INSTANCE)
     // TODO
 });
 
