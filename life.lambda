@@ -85,7 +85,7 @@ in
 
 (range 0 10).each fn n ->
     seq
-        (console.log (+ "Round #" n))
+        (console.log (+ "Round #" n.str))
         (console.log "")
         (grid.print (grid.advance_n_steps m n))
         (console.log "")
