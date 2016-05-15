@@ -12,7 +12,19 @@ BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-NaturalValue.prototype.context = ObjectValue.prototype.context.addAll({
+ComplexValue.prototype.context = ObjectValue.prototype.context.addAll({
+  real: LazyValue.unmarshal(function () {
+    return this.r;
+  }),
+  imaginary: LazyValue.unmarshal(function () {
+    return this.i;
+  }),
+  str: LazyValue.unmarshal(function () {
+    return this.toString();
+  })
+});
+
+RealValue.prototype.context = ObjectValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })
@@ -24,21 +36,9 @@ IntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-RealValue.prototype.context = ObjectValue.prototype.context.addAll({
+NaturalValue.prototype.context = ObjectValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
-  })
-});
-
-ComplexValue.prototype.context = ObjectValue.prototype.context.addAll({
-  real: LazyValue.unmarshal(function () {
-    return this.r;
-  }),
-  imaginary: LazyValue.unmarshal(function () {
-    return this.i;
-  }),
-  str: LazyValue.unmarshal(function () {
-    return this.toString();
   })
 });
 

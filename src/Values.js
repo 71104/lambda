@@ -194,69 +194,6 @@ BooleanValue.unmarshal = function (value) {
 };
 
 
-function NaturalValue(value) {
-  ObjectValue.call(this);
-  this.value = ~~value;
-  if (this.value < 0) {
-    throw new LambdaInternalError();
-  }
-}
-
-exports.NaturalValue = NaturalValue;
-
-NaturalValue.prototype = Object.create(ObjectValue.prototype);
-
-NaturalValue.prototype.type = 'natural';
-
-NaturalValue.prototype.toString = function () {
-  return '' + this.value;
-};
-
-NaturalValue.prototype.marshal = function () {
-  return this.value;
-};
-
-
-function IntegerValue(value) {
-  ObjectValue.call(this);
-  this.value = ~~value;
-}
-
-exports.IntegerValue = IntegerValue;
-
-IntegerValue.prototype = Object.create(ObjectValue.prototype);
-
-IntegerValue.prototype.type = 'integer';
-
-IntegerValue.prototype.toString = function () {
-  return '' + this.value;
-};
-
-IntegerValue.prototype.marshal = function () {
-  return this.value;
-};
-
-
-function RealValue(value) {
-  ObjectValue.call(this);
-  this.value = value * 1;
-}
-
-exports.RealValue = RealValue;
-
-RealValue.prototype = Object.create(ObjectValue.prototype);
-
-RealValue.prototype.type = 'real';
-
-RealValue.prototype.toString = function () {
-  return '' + this.value;
-};
-
-RealValue.prototype.marshal = function () {
-  return this.value;
-};
-
-
 function NativeComplexValue(real, imaginary) {
   this.r = real;
   this.i = imaginary;
@@ -293,6 +230,69 @@ ComplexValue.prototype.toString = function () {
 
 ComplexValue.prototype.marshal = function () {
   return new NativeComplexValue(this.real, this.imaginary);
+};
+
+
+function RealValue(value) {
+  ObjectValue.call(this);
+  this.value = value * 1;
+}
+
+exports.RealValue = RealValue;
+
+RealValue.prototype = Object.create(ComplexValue.prototype);
+
+RealValue.prototype.type = 'real';
+
+RealValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+RealValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
+function IntegerValue(value) {
+  ObjectValue.call(this);
+  this.value = ~~value;
+}
+
+exports.IntegerValue = IntegerValue;
+
+IntegerValue.prototype = Object.create(RealValue.prototype);
+
+IntegerValue.prototype.type = 'integer';
+
+IntegerValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+IntegerValue.prototype.marshal = function () {
+  return this.value;
+};
+
+
+function NaturalValue(value) {
+  ObjectValue.call(this);
+  this.value = ~~value;
+  if (this.value < 0) {
+    throw new LambdaInternalError();
+  }
+}
+
+exports.NaturalValue = NaturalValue;
+
+NaturalValue.prototype = Object.create(IntegerValue.prototype);
+
+NaturalValue.prototype.type = 'natural';
+
+NaturalValue.prototype.toString = function () {
+  return '' + this.value;
+};
+
+NaturalValue.prototype.marshal = function () {
+  return this.value;
 };
 
 
