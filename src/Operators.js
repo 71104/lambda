@@ -29,11 +29,6 @@ NotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
 
 function PlusOperator() {
   BinaryOperatorNode.call(this, {
-    'bool': {
-      'bool': function (x, y) {
-        return BooleanValue.unmarshal(x.value, y.value);
-      }
-    },
     'natural': {
       'natural': function (x, y) {
         return new NaturalValue(x.value + y.value);
@@ -95,11 +90,6 @@ PlusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function MinusOperator() {
   BinaryOperatorNode.call(this, {
-    'bool': {
-      'bool': function (x, y) {
-        return BooleanValue.unmarshal(x.value && !y.value);
-      }
-    },
     'natural': {
       'natural|integer': function (x, y) {
         return new IntegerValue(x.value - y.value);
@@ -148,11 +138,6 @@ MinusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function MultiplyOperator() {
   BinaryOperatorNode.call(this, {
-    'bool': {
-      'bool': function (x, y) {
-        return BooleanValue.unmarshal(x.value && y.value);
-      }
-    },
     'natural': {
       'natural': function (x, y) {
         return new NaturalValue(x.value * y.value);
@@ -489,16 +474,7 @@ function ComparisonOperator() {
       'undefined': function () {
         return BooleanValue.TRUE;
       },
-      'string': function () {
-        return BooleanValue.FALSE;
-      },
-      'closure': function () {
-        return BooleanValue.FALSE;
-      },
-      'array': function () {
-        return BooleanValue.FALSE;
-      },
-      'object': function () {
+      'null|bool|natural|integer|real|complex|string|closure|array|object': function () {
         return BooleanValue.FALSE;
       }
     },
@@ -506,25 +482,22 @@ function ComparisonOperator() {
       'null': function () {
         return BooleanValue.TRUE;
       },
-      'string': function () {
-        return BooleanValue.FALSE;
-      },
-      'closure': function () {
-        return BooleanValue.FALSE;
-      },
-      'array': function () {
-        return BooleanValue.FALSE;
-      },
-      'object': function () {
+      'undefined|object': function () {
         return BooleanValue.FALSE;
       }
     },
     'bool': {
+      'undefined': function () {
+        return BooleanValue.FALSE;
+      },
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       }
     },
     'natural|integer|real': {
+      'undefined': function () {
+        return BooleanValue.FALSE;
+      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       },
@@ -533,6 +506,9 @@ function ComparisonOperator() {
       }
     },
     'complex': {
+      'undefined': function () {
+        return BooleanValue.FALSE;
+      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!x.imaginary && x.real === y.value);
       },
@@ -541,15 +517,20 @@ function ComparisonOperator() {
       }
     },
     'string': {
-      'undefined|null': function () {
+      'undefined': function () {
         return BooleanValue.FALSE;
       },
       'string': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       }
     },
+    'closure': {
+      'undefined': function () {
+        return BooleanValue.FALSE;
+      }
+    },
     'array': {
-      'undefined|null': function () {
+      'undefined': function () {
         return BooleanValue.FALSE;
       },
       'array': function (x, y) {
@@ -587,16 +568,7 @@ function NegatedComparisonOperator() {
       'undefined': function () {
         return BooleanValue.FALSE;
       },
-      'string': function () {
-        return BooleanValue.TRUE;
-      },
-      'closure': function () {
-        return BooleanValue.TRUE;
-      },
-      'array': function () {
-        return BooleanValue.TRUE;
-      },
-      'object': function () {
+      'null|bool|natural|integer|real|complex|string|closure|array|object': function () {
         return BooleanValue.TRUE;
       }
     },
@@ -604,25 +576,22 @@ function NegatedComparisonOperator() {
       'null': function () {
         return BooleanValue.FALSE;
       },
-      'string': function () {
-        return BooleanValue.TRUE;
-      },
-      'closure': function () {
-        return BooleanValue.TRUE;
-      },
-      'array': function () {
-        return BooleanValue.TRUE;
-      },
-      'object': function () {
+      'undefined|object': function () {
         return BooleanValue.TRUE;
       }
     },
     'bool': {
+      'undefined': function () {
+        return BooleanValue.TRUE;
+      },
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
     'natural|integer|real': {
+      'undefined': function () {
+        return BooleanValue.TRUE;
+      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       },
@@ -631,6 +600,9 @@ function NegatedComparisonOperator() {
       }
     },
     'complex': {
+      'undefined': function () {
+        return BooleanValue.TRUE;
+      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!!x.imaginary || x.real !== y.value);
       },
@@ -639,15 +611,20 @@ function NegatedComparisonOperator() {
       }
     },
     'string': {
-      'undefined|null': function () {
+      'undefined': function () {
         return BooleanValue.TRUE;
       },
       'string': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
+    'closure': {
+      'undefined': function () {
+        return BooleanValue.TRUE;
+      }
+    },
     'array': {
-      'undefined|null': function () {
+      'undefined': function () {
         return BooleanValue.TRUE;
       },
       'array': function (x, y) {
