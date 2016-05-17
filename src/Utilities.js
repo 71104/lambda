@@ -16,15 +16,14 @@ Array.prototype.union = function () {
   return this.concat.apply(this, arguments).unique();
 };
 
-function getGlobalValue(name, fallback) {
-  try {
-    // jshint evil: true
-    return (new Function('name', 'return eval(name);'))(name);
-  } catch (e) {
-    if (fallback) {
-      return fallback();
-    } else {
-      throw e;
+function getGlobalValue(name, ErrorClass) {
+  if (name in this) {
+    try {
+      return this[name];
+    } catch (e) {
+      throw new ErrorClass();
     }
+  } else {
+    throw new ErrorClass();
   }
 }
