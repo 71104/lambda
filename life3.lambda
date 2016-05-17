@@ -1,7 +1,7 @@
 # generates an array of n natural numbers
 let range = fix fn range, n: integer ->
   if > n 0
-  then (range (- n 1)).concat {- n 1}
+  then (range (- n 1)).append (- n 1)
   else {} in
 
 # prints a grid
