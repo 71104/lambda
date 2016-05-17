@@ -73,12 +73,12 @@ Parser.prototype.parseClass0 = function () {
     this.lexer.next();
     return node;
   case 'left-curly':
+    this.lexer.next();
     var expressions = [];
-    if (this.lexer.next() !== 'right-curly') {
+    while (this.lexer.token() !== 'right-curly') {
       expressions.push(this.parseClass3(['comma', 'right-curly']));
-      while (this.lexer.token() === 'comma') {
+      if (this.lexer.token() === 'comma') {
         this.lexer.next();
-        expressions.push(this.parseClass3(['comma', 'right-curly']));
       }
     }
     this.lexer.next();

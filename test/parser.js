@@ -136,6 +136,53 @@ module.exports.testVariableFieldAccess = function (test) {
   test.done();
 };
 
+module.exports.testArray1 = function (test) {
+  var ast = parse('{}');
+  test.ok(ast.is(Lambda.ArrayLiteralNode));
+  test.ok(ast.expressions.length === 0);
+  test.done();
+};
+
+module.exports.testArray2 = function (test) {
+  var ast = parse('{x}');
+  test.ok(ast.is(Lambda.ArrayLiteralNode));
+  test.ok(ast.expressions.length === 1);
+  test.ok(ast.expressions[0].is(Lambda.VariableNode));
+  test.ok(ast.expressions[0].name === 'x');
+  test.done();
+};
+
+module.exports.testArray3 = function (test) {
+  var ast = parse('{y, z}');
+  test.ok(ast.is(Lambda.ArrayLiteralNode));
+  test.ok(ast.expressions.length === 2);
+  test.ok(ast.expressions[0].is(Lambda.VariableNode));
+  test.ok(ast.expressions[0].name === 'y');
+  test.ok(ast.expressions[1].is(Lambda.VariableNode));
+  test.ok(ast.expressions[1].name === 'z');
+  test.done();
+};
+
+module.exports.testArrayWithTrailingComma1 = function (test) {
+  var ast = parse('{0, }');
+  test.ok(ast.is(Lambda.ArrayLiteralNode));
+  test.ok(ast.expressions.length === 1);
+  test.ok(ast.expressions[0].is(Lambda.LiteralNode));
+  test.ok(ast.expressions[0].value.value === 0);
+  test.done();
+};
+
+module.exports.testArrayWithTrailingComma2 = function (test) {
+  var ast = parse('{1, 2, }');
+  test.ok(ast.is(Lambda.ArrayLiteralNode));
+  test.ok(ast.expressions.length === 2);
+  test.ok(ast.expressions[0].is(Lambda.LiteralNode));
+  test.ok(ast.expressions[0].value.value === 1);
+  test.ok(ast.expressions[1].is(Lambda.LiteralNode));
+  test.ok(ast.expressions[1].value.value === 2);
+  test.done();
+};
+
 module.exports.testSubscript1 = function (test) {
   var ast = parse('x[0]');
   test.ok(ast.is(Lambda.SubscriptNode));
