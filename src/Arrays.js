@@ -111,14 +111,14 @@ ArrayValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.
       return callback(element);
     });
   }),
-  reduce: Closure.unmarshal(function (callback, value) {
+  reduce: Closure.unmarshal(function (value, callback) {
     return this.reduce(function (value, element) {
-      return callback(value, element);
+      return callback(element, value);
     }, value);
   }),
-  reduceRight: Closure.unmarshal(function (callback, value) {
+  reduceRight: Closure.unmarshal(function (value, callback) {
     return this.reduceRight(function (value, element) {
-      return callback(value, element);
+      return callback(element, value);
     }, value);
   }),
   reverse: LazyValue.unmarshal(function () {

@@ -316,7 +316,7 @@ function ModulusOperator() {
       }
     },
     'real': {
-      'integer|real': function (x, y) {
+      'natural|integer|real': function (x, y) {
         return new RealValue(x.value % y.value);
       }
     }
