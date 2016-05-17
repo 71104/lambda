@@ -16,11 +16,14 @@ ArrayValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.
       return this.slice(begin, end);
     }
   }),
+  append: Closure.unmarshal(function (element) {
+    var result = this.slice();
+    result.push(element);
+    return result;
+  }),
   concat: Closure.unmarshal(function (other) {
     var result = this.slice();
-    for (var i = 0; i < other.length; i++) {
-      result.push(other[i]);
-    }
+    result.push.apply(result, other);
     return result;
   }),
   indexOf: Closure.unmarshal(function (compare) {
