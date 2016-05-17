@@ -29,7 +29,7 @@ let live_neighbors = fn grid: natural**, i: integer, j: integer ->
     get (get grid (+ i 1)) (- j 1),
     get (get grid (+ i 1)) j,
     get (get grid (+ i 1)) (+ j 1)
-  }.reduce + 0 in
+  }.reduce 0 + in
 
 # steps a grid to the next state
 let step = fn grid: natural** ->

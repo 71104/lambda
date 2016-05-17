@@ -21,7 +21,7 @@ let range = fix fn f, a, b ->
 in
 
 let sum = fn l ->
-    l.reduce (fn a, v -> + a v) 0
+    l.reduce 0 +
 in
 
 let grid.slice_row = fn g, i, j ->
@@ -71,7 +71,7 @@ in
 
 let grid.print = fn g ->
     g.each fn r ->
-        console.log (r.reduce (fn a, v -> + a (if = v 1 then "*" else " ")) "")
+        console.log (r.reduce "" (fn v, a -> + a (if = v 1 then "*" else " ")))
 in
 
 let m = {{0, 1, 0, 0, 0, 0, 0},
