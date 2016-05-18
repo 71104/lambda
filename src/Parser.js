@@ -82,7 +82,7 @@ Parser.prototype.parseClass0 = function () {
       }
     }
     this.lexer.next();
-    return new ArrayLiteralNode(expressions);
+    return new ListLiteralNode(expressions);
   default:
     throw new LambdaSyntaxError();
   }
@@ -151,9 +151,9 @@ Parser.prototype.parseTypeClass1 = function () {
     var token = this.lexer.token();
     var label = this.lexer.label();
     if (token === 'asterisk') {
-      type = new ArrayType(type);
+      type = new ListType(type);
     } else if (token === 'symbol' && label === '**') {
-      type = new ArrayType(new ArrayType(type));
+      type = new ListType(new ListType(type));
     } else {
       return type;
     }

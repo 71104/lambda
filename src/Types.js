@@ -255,19 +255,19 @@ LambdaType.prototype.isSubTypeOf = function (type) {
 };
 
 
-function ArrayType(inner) {
+function ListType(inner) {
   PrototypedType.call(this);
   this.inner = inner;
 }
 
-ArrayType.prototype = Object.create(PrototypedType.prototype);
+ListType.prototype = Object.create(PrototypedType.prototype);
 
-ArrayType.prototype.toString = function () {
+ListType.prototype.toString = function () {
   return '(' + this.inner + ')*';
 };
 
-ArrayType.prototype.isSubTypeOf = function (type) {
-  if (type.is(ArrayType)) {
+ListType.prototype.isSubTypeOf = function (type) {
+  if (type.is(ListType)) {
     return this.inner.isSubTypeOf(type.inner);
   } else {
     return IndexedType.prototype.isSubTypeOf.call(this, type);

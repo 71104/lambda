@@ -75,9 +75,9 @@ function PlusOperator() {
         return new StringValue(x.value + y.value);
       }
     },
-    'array': {
-      'array': function (x, y) {
-        return new ArrayValue(x.array.concat(y.array));
+    'list': {
+      'list': function (x, y) {
+        return new ListValue(x.values.concat(y.values));
       }
     }
   });
@@ -474,7 +474,7 @@ function ComparisonOperator() {
       'undefined': function () {
         return BooleanValue.TRUE;
       },
-      'null|bool|natural|integer|real|complex|string|closure|array|object': function () {
+      'null|bool|natural|integer|real|complex|string|closure|list|object': function () {
         return BooleanValue.FALSE;
       }
     },
@@ -529,15 +529,15 @@ function ComparisonOperator() {
         return BooleanValue.FALSE;
       }
     },
-    'array': {
+    'list': {
       'undefined': function () {
         return BooleanValue.FALSE;
       },
-      'array': function (x, y) {
-        if (x.array.length !== y.array.length) {
+      'list': function (x, y) {
+        if (x.values.length !== y.values.length) {
           return BooleanValue.FALSE;
         } else {
-          for (var i = 0; i < x.array.length; i++) {
+          for (var i = 0; i < x.values.length; i++) {
             // TODO
             throw new LambdaInternalError();
           }
@@ -568,7 +568,7 @@ function NegatedComparisonOperator() {
       'undefined': function () {
         return BooleanValue.FALSE;
       },
-      'null|bool|natural|integer|real|complex|string|closure|array|object': function () {
+      'null|bool|natural|integer|real|complex|string|closure|list|object': function () {
         return BooleanValue.TRUE;
       }
     },
@@ -623,15 +623,15 @@ function NegatedComparisonOperator() {
         return BooleanValue.TRUE;
       }
     },
-    'array': {
+    'list': {
       'undefined': function () {
         return BooleanValue.TRUE;
       },
-      'array': function (x, y) {
-        if (x.array.length !== y.array.length) {
+      'list': function (x, y) {
+        if (x.values.length !== y.values.length) {
           return BooleanValue.TRUE;
         } else {
-          for (var i = 0; i < x.array.length; i++) {
+          for (var i = 0; i < x.values.length; i++) {
             // TODO
             throw new LambdaInternalError();
           }

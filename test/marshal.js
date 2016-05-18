@@ -75,23 +75,23 @@ module.exports.testMarshalClosure2 = function (test) {
   test.done();
 };
 
-module.exports.testMarshalEmptyArray = function (test) {
-  var value = (new Lambda.ArrayValue([])).marshal();
+module.exports.testMarshalEmptyList = function (test) {
+  var value = (new Lambda.ListValue([])).marshal();
   test.ok(Array.isArray(value));
   test.ok(value.length === 0);
   test.done();
 };
 
-module.exports.testMarshalArray1 = function (test) {
-  var value = (new Lambda.ArrayValue([new Lambda.IntegerValue(0)])).marshal();
+module.exports.testMarshalList1 = function (test) {
+  var value = (new Lambda.ListValue([new Lambda.IntegerValue(0)])).marshal();
   test.ok(Array.isArray(value));
   test.ok(value.length === 1);
   test.ok(value[0] === 0);
   test.done();
 };
 
-module.exports.testMarshalArray2 = function (test) {
-  var value = (new Lambda.ArrayValue([
+module.exports.testMarshalList2 = function (test) {
+  var value = (new Lambda.ListValue([
     Lambda.NullValue.INSTANCE,
     new Lambda.StringValue('hello')
   ])).marshal();
@@ -113,7 +113,7 @@ module.exports.testMarshalEmptyObject = function (test) {
   test.done();
 };
 
-// TODO test more object marshaling, including nested objects and arrays
+// TODO test more object marshaling, including nested objects and lists
 
 module.exports.testUnmarshalUndefined = function (test) {
   test.ok(Lambda.AbstractValue.unmarshal().is(Lambda.UndefinedValue));
@@ -234,7 +234,7 @@ module.exports.testUnmarshalTwoArgFunction = function (test) {
 module.exports.testUnmarshalEmptyArray = function (test) {
   var value = Lambda.AbstractValue.unmarshal([]);
   test.ok(value.is(Lambda.NativeArrayValue));
-  test.ok(value.array.length === 0);
+  test.ok(value.values.length === 0);
   test.done();
 };
 
@@ -245,7 +245,7 @@ module.exports.testUnmarshalCyclicArray = function (test) {
   array.push(array);
   var value = Lambda.AbstractValue.unmarshal(array);
   test.ok(value.is(Lambda.NativeArrayValue));
-  test.ok(value.array.length === 1);
-  test.ok(value.array[0] === array);
+  test.ok(value.values.length === 1);
+  test.ok(value.values[0] === array);
   test.done();
 };

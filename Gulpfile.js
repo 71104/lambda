@@ -54,7 +54,7 @@ gulp.task('concat', ['bin'], function () {
     'src/Parser.js',
     'src/Bootstrap.js',
     'src/Strings.js',
-    'src/Arrays.js',
+    'src/Lists.js',
   ]).pipe(concat('lambda.js')).pipe(gulp.dest('bin'));
 });
 

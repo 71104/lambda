@@ -387,25 +387,25 @@ StringValue.prototype.marshal = function () {
 };
 
 
-function ArrayValue(array) {
+function ListValue(values) {
   ObjectValue.call(this);
-  this.array = array = array || [];
+  this.values = values || [];
 }
 
-exports.ArrayValue = ArrayValue;
+exports.ListValue = ListValue;
 
-ArrayValue.prototype = Object.create(ObjectValue.prototype);
+ListValue.prototype = Object.create(ObjectValue.prototype);
 
-ArrayValue.prototype.type = 'array';
+ListValue.prototype.type = 'list';
 
-ArrayValue.prototype.toString = function () {
-  return '{ ' + this.array.map(function (element) {
+ListValue.prototype.toString = function () {
+  return '{ ' + this.values.map(function (element) {
     return element.toString();
   }).join(', ') + ' }';
 };
 
-ArrayValue.prototype.marshal = function () {
-  return this.array.map(function (value) {
+ListValue.prototype.marshal = function () {
+  return this.values.map(function (value) {
     return value.marshal();
   });
 };
@@ -413,23 +413,23 @@ ArrayValue.prototype.marshal = function () {
 
 function NativeArrayValue(array) {
   ObjectValue.call(this);
-  this.array = array;
+  this.values = array;
 }
 
 exports.NativeArrayValue = NativeArrayValue;
 
 NativeArrayValue.prototype = Object.create(ObjectValue.prototype);
 
-NativeArrayValue.prototype.type = 'array';
+NativeArrayValue.prototype.type = 'list';
 
 NativeArrayValue.prototype.toString = function () {
-  return '{ ' + this.array.map(function (element) {
+  return '{ ' + this.values.map(function (element) {
     return AbstractValue.unmarshal(element).toString();
   }).join(', ') + ' }';
 };
 
 NativeArrayValue.prototype.marshal = function () {
-  return this.array;
+  return this.values;
 };
 
 

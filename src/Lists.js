@@ -1,9 +1,9 @@
-ArrayType.prototype.context = new Context({
+ListType.prototype.context = new Context({
   length: NaturalType.INSTANCE
     // TODO
 });
 
-ArrayValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.prototype.context.addAll({
+ListValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),

@@ -46,16 +46,16 @@ LiteralNode.prototype.compileStatement = function () {
 };
 
 
-function ArrayLiteralNode(expressions) {
+function ListLiteralNode(expressions) {
   AbstractNode.call(this);
   this.expressions = expressions;
 }
 
-exports.ArrayLiteralNode = ArrayLiteralNode;
+exports.ListLiteralNode = ListLiteralNode;
 
-ArrayLiteralNode.prototype = Object.create(AbstractNode.prototype);
+ListLiteralNode.prototype = Object.create(AbstractNode.prototype);
 
-ArrayLiteralNode.prototype.getFreeVariables = function () {
+ListLiteralNode.prototype.getFreeVariables = function () {
   var names = [];
   this.expressions.forEach(function (expression) {
     names = names.union(expression.getFreeVariables());
@@ -63,19 +63,19 @@ ArrayLiteralNode.prototype.getFreeVariables = function () {
   return names;
 };
 
-ArrayLiteralNode.prototype.evaluate = function (context) {
-  return new ArrayValue(this.expressions.map(function (expression) {
+ListLiteralNode.prototype.evaluate = function (context) {
+  return new ListValue(this.expressions.map(function (expression) {
     return expression.evaluate(context);
   }));
 };
 
-ArrayLiteralNode.prototype.compileExpression = function () {
+ListLiteralNode.prototype.compileExpression = function () {
   return '[' + this.expressions.map(function (expression) {
     return expression.compileExpression();
   }).join(',') + ']';
 };
 
-ArrayLiteralNode.prototype.compileStatement = function () {
+ListLiteralNode.prototype.compileStatement = function () {
   return 'return[' + this.expressions.map(function (expression) {
     return expression.compileExpression();
   }).join(',') + '];';
@@ -293,16 +293,16 @@ SubscriptNode.prototype.getType = function (context) {
 
 SubscriptNode.prototype.evaluate = function (context) {
   var value = LazyValue.evaluate(this.expression.evaluate(context));
-  if (value.isAny(ArrayValue, NativeArrayValue, StringValue)) {
+  if (value.isAny(ListValue, NativeArrayValue, StringValue)) {
     var index = this.index.evaluate(context);
     if (index.is(IntegerValue)) {
-      if (value.is(ArrayValue)) {
-        if (index.value >= 0 && index.value < value.array.length) {
-          return LazyValue.evaluate(value.array[index.value]);
+      if (value.is(ListValue)) {
+        if (index.value >= 0 && index.value < value.values.length) {
+          return LazyValue.evaluate(value.values[index.value]);
         }
       } else if (value.is(NativeArrayValue)) {
-        if (index.value >= 0 && index.value < value.array.length) {
-          return LazyValue.evaluate(AbstractValue.unmarshal(value.array[index.value]));
+        if (index.value >= 0 && index.value < value.values.length) {
+          return LazyValue.evaluate(AbstractValue.unmarshal(value.values[index.value]));
         }
       } else if (value.is(StringValue)) {
         if (index.value >= 0 && index.value < value.value.length) {
