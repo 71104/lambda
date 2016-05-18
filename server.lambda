@@ -1,4 +1,4 @@
-let http = require "http" in
+let http = process.mainModule.require "http" in
 
 let server = http.createServer fn request, response ->
   response.end.apply {"Oh hai!"} in
