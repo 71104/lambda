@@ -433,6 +433,27 @@ NativeArrayValue.prototype.marshal = function () {
 };
 
 
+function UnknownValue() {
+  AbstractValue.call(this);
+}
+
+exports.UnknownValue = UnknownValue;
+
+UnknownValue.prototype = Object.create(AbstractValue);
+
+UnknownValue.prototype.type = 'unknown';
+
+UnknownValue.prototype.toString = function () {
+  return 'unknown';
+};
+
+UnknownValue.prototype.marshal = function () {
+  throw new LambdaInternalError();
+};
+
+UnknownValue.INSTANCE = new UnknownValue();
+
+
 AbstractValue.unmarshal = function (value) {
   switch (typeof value) {
   case 'undefined':

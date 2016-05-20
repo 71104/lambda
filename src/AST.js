@@ -42,6 +42,10 @@ LiteralNode.prototype.evaluate = function () {
   return this.value;
 };
 
+LiteralNode.prototype.reduce = function () {
+  return this;
+};
+
 LiteralNode.prototype.compileExpression = function () {
   return JSON.stringify(this.value.marshal());
 };
@@ -71,6 +75,12 @@ ListLiteralNode.prototype.getFreeVariables = function () {
 ListLiteralNode.prototype.evaluate = function (context) {
   return new ListValue(this.expressions.map(function (expression) {
     return expression.evaluate(context);
+  }));
+};
+
+ListLiteralNode.prototype.reduce = function (context) {
+  return new ListLiteralNode(this.expressions.map(function (expression) {
+    return expression.reduce(context);
   }));
 };
 
@@ -145,6 +155,10 @@ FixNode.prototype.evaluate = function () {
   return FixNode.Z_COMBINATOR;
 };
 
+FixNode.prototype.reduce = function () {
+  return this;
+};
+
 FixNode.prototype.compileExpression = function () {
   return 'function fix(f){return function(v){return f(fix(f))(v);};}';
 };
@@ -180,6 +194,10 @@ ThisNode.prototype.evaluate = function (context) {
   } else {
     throw new LambdaRuntimeError();
   }
+};
+
+ThisNode.prototype.reduce = function () {
+  return this;
 };
 
 ThisNode.prototype.compileExpression = function () {
@@ -356,6 +374,10 @@ LambdaNode.prototype.getType = function (context) {
 
 LambdaNode.prototype.evaluate = function (context) {
   return new Closure(this, context);
+};
+
+LambdaNode.prototype.reduce = function () {
+  return this;
 };
 
 LambdaNode.prototype.compileExpression = function () {
@@ -591,6 +613,10 @@ ThrowNode.prototype.getFreeVariables = function () {
 
 ThrowNode.prototype.evaluate = function (context) {
   throw new LambdaUserError(this.expression.evaluate(context));
+};
+
+ThrowNode.prototype.reduce = function (context) {
+  return new ThrowNode(this.expression.reduce(context));
 };
 
 ThrowNode.prototype.compileExpression = function () {
