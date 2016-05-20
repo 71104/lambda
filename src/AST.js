@@ -538,6 +538,22 @@ IfNode.prototype.getFreeVariables = function () {
     .union(this.elseExpression.getFreeVariables());
 };
 
+IfNode.prototype.getType = function (context) {
+  if (this.condition.getType(context).is(BooleanType)) {
+    var thenType = this.thenExpression.getType(context);
+    var elseType = this.elseExpression.getType(context);
+    if (elseType.isSubTypeOf(thenType)) {
+      return thenType;
+    } else if (thenType.isSubTypeOf(elseType)) {
+      return elseType;
+    } else {
+      throw new LambdaTypeError();
+    }
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
 IfNode.prototype.evaluate = function (context) {
   var condition = this.condition.evaluate(context);
   if (condition.is(BooleanValue)) {
@@ -714,6 +730,10 @@ NativeNode.prototype = Object.create(AbstractNode.prototype);
 
 NativeNode.prototype.getFreeVariables = function () {
   return this.argumentNames;
+};
+
+NativeNode.prototype.getType = function () {
+  return UnknownType.INSTANCE;
 };
 
 NativeNode.prototype.evaluate = function (context) {
