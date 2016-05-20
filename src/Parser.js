@@ -5,19 +5,19 @@ function Parser(input) {
 exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
-  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')));
+  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')), IntegerType.INSTANCE);
 };
 
 Parser.prototype.parseComplex = function () {
-  return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')));
+  return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')), ComplexType.INSTANCE);
 };
 
 Parser.prototype.parseReal = function () {
-  return new LiteralNode(new RealValue(this.lexer.expect('real')));
+  return new LiteralNode(new RealValue(this.lexer.expect('real')), RealType.INSTANCE);
 };
 
 Parser.prototype.parseString = function () {
-  return new LiteralNode(new StringValue(this.lexer.expect('string')));
+  return new LiteralNode(new StringValue(this.lexer.expect('string')), StringType.INSTANCE);
 };
 
 Parser.prototype.parseVariable = function () {
@@ -30,16 +30,16 @@ Parser.prototype.parseClass0 = function () {
   switch (this.lexer.token()) {
   case 'keyword:null':
     this.lexer.next();
-    return new LiteralNode(NullValue.INSTANCE);
+    return new LiteralNode(NullValue.INSTANCE, NullType.INSTANCE);
   case 'keyword:undefined':
     this.lexer.next();
-    return new LiteralNode(UndefinedValue.INSTANCE);
+    return new LiteralNode(UndefinedValue.INSTANCE, UndefinedType.INSTANCE);
   case 'keyword:true':
     this.lexer.next();
-    return new LiteralNode(BooleanValue.TRUE);
+    return new LiteralNode(BooleanValue.TRUE, BooleanType.INSTANCE);
   case 'keyword:false':
     this.lexer.next();
-    return new LiteralNode(BooleanValue.FALSE);
+    return new LiteralNode(BooleanValue.FALSE, BooleanType.INSTANCE);
   case 'integer':
     return this.parseInteger();
   case 'complex':

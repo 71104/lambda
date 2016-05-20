@@ -20,9 +20,10 @@ AbstractNode.prototype.compile = function () {
 };
 
 
-function LiteralNode(value) {
+function LiteralNode(value, type) {
   AbstractNode.call(this);
   this.value = value;
+  this.type = type;
 }
 
 exports.LiteralNode = LiteralNode;
@@ -31,6 +32,10 @@ LiteralNode.prototype = Object.create(AbstractNode.prototype);
 
 LiteralNode.prototype.getFreeVariables = function () {
   return [];
+};
+
+LiteralNode.prototype.getType = function () {
+  return this.type;
 };
 
 LiteralNode.prototype.evaluate = function () {
