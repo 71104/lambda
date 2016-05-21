@@ -93,6 +93,7 @@ ListValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.p
     this.forEach(function (element) {
       callback(element);
     });
+    return this;
   }),
   some: Closure.unmarshal(function (callback) {
     return this.some(function (element) {
