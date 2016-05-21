@@ -20,10 +20,10 @@ AbstractValue.prototype.bindThis = function () {
 };
 
 
-function LazyValue(expression, context) {
+function LazyValue(expression, capture) {
   AbstractValue.call(this);
   this.expression = expression;
-  this.context = context;
+  this.capture = capture;
 }
 
 exports.LazyValue = LazyValue;
@@ -37,12 +37,12 @@ LazyValue.prototype.toString = function () {
 };
 
 LazyValue.prototype.bindThis = function (value) {
-  return new LazyValue(this.expression, this.context.add('this', value));
+  return new LazyValue(this.expression, this.capture.add('this', value));
 };
 
 LazyValue.prototype.marshal = function () {
   var node = this.expression;
-  var context = this.context;
+  var context = this.capture;
   return function () {
     return (function () {
       try {
@@ -64,7 +64,7 @@ LazyValue.unmarshal = function (value, context) {
 
 LazyValue.evaluate = function (value) {
   if (value.is(LazyValue)) {
-    return value.expression.evaluate(value.context);
+    return value.expression.evaluate(value.capture);
   } else {
     return value;
   }
@@ -296,10 +296,10 @@ NaturalValue.prototype.marshal = function () {
 };
 
 
-function Closure(lambda, context) {
+function Closure(lambda, capture) {
   ObjectValue.call(this);
   this.lambda = lambda;
-  this.capture = context;
+  this.capture = capture;
   this.context = this.context.add('length', new IntegerValue(this.getLength()));
 }
 
