@@ -92,6 +92,7 @@ ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.pro
     this.forEach(function (element) {
       callback(element);
     });
+    return this;
   }),
   some: Closure.unmarshal(function (callback) {
     return this.some(function (element) {
