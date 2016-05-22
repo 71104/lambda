@@ -6,6 +6,12 @@ ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.pro
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),
+  head: LazyValue.unmarshal(function () {
+    return this[0];
+  }),
+  tail: LazyValue.unmarshal(function () {
+    return this.slice(1);
+  }),
   slice: Closure.unmarshal(function (begin, end) {
     if (begin < 0 || begin >= this.length) {
       throw new Error('start index out of bounds: ' + begin + ' (length is ' + this.length + ')');
