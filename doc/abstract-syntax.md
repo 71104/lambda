@@ -4,33 +4,31 @@ Let \f$M\f$ be the generic Lambda term, \f$n\f$ the generic unsigned integer
 literal, \f$\alpha\f$ the generic unsigned floating point literal, and \f$s\f$
 the generic string literal.
 
-Curly braces indicate optional parts.
-
-\f[\begin{align}
+\f[\begin{array}{rl}
   M\ :=\ & undefined \\
          & true \\
          & false \\
          & n \\
          & \alpha \\
+         & \alpha i \\
          & s \\
-         & \left[\ M_1,\ M_2,\ ...\ \right] \\
+         & \{\ M_1,\ M_2, \ldots \} \\
          & x \\
          & fix \\
-         & this \\
-         & fn\ x_1\{,\ x_2\{\ ...\ \}\}\ \rightarrow\ M \\
+         & fn\ x_1, x_2, \ldots \rightarrow M \\
          & M\ N \\
-         & let\ x_1\{.x_2\{\ ...\ \}\}\ =\ M\ in\ N \\
+         & let\ x_1.x_2. \ldots = M\ in\ N \\
          & if\ M_1\ then\ M_2\ else\ M_3 \\
          & throw\ M \\
          & try\ M_1\ catch\ M_2 \\
          & try\ M_1\ finally\ M_2 \\
          & try\ M_1\ catch\ M_2\ finally\ M_3 \\
          & error
-\end{align}\f]
+\end{array}\f]
 
 Application associativity is left-most, i.e. the following are equivalent:
 
-\f[\begin{align}
-  & A\ B\ C \\
-  & (A\ B)\ C \\
-\end{align}\f]
+\f[\begin{array}{l}
+  A\ B\ C \\
+  (A\ B)\ C
+\end{array}\f]
