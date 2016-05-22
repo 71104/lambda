@@ -1,5 +1,4 @@
-StringType.prototype.context = new Context({
-  length: NaturalType.INSTANCE,
+StringType.prototype.context = StringType.prototype.context.addAll({
   substring: new LambdaType(
     NaturalType.INSTANCE,
     new LambdaType(

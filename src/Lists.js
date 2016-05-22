@@ -1,9 +1,8 @@
-ListType.prototype.context = new Context({
-  length: NaturalType.INSTANCE
-    // TODO
+ListType.prototype.context = ListType.prototype.context.addAll({
+  // TODO: type everything except length, which is typed by IndexedType
 });
 
-ListValue.prototype.context = NativeArrayValue.prototype.context = ObjectValue.prototype.context.addAll({
+ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),

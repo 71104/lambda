@@ -262,7 +262,7 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
-  if (left.is(PrototypedType) && left.context.has(this.name)) {
+  if (left.context.has(this.name)) {
     return left.context.top(this.name);
   } else {
     throw new LambdaTypeError();
@@ -271,7 +271,7 @@ FieldAccessNode.prototype.getType = function (context) {
 
 FieldAccessNode.prototype.evaluate = function (context) {
   var left = LazyValue.evaluate(this.left.evaluate(context));
-  if (left.isAny(ObjectValue, NativeObjectValue) && left.context.has(this.name)) {
+  if (left.context.has(this.name)) {
     return LazyValue.evaluate(left.context.top(this.name).bindThis(left));
   } else {
     throw new LambdaRuntimeError();
@@ -306,12 +306,9 @@ SubscriptNode.prototype.getType = function (context) {
     var expression = this.expression.getType(context);
     if (expression.is(IndexedType)) {
       return expression.inner;
-    } else {
-      throw new LambdaTypeError();
     }
-  } else {
-    throw new LambdaTypeError();
   }
+  throw new LambdaTypeError();
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
@@ -476,11 +473,7 @@ LetNode.prototype.getType = function (context) {
       var name = names[index];
       if (context.has(name)) {
         var object = context.top(name);
-        if (object.is(PrototypedType)) {
-          return context.add(name, new ObjectType(augment(object.context, index + 1)));
-        } else {
-          return context.add(name, new ObjectType(augment(Context.EMPTY, index + 1)));
-        }
+        return context.add(name, new ObjectType(augment(object.context, index + 1)));
       } else {
         return augment(context.add(name, UnknownType.INSTANCE), index);
       }
@@ -500,12 +493,10 @@ LetNode.prototype.evaluate = function (context) {
       var name = names[index];
       if (context.has(name)) {
         var object = context.top(name);
-        if (object.is(ObjectValue)) {
-          return context.add(name, new ObjectValue(augment(object.context, index + 1)));
-        } else if (object.is(NativeObjectValue)) {
+        if (object.is(NativeObjectValue)) {
           return context.add(name, new NativeObjectValue(augment(object.context, index + 1)));
         } else {
-          return context.add(name, new ObjectValue(augment(Context.EMPTY, index + 1)));
+          return context.add(name, new ObjectValue(augment(object.context, index + 1)));
         }
       } else {
         return augment(context.add(name, (function () {

@@ -2,6 +2,8 @@ function AbstractValue() {}
 
 exports.AbstractValue = AbstractValue;
 
+AbstractValue.prototype.context = Context.EMPTY;
+
 AbstractValue.prototype.is = function (Class) {
   return this instanceof Class;
 };
@@ -91,7 +93,7 @@ UndefinedValue.INSTANCE = new UndefinedValue();
 
 
 function ObjectValue(context) {
-  AbstractValue.call(this);
+  UndefinedValue.call(this);
   if (context) {
     this.context = this.context.extend(context);
   }
@@ -99,11 +101,9 @@ function ObjectValue(context) {
 
 exports.ObjectValue = ObjectValue;
 
-ObjectValue.prototype = Object.create(AbstractValue.prototype);
+ObjectValue.prototype = Object.create(UndefinedValue.prototype);
 
 ObjectValue.prototype.type = 'object';
-
-ObjectValue.prototype.context = Context.EMPTY;
 
 ObjectValue.prototype.toString = function () {
   return 'object';
@@ -119,13 +119,13 @@ ObjectValue.prototype.marshal = function () {
 
 
 function NativeObjectValue(context) {
-  AbstractValue.call(this);
+  UndefinedValue.call(this);
   this.context = context;
 }
 
 exports.NativeObjectValue = NativeObjectValue;
 
-NativeObjectValue.prototype = Object.create(AbstractValue.prototype);
+NativeObjectValue.prototype = Object.create(UndefinedValue.prototype);
 
 NativeObjectValue.prototype.type = 'object';
 
@@ -139,12 +139,12 @@ NativeObjectValue.prototype.marshal = function () {
 
 
 function NullValue() {
-  AbstractValue.call(this);
+  ObjectValue.call(this);
 }
 
 exports.NullValue = NullValue;
 
-NullValue.prototype = Object.create(AbstractValue.prototype);
+NullValue.prototype = Object.create(ObjectValue.prototype);
 
 NullValue.prototype.type = 'null';
 
@@ -234,8 +234,8 @@ ComplexValue.prototype.marshal = function () {
 
 
 function RealValue(value) {
-  ObjectValue.call(this);
-  this.value = value * 1;
+  ComplexValue.call(this, value * 1);
+  this.value = this.real;
 }
 
 exports.RealValue = RealValue;
@@ -254,8 +254,7 @@ RealValue.prototype.marshal = function () {
 
 
 function IntegerValue(value) {
-  ObjectValue.call(this);
-  this.value = ~~value;
+  RealValue.call(this, ~~value);
 }
 
 exports.IntegerValue = IntegerValue;
@@ -274,8 +273,7 @@ IntegerValue.prototype.marshal = function () {
 
 
 function NaturalValue(value) {
-  ObjectValue.call(this);
-  this.value = ~~value;
+  IntegerValue.call(this, ~~value);
   if (this.value < 0) {
     throw new LambdaInternalError();
   }
@@ -300,7 +298,7 @@ function Closure(lambda, capture) {
   ObjectValue.call(this);
   this.lambda = lambda;
   this.capture = capture;
-  this.context = this.context.add('length', new IntegerValue(this.getLength()));
+  this.context = this.context.add('length', new NaturalValue(this.getLength()));
 }
 
 exports.Closure = Closure;
@@ -439,7 +437,7 @@ function UnknownValue() {
 
 exports.UnknownValue = UnknownValue;
 
-UnknownValue.prototype = Object.create(AbstractValue);
+UnknownValue.prototype = Object.create(AbstractValue.prototype);
 
 UnknownValue.prototype.type = 'unknown';
 

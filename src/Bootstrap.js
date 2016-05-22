@@ -2,7 +2,11 @@ IndexedType.prototype.context = new Context({
   length: NaturalType.INSTANCE
 });
 
-BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
+BooleanType.prototype.context = BooleanType.prototype.context.addAll({
+  str: StringType.INSTANCE
+});
+
+BooleanValue.prototype.context = BooleanValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     if (this.valueOf()) {
       return 'true';
@@ -12,7 +16,13 @@ BooleanValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-ComplexValue.prototype.context = ObjectValue.prototype.context.addAll({
+ComplexType.prototype.context = ComplexType.prototype.context.addAll({
+  real: RealType.INSTANCE,
+  imaginary: RealType.INSTANCE,
+  str: StringType.INSTANCE
+});
+
+ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
   real: LazyValue.unmarshal(function () {
     return this.r;
   }),
@@ -24,25 +34,37 @@ ComplexValue.prototype.context = ObjectValue.prototype.context.addAll({
   })
 });
 
-RealValue.prototype.context = ObjectValue.prototype.context.addAll({
+RealType.prototype.context = RealType.prototype.context.addAll({
+  str: StringType.INSTANCE
+});
+
+RealValue.prototype.context = RealValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })
 });
 
-IntegerValue.prototype.context = ObjectValue.prototype.context.addAll({
+IntegerType.prototype.context = IntegerType.prototype.context.addAll({
+  str: StringType.INSTANCE
+});
+
+IntegerValue.prototype.context = IntegerValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })
 });
 
-NaturalValue.prototype.context = ObjectValue.prototype.context.addAll({
+NaturalType.prototype.context = NaturalType.prototype.context.addAll({
+  str: StringType.INSTANCE
+});
+
+NaturalValue.prototype.context = NaturalValue.prototype.context.addAll({
   str: LazyValue.unmarshal(function () {
     return '' + this;
   })
 });
 
-Closure.prototype.context = ObjectValue.prototype.context.addAll({
+Closure.prototype.context = Closure.prototype.context.addAll({
   apply: Closure.unmarshal(function (parameters) {
     return this.apply(null, parameters);
   })
