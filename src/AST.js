@@ -15,10 +15,6 @@ AbstractNode.prototype.isAny = function () {
   return false;
 };
 
-AbstractNode.prototype.compile = function () {
-  return '(function(){"use strict";' + this.compileStatement() + '}());';
-};
-
 
 function LiteralNode(value, type) {
   AbstractNode.call(this);
@@ -40,18 +36,6 @@ LiteralNode.prototype.getType = function () {
 
 LiteralNode.prototype.evaluate = function () {
   return this.value;
-};
-
-LiteralNode.prototype.reduce = function () {
-  return this;
-};
-
-LiteralNode.prototype.compileExpression = function () {
-  return JSON.stringify(this.value.marshal());
-};
-
-LiteralNode.prototype.compileStatement = function () {
-  return 'return ' + JSON.stringify(this.value.marshal()) + ';';
 };
 
 
@@ -76,24 +60,6 @@ ListLiteralNode.prototype.evaluate = function (context) {
   return new ListValue(this.expressions.map(function (expression) {
     return expression.evaluate(context);
   }));
-};
-
-ListLiteralNode.prototype.reduce = function (context) {
-  return new ListLiteralNode(this.expressions.map(function (expression) {
-    return expression.reduce(context);
-  }));
-};
-
-ListLiteralNode.prototype.compileExpression = function () {
-  return '[' + this.expressions.map(function (expression) {
-    return expression.compileExpression();
-  }).join(',') + ']';
-};
-
-ListLiteralNode.prototype.compileStatement = function () {
-  return 'return[' + this.expressions.map(function (expression) {
-    return expression.compileExpression();
-  }).join(',') + '];';
 };
 
 
@@ -126,14 +92,6 @@ VariableNode.prototype.evaluate = function (context) {
   }
 };
 
-VariableNode.prototype.compileExpression = function () {
-  return this.name;
-};
-
-VariableNode.prototype.compileStatement = function () {
-  return 'return ' + this.name + ';';
-};
-
 
 function FixNode() {
   AbstractNode.call(this);
@@ -153,18 +111,6 @@ FixNode.prototype.getType = function () {
 
 FixNode.prototype.evaluate = function () {
   return FixNode.Z_COMBINATOR;
-};
-
-FixNode.prototype.reduce = function () {
-  return this;
-};
-
-FixNode.prototype.compileExpression = function () {
-  return 'function fix(f){return function(v){return f(fix(f))(v);};}';
-};
-
-FixNode.prototype.compileStatement = function () {
-  return 'return function fix(f){return function(v){return f(fix(f))(v);};};';
 };
 
 
@@ -196,18 +142,6 @@ ThisNode.prototype.evaluate = function (context) {
   }
 };
 
-ThisNode.prototype.reduce = function () {
-  return this;
-};
-
-ThisNode.prototype.compileExpression = function () {
-  return 'this';
-};
-
-ThisNode.prototype.compileStatement = function () {
-  return 'return this;';
-};
-
 
 function ErrorNode() {
   AbstractNode.call(this);
@@ -235,14 +169,6 @@ ErrorNode.prototype.evaluate = function (context) {
   } else {
     throw new LambdaRuntimeError();
   }
-};
-
-ErrorNode.prototype.compileExpression = function () {
-  return 'error';
-};
-
-ErrorNode.prototype.compileStatement = function () {
-  return 'return error;';
 };
 
 
@@ -276,14 +202,6 @@ FieldAccessNode.prototype.evaluate = function (context) {
   } else {
     throw new LambdaRuntimeError();
   }
-};
-
-FieldAccessNode.prototype.compileExpression = function () {
-  return '(' + this.left.compileExpression() + ').' + this.name;
-};
-
-FieldAccessNode.prototype.compileStatement = function () {
-  return 'return(' + this.left.compileExpression() + ').' + this.name + ';';
 };
 
 
@@ -334,14 +252,6 @@ SubscriptNode.prototype.evaluate = function (context) {
   throw new LambdaRuntimeError();
 };
 
-SubscriptNode.prototype.compileExpression = function () {
-  return '(' + this.expression.compileExpression() + ')[' + this.index.compileExpression() + ']';
-};
-
-SubscriptNode.prototype.compileStatement = function () {
-  return 'return(' + this.expression.compileExpression() + ')[' + this.index.compileExpression() + '];';
-};
-
 
 function LambdaNode(name, type, body) {
   AbstractNode.call(this);
@@ -373,18 +283,6 @@ LambdaNode.prototype.evaluate = function (context) {
   return new Closure(this, context);
 };
 
-LambdaNode.prototype.reduce = function () {
-  return this;
-};
-
-LambdaNode.prototype.compileExpression = function () {
-  return 'function(' + this.name + '){' + this.body.compileStatement() + '}';
-};
-
-LambdaNode.prototype.compileStatement = function () {
-  return 'return function(' + this.name + '){' + this.body.compileStatement() + '};';
-};
-
 
 function LazyNode(expression) {
   AbstractNode.call(this);
@@ -405,14 +303,6 @@ LazyNode.prototype.getType = function (context) {
 
 LazyNode.prototype.evaluate = function (context) {
   return new LazyValue(this.expression, context);
-};
-
-LazyNode.prototype.compileExpression = function () {
-  return 'function(){' + this.expression.compileStatement() + '}';
-};
-
-LazyNode.prototype.compileStatement = function () {
-  return 'return function(){' + this.expression.compileStatement() + '}';
 };
 
 
@@ -437,14 +327,6 @@ ApplicationNode.prototype.evaluate = function (context) {
   } else {
     throw new LambdaRuntimeError();
   }
-};
-
-ApplicationNode.prototype.compileExpression = function () {
-  return '(' + this.left.compileExpression() + ')(' + this.right.compileExpression() + ')';
-};
-
-ApplicationNode.prototype.compileStatement = function () {
-  return 'return(' + this.left.compileExpression() + ')(' + this.right.compileExpression() + ');';
 };
 
 
@@ -515,24 +397,6 @@ LetNode.prototype.evaluate = function (context) {
   }(context, 0));
 };
 
-LetNode.prototype.compileExpression = function () {
-  if (this.names.length > 1) {
-    // XXX not implemented yet
-    throw new LambdaInternalError();
-  } else {
-    return '(function(' + this.names[0] + '){' + this.body.compileStatement() + '}(' + this.expression.compileExpression() + '))';
-  }
-};
-
-LetNode.prototype.compileStatement = function () {
-  if (this.names.length > 1) {
-    // XXX not implemented yet
-    throw new LambdaInternalError();
-  } else {
-    return 'var ' + this.names[0] + '=' + this.expression.compileExpression() + ';' + this.body.compileStatement();
-  }
-};
-
 
 function IfNode(condition, thenExpression, elseExpression) {
   AbstractNode.call(this);
@@ -580,14 +444,6 @@ IfNode.prototype.evaluate = function (context) {
   }
 };
 
-IfNode.prototype.compileExpression = function () {
-  return '(' + this.condition.compileExpression() + ')?(' + this.thenExpression.compileExpression() + '):(' + this.elseExpression.compileExpression() + ')';
-};
-
-IfNode.prototype.compileStatement = function () {
-  return 'if(' + this.condition.compileExpression() + '){' + this.thenExpression.compileStatement() + '}else{' + this.elseExpression.compileStatement() + '}';
-};
-
 
 function ThrowNode(expression) {
   AbstractNode.call(this);
@@ -604,18 +460,6 @@ ThrowNode.prototype.getFreeVariables = function () {
 
 ThrowNode.prototype.evaluate = function (context) {
   throw new LambdaUserError(this.expression.evaluate(context));
-};
-
-ThrowNode.prototype.reduce = function (context) {
-  return new ThrowNode(this.expression.reduce(context));
-};
-
-ThrowNode.prototype.compileExpression = function () {
-  return '(function(){throw ' + this.expression.compileExpression() + ';}())';
-};
-
-ThrowNode.prototype.compileStatement = function () {
-  return 'throw ' + this.expression.compileExpression() + ';';
 };
 
 
@@ -648,14 +492,6 @@ TryCatchNode.prototype.evaluate = function (context) {
   }
 };
 
-TryCatchNode.prototype.compileExpression = function () {
-  return '(function(){try{' + this.tryExpression.compileStatement() + '}catch(error){' + this.catchExpression.compileStatement() + '}}())';
-};
-
-TryCatchNode.prototype.compileStatement = function () {
-  return 'try{' + this.tryExpression.compileStatement() + '}catch(error){' + this.catchExpression.compileStatement() + '}';
-};
-
 
 function TryFinallyNode(tryExpression, finallyExpression) {
   AbstractNode.call(this);
@@ -678,14 +514,6 @@ TryFinallyNode.prototype.evaluate = function (context) {
   } finally {
     this.finallyExpression.evaluate(context);
   }
-};
-
-TryFinallyNode.prototype.compileExpression = function () {
-  return '(function(){try{' + this.tryExpression.compileStatement() + '}finally{' + this.finallyExpression.compileStatement() + '}}())';
-};
-
-TryFinallyNode.prototype.compileStatement = function () {
-  return 'try{' + this.tryExpression.compileStatement() + '}finally{' + this.finallyExpression.compileStatement() + '}';
 };
 
 
@@ -720,18 +548,6 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
   } finally {
     this.finallyExpression.evaluate(context);
   }
-};
-
-TryCatchFinallyNode.prototype.compileExpression = function () {
-  return '(function(){try{' + this.tryExpression.compileStatement() +
-    '}catch(error){' + this.catchExpression.compileStatement() +
-    '}finally{' + this.finallyExpression.compileStatement() + '}}())';
-};
-
-TryCatchFinallyNode.prototype.compileStatement = function () {
-  return 'try{' + this.tryExpression.compileStatement() +
-    '}catch(error){' + this.catchExpression.compileStatement() +
-    '}finally{' + this.finallyExpression.compileStatement() + '}';
 };
 
 
