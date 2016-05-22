@@ -127,6 +127,32 @@ ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.pro
   reverse: LazyValue.unmarshal(function () {
     return this.slice().reverse();
   }),
+  min: Closure.unmarshal(function (compare) {
+    if (this.length) {
+      var value = this[0];
+      for (var i = 1; i < this.length; i++) {
+        if (compare(this[i], value)) {
+          value = this[i];
+        }
+      }
+      return value;
+    } else {
+      throw new Error('cannot find minimum in an empty list');
+    }
+  }),
+  max: Closure.unmarshal(function (compare) {
+    if (this.length) {
+      var value = this[0];
+      for (var i = 1; i < this.length; i++) {
+        if (compare(value, this[i])) {
+          value = this[i];
+        }
+      }
+      return value;
+    } else {
+      throw new Error('cannot find maximum in an empty list');
+    }
+  }),
   sort: Closure.unmarshal(function (compare) {
     return this.sort(function (a, b) {
       if (!compare(a, b)) {
