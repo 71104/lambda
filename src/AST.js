@@ -77,7 +77,7 @@ VariableNode.prototype.getFreeVariables = function () {
 };
 
 VariableNode.prototype.getType = function (context) {
-  if (context.hash(this.name)) {
+  if (context.has(this.name)) {
     return context.top(this.name);
   } else {
     return UnknownType.INSTANCE;

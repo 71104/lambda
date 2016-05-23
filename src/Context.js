@@ -9,11 +9,7 @@ Context.prototype.has = function (name) {
 };
 
 Context.prototype.top = function (name) {
-  if (name in this._hash) {
-    return this._hash[name];
-  } else {
-    throw new LambdaInternalError();
-  }
+  return this._hash[name];
 };
 
 Context.prototype.names = function () {
