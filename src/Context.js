@@ -56,7 +56,7 @@ Context.prototype.extend = function (context) {
   var child = Object.create(this._hash);
   context.forEach(function (name, value) {
     child[name] = this._marshal(value);
-  });
+  }, this);
   return new Context(child);
 };
 
