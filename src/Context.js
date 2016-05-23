@@ -1,12 +1,5 @@
 function Context(hash) {
-  this._hash = Object.create(null);
-  if (hash) {
-    for (var name in hash) {
-      if (hash.hasOwnProperty(name)) {
-        this._hash[name] = hash[name];
-      }
-    }
-  }
+  this._hash = hash || Object.create(null);
 }
 
 exports.Context = Context;
@@ -42,9 +35,7 @@ Context.prototype.forEach = function (callback, context) {
 Context.prototype.add = function (name, value) {
   var hash = Object.create(this._hash);
   hash[name] = value;
-  var context = new Context();
-  context._hash = hash;
-  return context;
+  return new Context(hash);
 };
 
 Context.prototype.addAll = function (hash) {
@@ -54,9 +45,7 @@ Context.prototype.addAll = function (hash) {
       child[name] = hash[name];
     }
   }
-  var context = new Context();
-  context._hash = child;
-  return context;
+  return new Context(child);
 };
 
 Context.prototype.extend = function (context) {
@@ -64,9 +53,7 @@ Context.prototype.extend = function (context) {
   context.forEach(function (name, value) {
     child[name] = value;
   });
-  var result = new Context();
-  result._hash = child;
-  return result;
+  return new Context(child);
 };
 
 Context.EMPTY = new Context();
@@ -106,6 +93,16 @@ NativeContext.prototype.add = function (name, value) {
   var object = Object.create(this.object);
   object[name] = value.marshal();
   return new NativeContext(object);
+};
+
+NativeContext.prototype.addAll = function (hash) {
+  var child = Object.create(this.object);
+  for (var name in hash) {
+    if (hash.hasOwnProperty(name)) {
+      child[name] = hash[name].marshal();
+    }
+  }
+  return new NativeContext(child);
 };
 
 NativeContext.prototype.extend = function (context) {

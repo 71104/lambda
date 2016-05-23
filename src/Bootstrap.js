@@ -1,4 +1,4 @@
-IndexedType.prototype.context = new Context({
+IndexedType.prototype.context = IndexedType.prototype.context.addAll({
   length: NaturalType.INSTANCE
 });
 
