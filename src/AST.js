@@ -374,18 +374,13 @@ LetNode.prototype.evaluate = function (context) {
     if (index < names.length - 1) {
       var name = names[index];
       if (context.has(name)) {
-        var object = context.top(name);
-        if (object.is(NativeObjectValue)) {
-          return context.add(name, new NativeObjectValue(augment(object.context, index + 1)));
-        } else {
-          return context.add(name, new ObjectValue(augment(object.context, index + 1)));
-        }
+        return context.add(name, new ObjectValue(augment(context.top(name).context, index + 1)));
       } else {
         return augment(context.add(name, (function () {
           try {
             return AbstractValue.unmarshal(getGlobalValue(name, Error));
           } catch (e) {
-            return new ObjectValue(Context.EMPTY);
+            return new ObjectValue();
           }
         }())), index);
       }
