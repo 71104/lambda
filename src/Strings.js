@@ -5,11 +5,17 @@ StringType.prototype.context = StringType.prototype.context.addAll({
       NaturalType.INSTANCE,
       StringType.INSTANCE)),
   prefix: new LambdaType(NaturalType.INSTANCE, StringType.INSTANCE),
-  suffix: new LambdaType(NaturalType.INSTANCE, StringType.INSTANCE)
-    // TODO
+  suffix: new LambdaType(NaturalType.INSTANCE, StringType.INSTANCE),
+  lowerCase: StringType.INSTANCE,
+  upperCase: StringType.INSTANCE,
+  startsWith: new LambdaType(StringType.INSTANCE, BooleanType.INSTANCE),
+  endsWith: new LambdaType(StringType.INSTANCE, BooleanType.INSTANCE),
+  trim: StringType.INSTANCE,
+  trimLeft: StringType.INSTANCE,
+  trimRight: StringType.INSTANCE
 });
 
-StringValue.prototype.context = ObjectValue.prototype.context.addAll({
+StringValue.prototype.context = StringValue.prototype.context.addAll({
   length: LazyValue.unmarshal(function () {
     return this.length;
   }),
