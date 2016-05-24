@@ -4,6 +4,8 @@ function Context(hash) {
 
 exports.Context = Context;
 
+Context.prototype._CLASS = Context;
+
 Context.prototype._marshal = function (value) {
   return value;
 };
@@ -39,7 +41,7 @@ Context.prototype.forEach = function (callback, context) {
 Context.prototype.add = function (name, value) {
   var hash = Object.create(this._hash);
   hash[name] = this._marshal(value);
-  return new Context(hash);
+  return new this._CLASS(hash);
 };
 
 Context.prototype.addAll = function (hash) {
@@ -49,7 +51,7 @@ Context.prototype.addAll = function (hash) {
       child[name] = this._marshal(hash[name]);
     }
   }
-  return new Context(child);
+  return new this._CLASS(child);
 };
 
 Context.prototype.extend = function (context) {
@@ -57,7 +59,7 @@ Context.prototype.extend = function (context) {
   context.forEach(function (name, value) {
     child[name] = this._marshal(value);
   }, this);
-  return new Context(child);
+  return new this._CLASS(child);
 };
 
 Context.EMPTY = new Context();
@@ -72,10 +74,16 @@ exports.NativeContext = NativeContext;
 
 NativeContext.prototype = Object.create(Context.prototype);
 
+NativeContext.prototype._CLASS = NativeContext;
+
 NativeContext.prototype._marshal = function (value) {
   return value.marshal();
 };
 
 NativeContext.prototype._unmarshal = function (value) {
   return AbstractValue.unmarshal(value);
+};
+
+NativeContext.prototype.marshal = function () {
+  return this.object;
 };

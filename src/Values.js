@@ -95,7 +95,7 @@ UndefinedValue.INSTANCE = new UndefinedValue();
 function ObjectValue(context) {
   UndefinedValue.call(this);
   if (context) {
-    this.context = this.context.extend(context);
+    this.context = context;
   }
 }
 
@@ -115,26 +115,6 @@ ObjectValue.prototype.marshal = function () {
     object[name] = value.marshal();
   });
   return object;
-};
-
-
-function NativeObjectValue(context) {
-  UndefinedValue.call(this);
-  this.context = context;
-}
-
-exports.NativeObjectValue = NativeObjectValue;
-
-NativeObjectValue.prototype = Object.create(UndefinedValue.prototype);
-
-NativeObjectValue.prototype.type = 'object';
-
-NativeObjectValue.prototype.toString = function () {
-  return 'object';
-};
-
-NativeObjectValue.prototype.marshal = function () {
-  return this.context.object;
 };
 
 
@@ -234,7 +214,7 @@ ComplexValue.prototype.marshal = function () {
 
 
 function RealValue(value) {
-  ComplexValue.call(this, value * 1);
+  ComplexValue.call(this, value * 1, 0);
   this.value = this.real;
 }
 
@@ -316,12 +296,9 @@ Closure.prototype.bindThis = function (value) {
 };
 
 Closure.prototype.marshal = function () {
-  var length = 0;
-  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
-    length++;
-  }
-  node = this.lambda;
+  var node = this.lambda;
   var context = this.capture;
+  var length = this.getLength();
   return function () {
     var values = arguments;
     return (function augment(node, context, index) {
@@ -477,7 +454,7 @@ AbstractValue.unmarshal = function (value) {
     } else if (value instanceof NativeComplexValue) {
       return new ComplexValue(value.r, value.i);
     } else {
-      return new NativeObjectValue(new NativeContext(value));
+      return new ObjectValue(new NativeContext(value));
     }
     break;
   }
