@@ -87,6 +87,12 @@ UndefinedValue.prototype.toString = function () {
   return 'undefined';
 };
 
+UndefinedValue.prototype.extend = function (name, value) {
+  var result = new UndefinedValue();
+  result.context = this.context.add(name, value);
+  return result;
+};
+
 UndefinedValue.prototype.marshal = function () {};
 
 UndefinedValue.INSTANCE = new UndefinedValue();
@@ -104,6 +110,12 @@ ObjectValue.prototype.type = 'object';
 
 ObjectValue.prototype.toString = function () {
   return 'object';
+};
+
+ObjectValue.prototype.extend = function (name, value) {
+  var result = new ObjectValue();
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 ObjectValue.prototype.marshal = function () {
@@ -141,6 +153,11 @@ NullValue.prototype.toString = function () {
   return 'null';
 };
 
+NullValue.prototype.extend = function () {
+  // TODO - tough design choice, evaluate better.
+  throw new LambdaRuntimeError();
+};
+
 NullValue.prototype.marshal = function () {
   return null;
 };
@@ -165,6 +182,12 @@ BooleanValue.prototype.toString = function () {
   } else {
     return 'false';
   }
+};
+
+BooleanValue.prototype.extend = function (name, value) {
+  var result = new BooleanValue(this.value);
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 BooleanValue.prototype.marshal = function () {
@@ -217,6 +240,12 @@ ComplexValue.prototype.toString = function () {
   }
 };
 
+ComplexValue.prototype.extend = function (name, value) {
+  var result = new ComplexValue(this.real, this.imaginary);
+  result.context = this.context.add(name, value);
+  return result;
+};
+
 ComplexValue.prototype.marshal = function () {
   return new NativeComplexValue(this.real, this.imaginary);
 };
@@ -237,6 +266,12 @@ RealValue.prototype.toString = function () {
   return '' + this.value;
 };
 
+RealValue.prototype.extend = function (name, value) {
+  var result = new RealValue(this.value);
+  result.context = this.context.add(name, value);
+  return result;
+};
+
 RealValue.prototype.marshal = function () {
   return this.value;
 };
@@ -254,6 +289,12 @@ IntegerValue.prototype.type = 'integer';
 
 IntegerValue.prototype.toString = function () {
   return '' + this.value;
+};
+
+IntegerValue.prototype.extend = function (name, value) {
+  var result = new IntegerValue(this.value);
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 IntegerValue.prototype.marshal = function () {
@@ -278,6 +319,12 @@ NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
 
+NaturalValue.prototype.extend = function (name, value) {
+  var result = new NaturalValue(this.value);
+  result.context = this.context.add(name, value);
+  return result;
+};
+
 NaturalValue.prototype.marshal = function () {
   return this.value;
 };
@@ -298,6 +345,12 @@ Closure.prototype.type = 'closure';
 
 Closure.prototype.toString = function () {
   return 'closure';
+};
+
+Closure.prototype.extend = function (name, value) {
+  var result = new Closure(this.lambda, this.capture);
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 Closure.prototype.bindThis = function (value) {
@@ -366,6 +419,12 @@ StringValue.prototype.toString = function () {
   return '\"' + this.value.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"') + '\"';
 };
 
+StringValue.prototype.extend = function (name, value) {
+  var result = new StringValue(this.value);
+  result.context = this.context.add(name, value);
+  return result;
+};
+
 StringValue.prototype.marshal = function () {
   return this.value;
 };
@@ -386,6 +445,12 @@ ListValue.prototype.toString = function () {
   return '{ ' + this.values.map(function (element) {
     return element.toString();
   }).join(', ') + ' }';
+};
+
+ListValue.prototype.extend = function (name, value) {
+  var result = new ListValue(this.values);
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 ListValue.prototype.marshal = function () {
@@ -410,6 +475,12 @@ NativeArrayValue.prototype.toString = function () {
   return '{ ' + this.values.map(function (element) {
     return AbstractValue.unmarshal(element).toString();
   }).join(', ') + ' }';
+};
+
+NativeArrayValue.prototype.extend = function (name, value) {
+  var result = new NativeArrayValue(this.values);
+  result.context = this.context.add(name, value);
+  return result;
 };
 
 NativeArrayValue.prototype.marshal = function () {
