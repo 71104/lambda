@@ -299,7 +299,7 @@ Closure.prototype.marshal = function () {
   var node = this.lambda;
   var context = this.capture;
   var length = this.getLength();
-  return function () {
+  return wrapFunction(length, function () {
     var values = arguments;
     return (function augment(node, context, index) {
       if (index < length) {
@@ -318,7 +318,7 @@ Closure.prototype.marshal = function () {
         }()).marshal();
       }
     }(node, context, 0));
-  };
+  });
 };
 
 Closure.unmarshal = function (value, context) {

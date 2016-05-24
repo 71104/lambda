@@ -27,3 +27,10 @@ function getGlobalValue(name, ErrorClass) {
     throw new ErrorClass();
   }
 }
+
+function wrapFunction(length, nativeFunction) {
+  // jshint evil: true, unused: false
+  return eval('(function (' + Array.apply(null, Array(length)).map(function (_, index) {
+    return '_' + index;
+  }).join(',') + ') { return nativeFunction.apply(this, arguments); })');
+}
