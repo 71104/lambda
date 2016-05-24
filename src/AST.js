@@ -374,7 +374,7 @@ LetNode.prototype.evaluate = function (context) {
     if (index < names.length - 1) {
       var name = names[index];
       if (context.has(name)) {
-        return context.add(name, new ObjectValue(augment(context.top(name).context, index + 1)));
+        return context.add(name, ObjectValue.fromContext(augment(context.top(name).context, index + 1)));
       } else {
         return augment(context.add(name, (function () {
           try {

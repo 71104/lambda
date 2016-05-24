@@ -92,11 +92,8 @@ UndefinedValue.prototype.marshal = function () {};
 UndefinedValue.INSTANCE = new UndefinedValue();
 
 
-function ObjectValue(context) {
+function ObjectValue() {
   UndefinedValue.call(this);
-  if (context) {
-    this.context = context;
-  }
 }
 
 exports.ObjectValue = ObjectValue;
@@ -115,6 +112,18 @@ ObjectValue.prototype.marshal = function () {
     object[name] = value.marshal();
   });
   return object;
+};
+
+ObjectValue.fromContext = function (context) {
+  var value = new ObjectValue();
+  value.context = context;
+  return value;
+};
+
+ObjectValue.unmarshal = function (object) {
+  var value = new ObjectValue();
+  value.context = new NativeContext(object);
+  return value;
 };
 
 
@@ -454,7 +463,7 @@ AbstractValue.unmarshal = function (value) {
     } else if (value instanceof NativeComplexValue) {
       return new ComplexValue(value.r, value.i);
     } else {
-      return new ObjectValue(new NativeContext(value));
+      return ObjectValue.unmarshal(value);
     }
     break;
   }
