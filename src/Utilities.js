@@ -29,8 +29,8 @@ function getGlobalValue(name, ErrorClass) {
 }
 
 function wrapFunction(length, nativeFunction) {
-  // jshint evil: true, unused: false
-  return eval('(function (' + Array.apply(null, Array(length)).map(function (_, index) {
+  // jshint evil: true
+  return (new Function('f', 'return function (' + Array.apply(null, Array(length)).map(function (_, index) {
     return '_' + index;
-  }).join(',') + ') { return nativeFunction.apply(this, arguments); })');
+  }).join(',') + ') { return f.apply(this, arguments); }'))(nativeFunction);
 }
