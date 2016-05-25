@@ -518,8 +518,10 @@ AbstractValue.unmarshal = function (value) {
   case 'number':
     if (value % 1) {
       return new RealValue(value);
-    } else {
+    } else if (value < 0) {
       return new IntegerValue(~~value);
+    } else {
+      return new NaturalValue(~~value);
     }
     break;
   case 'string':
