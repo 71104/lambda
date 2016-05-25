@@ -28,7 +28,7 @@ function getGlobalValue(name, ErrorClass) {
   }
 }
 
-function wrapFunction(length, nativeFunction) {
+function arity(length, nativeFunction) {
   // jshint evil: true
   return (new Function('f', 'return function (' + Array.apply(null, Array(length)).map(function (_, index) {
     return '_' + index;

@@ -361,7 +361,7 @@ Closure.prototype.marshal = function () {
   var node = this.lambda;
   var context = this.capture;
   var length = this.getLength();
-  return wrapFunction(length, function () {
+  return arity(length, function () {
     var values = arguments;
     return (function augment(node, context, index) {
       if (index < length) {
