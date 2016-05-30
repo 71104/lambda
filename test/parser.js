@@ -11,13 +11,6 @@ module.exports.testUndefined = function (test) {
   test.done();
 };
 
-module.exports.testNull = function (test) {
-  var ast = parse('null');
-  test.ok(ast.is(Lambda.LiteralNode));
-  test.ok(ast.value.is(Lambda.NullValue));
-  test.done();
-};
-
 module.exports.testTrue = function (test) {
   var ast = parse('true');
   test.ok(ast.is(Lambda.LiteralNode));

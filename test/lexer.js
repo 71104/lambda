@@ -25,7 +25,6 @@ module.exports.testWhiteSpace2 = testTokens('\t', []);
 module.exports.testWhiteSpace3 = testTokens('\n', []);
 module.exports.testWhiteSpace4 = testTokens(' \t\n', []);
 
-module.exports.testNullKeyword = testTokens('null', ['keyword:null']);
 module.exports.testUndefinedKeyword = testTokens('undefined', ['keyword:undefined']);
 module.exports.testTrueKeyword = testTokens('true', ['keyword:true']);
 module.exports.testFalseKeyword = testTokens('false', ['keyword:false']);

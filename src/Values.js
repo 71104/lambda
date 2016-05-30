@@ -93,32 +93,7 @@ UndefinedValue.prototype.clone = function (context) {
   return result;
 };
 
-UndefinedValue.prototype.marshal = function () {};
-
-UndefinedValue.INSTANCE = new UndefinedValue();
-
-
-function ObjectValue() {
-  UndefinedValue.call(this);
-}
-
-exports.ObjectValue = ObjectValue;
-
-ObjectValue.prototype = Object.create(UndefinedValue.prototype);
-
-ObjectValue.prototype.type = 'object';
-
-ObjectValue.prototype.toString = function () {
-  return 'object';
-};
-
-ObjectValue.prototype.clone = function (context) {
-  var result = new ObjectValue();
-  result.context = context;
-  return result;
-};
-
-ObjectValue.prototype.marshal = function () {
+UndefinedValue.prototype.marshal = function () {
   var object = {};
   this.context.forEach(function (name, value) {
     object[name] = value.marshal();
@@ -126,53 +101,23 @@ ObjectValue.prototype.marshal = function () {
   return object;
 };
 
-ObjectValue.fromContext = function (context) {
-  var value = new ObjectValue();
-  value.context = context;
-  return value;
-};
+UndefinedValue.INSTANCE = new UndefinedValue();
 
-ObjectValue.unmarshal = function (object) {
-  var value = new ObjectValue();
+UndefinedValue.unmarshalObject = function (object) {
+  var value = new UndefinedValue();
   value.context = new NativeContext(object);
   return value;
 };
 
 
-function NullValue() {
-  ObjectValue.call(this);
-}
-
-exports.NullValue = NullValue;
-
-NullValue.prototype = Object.create(ObjectValue.prototype);
-
-NullValue.prototype.type = 'null';
-
-NullValue.prototype.toString = function () {
-  return 'null';
-};
-
-NullValue.prototype.clone = function () {
-  // TODO - tough design choice, evaluate better.
-  throw new LambdaRuntimeError();
-};
-
-NullValue.prototype.marshal = function () {
-  return null;
-};
-
-NullValue.INSTANCE = new NullValue();
-
-
 function BooleanValue(value) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.value = !!value;
 }
 
 exports.BooleanValue = BooleanValue;
 
-BooleanValue.prototype = Object.create(ObjectValue.prototype);
+BooleanValue.prototype = Object.create(UndefinedValue.prototype);
 
 BooleanValue.prototype.type = 'bool';
 
@@ -221,14 +166,14 @@ NativeComplexValue.prototype.toString = function () {
 
 
 function ComplexValue(real, imaginary) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.real = real * 1;
   this.imaginary = imaginary * 1;
 }
 
 exports.ComplexValue = ComplexValue;
 
-ComplexValue.prototype = Object.create(ObjectValue.prototype);
+ComplexValue.prototype = Object.create(UndefinedValue.prototype);
 
 ComplexValue.prototype.type = 'complex';
 
@@ -331,7 +276,7 @@ NaturalValue.prototype.marshal = function () {
 
 
 function Closure(lambda, capture) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.lambda = lambda;
   this.capture = capture;
   this.context = this.context.add('length', new NaturalValue(this.getLength()));
@@ -339,7 +284,7 @@ function Closure(lambda, capture) {
 
 exports.Closure = Closure;
 
-Closure.prototype = Object.create(ObjectValue.prototype);
+Closure.prototype = Object.create(UndefinedValue.prototype);
 
 Closure.prototype.type = 'closure';
 
@@ -405,13 +350,13 @@ Closure.prototype.getLength = function () {
 
 
 function StringValue(value) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.value = '' + value;
 }
 
 exports.StringValue = StringValue;
 
-StringValue.prototype = Object.create(ObjectValue.prototype);
+StringValue.prototype = Object.create(UndefinedValue.prototype);
 
 StringValue.prototype.type = 'string';
 
@@ -431,13 +376,13 @@ StringValue.prototype.marshal = function () {
 
 
 function ListValue(values) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.values = values || [];
 }
 
 exports.ListValue = ListValue;
 
-ListValue.prototype = Object.create(ObjectValue.prototype);
+ListValue.prototype = Object.create(UndefinedValue.prototype);
 
 ListValue.prototype.type = 'list';
 
@@ -461,13 +406,13 @@ ListValue.prototype.marshal = function () {
 
 
 function NativeArrayValue(array) {
-  ObjectValue.call(this);
+  UndefinedValue.call(this);
   this.values = array;
 }
 
 exports.NativeArrayValue = NativeArrayValue;
 
-NativeArrayValue.prototype = Object.create(ObjectValue.prototype);
+NativeArrayValue.prototype = Object.create(UndefinedValue.prototype);
 
 NativeArrayValue.prototype.type = 'list';
 
@@ -530,13 +475,13 @@ AbstractValue.unmarshal = function (value) {
     return Closure.unmarshal(value);
   case 'object':
     if (value === null) {
-      return NullValue.INSTANCE;
+      return UndefinedValue.INSTANCE;
     } else if (Array.isArray(value)) {
       return new NativeArrayValue(value);
     } else if (value instanceof NativeComplexValue) {
       return new ComplexValue(value.r, value.i);
     } else {
-      return ObjectValue.unmarshal(value);
+      return UndefinedValue.unmarshalObject(value);
     }
     break;
   }

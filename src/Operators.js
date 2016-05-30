@@ -430,15 +430,7 @@ function ComparisonOperator() {
       'undefined': function () {
         return BooleanValue.TRUE;
       },
-      'null|bool|natural|integer|real|complex|string|closure|list|object': function () {
-        return BooleanValue.FALSE;
-      }
-    },
-    'null': {
-      'null': function () {
-        return BooleanValue.TRUE;
-      },
-      'undefined|object': function () {
+      'bool|natural|integer|real|complex|string|closure|list': function () {
         return BooleanValue.FALSE;
       }
     },
@@ -500,15 +492,6 @@ function ComparisonOperator() {
           return BooleanValue.TRUE;
         }
       }
-    },
-    'object': {
-      'undefined|null': function () {
-        return BooleanValue.FALSE;
-      },
-      'object': function () {
-        // TODO
-        throw new LambdaInternalError();
-      }
     }
   });
 }
@@ -524,15 +507,7 @@ function NegatedComparisonOperator() {
       'undefined': function () {
         return BooleanValue.FALSE;
       },
-      'null|bool|natural|integer|real|complex|string|closure|list|object': function () {
-        return BooleanValue.TRUE;
-      }
-    },
-    'null': {
-      'null': function () {
-        return BooleanValue.FALSE;
-      },
-      'undefined|object': function () {
+      'bool|natural|integer|real|complex|string|closure|list': function () {
         return BooleanValue.TRUE;
       }
     },
@@ -593,15 +568,6 @@ function NegatedComparisonOperator() {
           }
           return BooleanValue.FALSE;
         }
-      }
-    },
-    'object': {
-      'undefined|null': function () {
-        return BooleanValue.TRUE;
-      },
-      'object': function () {
-        // TODO
-        throw new LambdaInternalError();
       }
     }
   });

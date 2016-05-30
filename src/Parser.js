@@ -28,9 +28,6 @@ Parser.prototype.parseVariable = function () {
 
 Parser.prototype.parseClass0 = function () {
   switch (this.lexer.token()) {
-  case 'keyword:null':
-    this.lexer.next();
-    return new LiteralNode(NullValue.INSTANCE, NullType.INSTANCE);
   case 'keyword:undefined':
     this.lexer.next();
     return new LiteralNode(UndefinedValue.INSTANCE, UndefinedType.INSTANCE);
@@ -120,8 +117,6 @@ Parser.prototype.parseTypeClass0 = function () {
   switch (token) {
   case 'keyword:undefined':
     return UndefinedType.INSTANCE;
-  case 'keyword:null':
-    return NullType.INSTANCE;
   case 'keyword:bool':
     return BooleanType.INSTANCE;
   case 'keyword:complex':

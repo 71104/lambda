@@ -21,7 +21,6 @@ function testSet(expression, variables) {
 }
 
 module.exports.testUndefinedLiteral = testSet('undefined', []);
-module.exports.testNullLiteral = testSet('null', []);
 module.exports.testTrueLiteral = testSet('true', []);
 module.exports.testFalseLiteral = testSet('false', []);
 module.exports.testIntegerLiteral = testSet('123', []);

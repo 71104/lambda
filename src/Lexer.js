@@ -25,7 +25,6 @@ function Lexer(input) {
   }
 
   var keywords = [
-    'null',
     'undefined',
     'true',
     'false',

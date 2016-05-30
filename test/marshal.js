@@ -1,12 +1,13 @@
 var Lambda = require('../bin/lambda.js');
 
 module.exports.testMarshalUndefined = function (test) {
-  test.ok(typeof Lambda.UndefinedValue.INSTANCE.marshal() === 'undefined');
-  test.done();
-};
-
-module.exports.testMarshalNull = function (test) {
-  test.ok(Lambda.NullValue.INSTANCE.marshal() === null);
+  var output = Lambda.UndefinedValue.INSTANCE.marshal();
+  test.ok(typeof output === 'object');
+  for (var key in output) {
+    if (output.hasOwnProperty(key)) {
+      test.ok(false);
+    }
+  }
   test.done();
 };
 
@@ -58,11 +59,11 @@ module.exports.testMarshalString3 = function (test) {
 };
 
 module.exports.testMarshalClosure1 = function (test) {
-  var ast = new Lambda.LambdaNode('x', null, new Lambda.LiteralNode(Lambda.NullValue.INSTANCE));
+  var ast = new Lambda.LambdaNode('x', null, new Lambda.LiteralNode(Lambda.BooleanValue.FALSE));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
-  test.ok(value(null) === null);
-  test.ok(value(123.456) === null);
+  test.ok(value(null) === false);
+  test.ok(value(123.456) === false);
   test.done();
 };
 
@@ -70,7 +71,7 @@ module.exports.testMarshalClosure2 = function (test) {
   var ast = new Lambda.LambdaNode('x', null, new Lambda.VariableNode('x'));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
-  test.ok(value(null) === null);
+  test.ok(value('hello') === 'hello');
   test.ok(value(123.456) === 123.456);
   test.done();
 };
@@ -92,18 +93,18 @@ module.exports.testMarshalList1 = function (test) {
 
 module.exports.testMarshalList2 = function (test) {
   var value = (new Lambda.ListValue([
-    Lambda.NullValue.INSTANCE,
+    Lambda.BooleanValue.TRUE,
     new Lambda.StringValue('hello')
   ])).marshal();
   test.ok(Array.isArray(value));
   test.ok(value.length === 2);
-  test.ok(value[0] === null);
+  test.ok(value[0] === true);
   test.ok(value[1] === 'hello');
   test.done();
 };
 
 module.exports.testMarshalEmptyObject = function (test) {
-  var value = (new Lambda.ObjectValue(Lambda.Context.EMPTY)).marshal();
+  var value = Lambda.UndefinedValue.INSTANCE.marshal();
   test.ok(typeof value === 'object' && value !== null);
   for (var key in value) {
     if (value.hasOwnProperty(key)) {
@@ -121,7 +122,7 @@ module.exports.testUnmarshalUndefined = function (test) {
 };
 
 module.exports.testUnmarshalNull = function (test) {
-  test.ok(Lambda.AbstractValue.unmarshal(null).is(Lambda.NullValue));
+  test.ok(Lambda.AbstractValue.unmarshal(null).is(Lambda.UndefinedValue));
   test.done();
 };
 

@@ -359,7 +359,7 @@ LetNode.prototype.getType = function (context) {
         } else if (!index) {
           return UnknownType.INSTANCE;
         } else {
-          return new ObjectType();
+          return UndefinedType.INSTANCE;
         }
       }());
       return context.add(name, container.clone(augment(container.context, index + 1)));
@@ -382,10 +382,10 @@ LetNode.prototype.evaluate = function (context) {
           try {
             return AbstractValue.getGlobal(name, Error);
           } catch (e) {
-            return new ObjectValue();
+            return new UndefinedValue();
           }
         } else {
-          return new ObjectValue();
+          return new UndefinedValue();
         }
       }());
       return context.add(name, container.clone(augment(container.context, index + 1)));
