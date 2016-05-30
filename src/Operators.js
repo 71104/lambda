@@ -192,48 +192,7 @@ MultiplyOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function DivideOperator() {
   BinaryOperatorNode.call(this, {
-    'natural': {
-      'natural': function (x, y) {
-        return new NaturalValue(x.value / y.value);
-      },
-      'integer': function (x, y) {
-        var value = x.value / y.value;
-        if (value < 0) {
-          return new IntegerValue(Math.ceil(value));
-        } else {
-          return new IntegerValue(Math.floor(value));
-        }
-      },
-      'real': function (x, y) {
-        return new RealValue(x.value / y.value);
-      },
-      'complex': function (x, y) {
-        return new ComplexValue(
-          x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
-          x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary)
-        );
-      }
-    },
-    'integer': {
-      'natural|integer': function (x, y) {
-        var value = x.value / y.value;
-        if (value < 0) {
-          return new IntegerValue(Math.ceil(value));
-        } else {
-          return new IntegerValue(Math.floor(value));
-        }
-      },
-      'real': function (x, y) {
-        return new RealValue(x.value / y.value);
-      },
-      'complex': function (x, y) {
-        return new ComplexValue(
-          x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
-          x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary)
-        );
-      }
-    },
-    'real': {
+    'natural|integer|real': {
       'natural|integer|real': function (x, y) {
         return new RealValue(x.value / y.value);
       },
@@ -269,18 +228,15 @@ function PowerOperator() {
       'natural': function (x, y) {
         return new NaturalValue(Math.pow(x.value, y.value));
       },
-      'integer': function (x, y) {
-        return new IntegerValue(Math.pow(x.value, y.value));
-      },
-      'real': function (x, y) {
+      'integer|real': function (x, y) {
         return new RealValue(Math.pow(x.value, y.value));
       }
     },
     'integer': {
-      'natural|integer': function (x, y) {
+      'natural': function (x, y) {
         return new IntegerValue(Math.pow(x.value, y.value));
       },
-      'real': function (x, y) {
+      'integer|real': function (x, y) {
         return new RealValue(Math.pow(x.value, y.value));
       }
     },
