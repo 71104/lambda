@@ -87,9 +87,9 @@ UndefinedValue.prototype.toString = function () {
   return 'undefined';
 };
 
-UndefinedValue.prototype.extend = function (name, value) {
+UndefinedValue.prototype.clone = function (context) {
   var result = new UndefinedValue();
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -112,9 +112,9 @@ ObjectValue.prototype.toString = function () {
   return 'object';
 };
 
-ObjectValue.prototype.extend = function (name, value) {
+ObjectValue.prototype.clone = function (context) {
   var result = new ObjectValue();
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -153,7 +153,7 @@ NullValue.prototype.toString = function () {
   return 'null';
 };
 
-NullValue.prototype.extend = function () {
+NullValue.prototype.clone = function () {
   // TODO - tough design choice, evaluate better.
   throw new LambdaRuntimeError();
 };
@@ -184,9 +184,9 @@ BooleanValue.prototype.toString = function () {
   }
 };
 
-BooleanValue.prototype.extend = function (name, value) {
+BooleanValue.prototype.clone = function (context) {
   var result = new BooleanValue(this.value);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -240,9 +240,9 @@ ComplexValue.prototype.toString = function () {
   }
 };
 
-ComplexValue.prototype.extend = function (name, value) {
+ComplexValue.prototype.clone = function (context) {
   var result = new ComplexValue(this.real, this.imaginary);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -266,9 +266,9 @@ RealValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-RealValue.prototype.extend = function (name, value) {
+RealValue.prototype.clone = function (context) {
   var result = new RealValue(this.value);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -291,9 +291,9 @@ IntegerValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-IntegerValue.prototype.extend = function (name, value) {
+IntegerValue.prototype.clone = function (context) {
   var result = new IntegerValue(this.value);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -319,9 +319,9 @@ NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-NaturalValue.prototype.extend = function (name, value) {
+NaturalValue.prototype.clone = function (context) {
   var result = new NaturalValue(this.value);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -347,9 +347,9 @@ Closure.prototype.toString = function () {
   return 'closure';
 };
 
-Closure.prototype.extend = function (name, value) {
+Closure.prototype.clone = function (context) {
   var result = new Closure(this.lambda, this.capture);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -419,9 +419,9 @@ StringValue.prototype.toString = function () {
   return '\"' + this.value.replace(/\\/g, '\\\\').replace(/\"/g, '\\\"') + '\"';
 };
 
-StringValue.prototype.extend = function (name, value) {
+StringValue.prototype.clone = function (context) {
   var result = new StringValue(this.value);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -447,9 +447,9 @@ ListValue.prototype.toString = function () {
   }).join(', ') + ' }';
 };
 
-ListValue.prototype.extend = function (name, value) {
+ListValue.prototype.clone = function (context) {
   var result = new ListValue(this.values);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -477,9 +477,9 @@ NativeArrayValue.prototype.toString = function () {
   }).join(', ') + ' }';
 };
 
-NativeArrayValue.prototype.extend = function (name, value) {
+NativeArrayValue.prototype.clone = function (context) {
   var result = new NativeArrayValue(this.values);
-  result.context = this.context.add(name, value);
+  result.context = context;
   return result;
 };
 
@@ -540,4 +540,8 @@ AbstractValue.unmarshal = function (value) {
     }
     break;
   }
+};
+
+AbstractValue.getGlobal = function (name, Error) {
+  return AbstractValue.unmarshal(getGlobalValue(name, Error));
 };

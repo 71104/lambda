@@ -88,7 +88,7 @@ VariableNode.prototype.evaluate = function (context) {
   if (context.has(this.name)) {
     return LazyValue.evaluate(context.top(this.name));
   } else {
-    return LazyValue.evaluate(AbstractValue.unmarshal(getGlobalValue(this.name, LambdaRuntimeError)));
+    return LazyValue.evaluate(AbstractValue.getGlobal(this.name, LambdaRuntimeError));
   }
 };
 
@@ -349,20 +349,22 @@ LetNode.prototype.getFreeVariables = function () {
 
 LetNode.prototype.getType = function (context) {
   var names = this.names;
-  var expression = this.expression.getType(context);
-  return this.body.getType(function augment(context, index) {
+  var value = this.expression.getType(context);
+  return this.body.evaluate(function augment(context, index) {
+    var name = names[index];
     if (index < names.length - 1) {
-      var name = names[index];
-      if (context.has(name)) {
-        var object = context.top(name);
-        return context.add(name, new ObjectType(augment(object.context, index + 1)));
-      } else {
-        return augment(context.add(name, UnknownType.INSTANCE), index);
-      }
-    } else if (index < names.length) {
-      return context.add(names[index], expression);
+      var container = (function () {
+        if (context.has(name)) {
+          return context.top(name);
+        } else if (!index) {
+          return UnknownType.INSTANCE;
+        } else {
+          return new ObjectType();
+        }
+      }());
+      return context.add(name, container.clone(augment(container.context, index + 1)));
     } else {
-      throw new LambdaInternalError();
+      return context.add(name, value);
     }
   }(context, 0));
 };
@@ -371,23 +373,24 @@ LetNode.prototype.evaluate = function (context) {
   var names = this.names;
   var value = this.expression.evaluate(context);
   return this.body.evaluate(function augment(context, index) {
+    var name = names[index];
     if (index < names.length - 1) {
-      var name = names[index];
-      if (context.has(name)) {
-        return context.add(name, ObjectValue.fromContext(augment(context.top(name).context, index + 1)));
-      } else {
-        return augment(context.add(name, (function () {
+      var container = (function () {
+        if (context.has(name)) {
+          return context.top(name);
+        } else if (!index) {
           try {
-            return AbstractValue.unmarshal(getGlobalValue(name, Error));
+            return AbstractValue.getGlobal(name, Error);
           } catch (e) {
             return new ObjectValue();
           }
-        }())), index);
-      }
-    } else if (index < names.length) {
-      return context.add(names[index], value);
+        } else {
+          return new ObjectValue();
+        }
+      }());
+      return context.add(name, container.clone(augment(container.context, index + 1)));
     } else {
-      throw new LambdaInternalError();
+      return context.add(name, value);
     }
   }(context, 0));
 };
