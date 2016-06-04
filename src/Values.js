@@ -486,6 +486,8 @@ AbstractValue.unmarshal = function (value) {
   case 'object':
     if (value === null) {
       return UndefinedValue.INSTANCE;
+    } else if (value instanceof Boolean || value instanceof Number || value instanceof String) {
+      return AbstractValue.unmarshal(value.valueOf());
     } else if (Array.isArray(value)) {
       return new NativeArrayValue(value);
     } else if (value instanceof NativeComplexValue) {
