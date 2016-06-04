@@ -2,8 +2,6 @@ function AbstractValue() {}
 
 exports.AbstractValue = AbstractValue;
 
-AbstractValue.prototype.context = Context.EMPTY;
-
 AbstractValue.prototype.is = function (Class) {
   return this instanceof Class;
 };
@@ -81,6 +79,8 @@ exports.UndefinedValue = UndefinedValue;
 
 UndefinedValue.prototype = Object.create(AbstractValue.prototype);
 
+UndefinedValue.prototype.context = Context.EMPTY;
+
 UndefinedValue.prototype.type = 'undefined';
 
 UndefinedValue.prototype.toString = function () {
@@ -103,7 +103,7 @@ UndefinedValue.prototype.marshal = function () {
 
 UndefinedValue.INSTANCE = new UndefinedValue();
 
-UndefinedValue.unmarshalObject = function (object) {
+UndefinedValue.unmarshal = function (object) {
   var value = new UndefinedValue();
   value.context = new NativeContext(object);
   return value;
@@ -493,7 +493,7 @@ AbstractValue.unmarshal = function (value) {
     } else if (value instanceof NativeComplexValue) {
       return new ComplexValue(value.r, value.i);
     } else {
-      return UndefinedValue.unmarshalObject(value);
+      return UndefinedValue.unmarshal(value);
     }
     break;
   }

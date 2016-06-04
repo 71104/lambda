@@ -426,26 +426,12 @@ RightShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function ComparisonOperator() {
   BinaryOperatorNode.call(this, {
-    'undefined': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
-      'bool|natural|integer|real|complex|string|closure|list': function () {
-        return BooleanValue.FALSE;
-      }
-    },
     'bool': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       }
     },
     'natural|integer|real': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       },
@@ -454,9 +440,6 @@ function ComparisonOperator() {
       }
     },
     'complex': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!x.imaginary && x.real === y.value);
       },
@@ -465,22 +448,11 @@ function ComparisonOperator() {
       }
     },
     'string': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
       'string': function (x, y) {
         return BooleanValue.unmarshal(x.value === y.value);
       }
     },
-    'closure': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      }
-    },
     'list': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
       'list': function (x, y) {
         var xValues = x.getValues();
         var yValues = y.getValues();
@@ -505,26 +477,12 @@ ComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype);
 
 function NegatedComparisonOperator() {
   BinaryOperatorNode.call(this, {
-    'undefined': {
-      'undefined': function () {
-        return BooleanValue.FALSE;
-      },
-      'bool|natural|integer|real|complex|string|closure|list': function () {
-        return BooleanValue.TRUE;
-      }
-    },
     'bool': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
       'bool': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
     'natural|integer|real': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       },
@@ -533,9 +491,6 @@ function NegatedComparisonOperator() {
       }
     },
     'complex': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
       'natural|integer|real': function (x, y) {
         return BooleanValue.unmarshal(!!x.imaginary || x.real !== y.value);
       },
@@ -544,22 +499,11 @@ function NegatedComparisonOperator() {
       }
     },
     'string': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
       'string': function (x, y) {
         return BooleanValue.unmarshal(x.value !== y.value);
       }
     },
-    'closure': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      }
-    },
     'list': {
-      'undefined': function () {
-        return BooleanValue.TRUE;
-      },
       'list': function (x, y) {
         var xValues = x.getValues();
         var yValues = y.getValues();

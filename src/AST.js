@@ -188,7 +188,7 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
-  if (left.context.has(this.name)) {
+  if (left.is(UndefinedType) && left.context.has(this.name)) {
     return left.context.top(this.name);
   } else {
     throw new LambdaTypeError();
@@ -197,7 +197,7 @@ FieldAccessNode.prototype.getType = function (context) {
 
 FieldAccessNode.prototype.evaluate = function (context) {
   var left = LazyValue.evaluate(this.left.evaluate(context));
-  if (left.context.has(this.name)) {
+  if (left.is(UndefinedValue) && left.context.has(this.name)) {
     return LazyValue.evaluate(left.context.top(this.name).bindThis(left));
   } else {
     throw new LambdaRuntimeError();
@@ -347,52 +347,68 @@ LetNode.prototype.getFreeVariables = function () {
   }, this));
 };
 
-LetNode.prototype.getType = function (context) {
-  var names = this.names;
-  var value = this.expression.getType(context);
-  return this.body.evaluate(function augment(context, index) {
-    var name = names[index];
-    if (index < names.length - 1) {
-      var container = (function () {
-        if (context.has(name)) {
-          return context.top(name);
-        } else if (!index) {
-          return UnknownType.INSTANCE;
-        } else {
-          return UndefinedType.INSTANCE;
-        }
-      }());
-      return context.add(name, container.clone(augment(container.context, index + 1)));
-    } else {
-      return context.add(name, value);
+LetNode.prototype._findType = function (context, index) {
+  var name = this.names[index];
+  if (context.has(name)) {
+    return context.top(name);
+  } else if (!index) {
+    return UnknownType.INSTANCE;
+  } else {
+    return UndefinedType.INSTANCE;
+  }
+};
+
+LetNode.prototype._augmentType = function (context, index, type) {
+  var name = this.names[index];
+  if (index < this.names.length - 1) {
+    var container = this._findType(context, index);
+    if (!container.isSubTypeOf(UndefinedType.INSTANCE)) {
+      container = UndefinedType.INSTANCE;
     }
-  }(context, 0));
+    var augmentedContext = this._augmentValue(container.context, index + 1, type);
+    return context.add(name, container.clone(augmentedContext));
+  } else {
+    return context.add(name, type);
+  }
+};
+
+LetNode.prototype.getType = function (context) {
+  var type = this.expression.evaluate(context);
+  return this.body.evaluate(this._augmentType(context, 0, type));
+};
+
+LetNode.prototype._findValue = function (context, index) {
+  var name = this.names[index];
+  if (context.has(name)) {
+    return context.top(name);
+  } else if (!index) {
+    try {
+      return AbstractValue.getGlobal(name, Error);
+    } catch (e) {
+      return UndefinedValue.INSTANCE;
+    }
+  } else {
+    return UndefinedValue.INSTANCE;
+  }
+};
+
+LetNode.prototype._augmentValue = function (context, index, value) {
+  var name = this.names[index];
+  if (index < this.names.length - 1) {
+    var container = this._findValue(context, index);
+    if (!container.is(UndefinedValue)) {
+      container = UndefinedValue.INSTANCE;
+    }
+    var augmentedContext = this._augmentValue(container.context, index + 1, value);
+    return context.add(name, container.clone(augmentedContext));
+  } else {
+    return context.add(name, value);
+  }
 };
 
 LetNode.prototype.evaluate = function (context) {
-  var names = this.names;
   var value = this.expression.evaluate(context);
-  return this.body.evaluate(function augment(context, index) {
-    var name = names[index];
-    if (index < names.length - 1) {
-      var container = (function () {
-        if (context.has(name)) {
-          return context.top(name);
-        } else if (!index) {
-          try {
-            return AbstractValue.getGlobal(name, Error);
-          } catch (e) {
-            return new UndefinedValue();
-          }
-        } else {
-          return new UndefinedValue();
-        }
-      }());
-      return context.add(name, container.clone(augment(container.context, index + 1)));
-    } else {
-      return context.add(name, value);
-    }
-  }(context, 0));
+  return this.body.evaluate(this._augmentValue(context, 0, value));
 };
 
 

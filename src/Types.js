@@ -2,8 +2,6 @@ function AbstractType() {}
 
 exports.AbstractType = AbstractType;
 
-AbstractType.prototype.context = Context.EMPTY;
-
 AbstractType.prototype.is = function (Class) {
   return this instanceof Class;
 };
@@ -17,34 +15,12 @@ AbstractType.prototype.isAny = function () {
   return false;
 };
 
-AbstractType.prototype.isSubTypeOf = function (type) {
-  return type.context.names().every(function (name) {
-    return this.context.has(name) && this.context.top(name).isSubTypeOf(type.context.top(name));
-  }, this);
-};
-
-
-function UndefinedType() {
-  AbstractType.call(this);
-}
-
-UndefinedType.prototype = Object.create(AbstractType.prototype);
-
-UndefinedType.prototype.toString = function () {
-  return 'undefined';
-};
-
-UndefinedType.prototype.isSubTypeOf = function (type) {
-  return type.is(UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
-};
-
-UndefinedType.INSTANCE = new UndefinedType();
-
 
 function UnknownType() {
   AbstractType.call(this);
 }
+
+exports.UnknownType = UnknownType;
 
 UnknownType.prototype = Object.create(AbstractType.prototype);
 
@@ -59,109 +35,152 @@ UnknownType.prototype.isSubTypeOf = function () {
 UnknownType.INSTANCE = new UnknownType();
 
 
-function IndexedType(inner) {
+function UndefinedType() {
   AbstractType.call(this);
+}
+
+exports.UndefinedType = UndefinedType;
+
+UndefinedType.prototype = Object.create(AbstractType.prototype);
+
+UndefinedType.prototype.context = Context.EMPTY;
+
+UndefinedType.prototype.toString = function () {
+  return 'undefined';
+};
+
+UndefinedType.prototype.clone = function (context) {
+  var result = new UndefinedType();
+  result.context = context;
+  return result;
+};
+
+UndefinedType.prototype.isSubTypeOf = function (type) {
+  return type instanceof UndefinedType &&
+    this instanceof type.constructor &&
+    type.context.names().every(function (name) {
+      return this.context.has(name) && this.context.top(name).isSubTypeOf(type.context.top(name));
+    }, this);
+};
+
+UndefinedType.INSTANCE = new UndefinedType();
+
+
+function IndexedType(inner) {
+  UndefinedType.call(this);
   this.inner = inner;
 }
 
-IndexedType.prototype = Object.create(AbstractType.prototype);
+exports.IndexedType = IndexedType;
+
+IndexedType.prototype = Object.create(UndefinedType.prototype);
 
 IndexedType.prototype.isSubTypeOf = function (type) {
-  if (type.is(IndexedType)) {
-    return this.inner.isSubTypeOf(type.inner) &&
-      AbstractType.prototype.isSubTypeOf.call(this, type);
-  } else {
-    return type.is(UndefinedType) &&
-      AbstractType.prototype.isSubTypeOf.call(this, type);
-  }
+  return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
+    this.inner.isSubTypeOf(type);
 };
 
 
 function BooleanType() {
-  AbstractType.call(this);
+  UndefinedType.call(this);
 }
 
-BooleanType.prototype = Object.create(AbstractType.prototype);
+exports.BooleanType = BooleanType;
+
+BooleanType.prototype = Object.create(UndefinedType.prototype);
 
 BooleanType.prototype.toString = function () {
   return 'bool';
 };
 
-BooleanType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(BooleanType, UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
+BooleanType.prototype.clone = function (context) {
+  var result = new BooleanType();
+  result.context = context;
+  return result;
 };
 
 BooleanType.INSTANCE = new BooleanType();
 
 
 function ComplexType() {
-  AbstractType.call(this);
+  UndefinedType.call(this);
 }
 
-ComplexType.prototype = Object.create(AbstractType.prototype);
+exports.ComplexType = ComplexType;
+
+ComplexType.prototype = Object.create(UndefinedType.prototype);
 
 ComplexType.prototype.toString = function () {
   return 'complex';
 };
 
-ComplexType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(ComplexType, UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
+ComplexType.prototype.clone = function (context) {
+  var result = new ComplexType();
+  result.context = context;
+  return result;
 };
 
 ComplexType.INSTANCE = new ComplexType();
 
 
 function RealType() {
-  AbstractType.call(this);
+  ComplexType.call(this);
 }
 
-RealType.prototype = Object.create(AbstractType.prototype);
+exports.RealType = RealType;
+
+RealType.prototype = Object.create(ComplexType.prototype);
 
 RealType.prototype.toString = function () {
   return 'real';
 };
 
-RealType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(RealType, ComplexType, UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
+RealType.prototype.clone = function (context) {
+  var result = new RealType();
+  result.context = context;
+  return result;
 };
 
 RealType.INSTANCE = new RealType();
 
 
 function IntegerType() {
-  AbstractType.call(this);
+  RealType.call(this);
 }
 
-IntegerType.prototype = Object.create(AbstractType.prototype);
+exports.IntegerType = IntegerType;
+
+IntegerType.prototype = Object.create(RealType.prototype);
 
 IntegerType.prototype.toString = function () {
   return 'integer';
 };
 
-IntegerType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(IntegerType, RealType, ComplexType, UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
+IntegerType.prototype.clone = function (context) {
+  var result = new IntegerType();
+  result.context = context;
+  return result;
 };
 
 IntegerType.INSTANCE = new IntegerType();
 
 
 function NaturalType() {
-  AbstractType.call(this);
+  IntegerType.call(this);
 }
 
-NaturalType.prototype = Object.create(AbstractType.prototype);
+exports.NaturalType = NaturalType;
+
+NaturalType.prototype = Object.create(IntegerType.prototype);
 
 NaturalType.prototype.toString = function () {
   return 'natural';
 };
 
-NaturalType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(NaturalType, IntegerType, RealType, ComplexType, UndefinedType) &&
-    AbstractType.prototype.isSubTypeOf.call(this, type);
+NaturalType.prototype.clone = function (context) {
+  var result = new NaturalType();
+  result.context = context;
+  return result;
 };
 
 NaturalType.INSTANCE = new NaturalType();
@@ -171,40 +190,47 @@ function StringType(selfReference) {
   IndexedType.call(this, selfReference ? this : StringType.INSTANCE);
 }
 
+exports.StringType = StringType;
+
 StringType.prototype = Object.create(IndexedType.prototype);
 
 StringType.prototype.toString = function () {
   return 'string';
 };
 
-StringType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(StringType, UndefinedType) &&
-    IndexedType.prototype.isSubTypeOf.call(this, type);
+StringType.prototype.clone = function (context) {
+  var result = new StringType();
+  result.context = context;
+  return result;
 };
 
 StringType.INSTANCE = new StringType(true);
 
 
 function LambdaType(left, right) {
-  AbstractType.call(this);
+  UndefinedType.call(this);
   this.left = left;
   this.right = right;
 }
 
-LambdaType.prototype = Object.create(AbstractType.prototype);
+exports.LambdaType = LambdaType;
+
+LambdaType.prototype = Object.create(UndefinedType.prototype);
 
 LambdaType.prototype.toString = function () {
   return '(' + this.left + ') -> (' + this.right + ')';
 };
 
+LambdaType.prototype.clone = function (context) {
+  var result = new LambdaType(this.left, this.right);
+  result.context = context;
+  return result;
+};
+
 LambdaType.prototype.isSubTypeOf = function (type) {
-  if (type.is(LambdaType)) {
-    return type.left.isSubTypeOf(this.left) && this.right.isSubTypeOf(type.right) &&
-      AbstractType.prototype.isSubTypeOf.call(this, type);
-  } else {
-    return type.is(UndefinedType) &&
-      AbstractType.prototype.isSubTypeOf.call(this, type);
-  }
+  return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
+    type.left.isSubTypeOf(this.left) &&
+    this.right.isSubTypeOf(type.right);
 };
 
 
@@ -212,15 +238,18 @@ function ListType(inner) {
   IndexedType.call(this, inner);
 }
 
+exports.ListType = ListType;
+
 ListType.prototype = Object.create(IndexedType.prototype);
 
 ListType.prototype.toString = function () {
   return '(' + this.inner + ')*';
 };
 
-ListType.prototype.isSubTypeOf = function (type) {
-  return type.isAny(ListType, UndefinedType) &&
-    IndexedType.prototype.isSubTypeOf.call(this, type);
+ListType.prototype.clone = function (context) {
+  var result = new ListType(this.inner);
+  result.context = context;
+  return result;
 };
 
 
@@ -228,6 +257,8 @@ function VariableType(name) {
   AbstractType.call(this);
   this.name = name;
 }
+
+exports.VariableType = VariableType;
 
 VariableType.prototype = Object.create(AbstractType.prototype);
 
@@ -241,6 +272,8 @@ function ForEachType(name, inner) {
   this.name = name;
   this.inner = inner;
 }
+
+exports.ForEachType = ForEachType;
 
 ForEachType.prototype = Object.create(AbstractType.prototype);
 
