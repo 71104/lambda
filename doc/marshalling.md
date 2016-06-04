@@ -2,66 +2,43 @@
 
 ## Introduction
 
-Assumptions:
+The set \f$D_\Lambda\f$ of Lambda values is defined in [Domain](domain).
+
+The following is a simplified view of the \f$D_{JS}\f$ set of JavaScript values:
+
+\f[\begin{array}{rrl}
+  D_{JS} & := & undefined \\
+         & |  & null \\
+         & |  & true \\
+         & |  & false \\
+         & |  & Number(\alpha) \\
+         & |  & String(s) \\
+         & |  & Closure(this,\ x_1,\ x_2,\ \ldots) \\
+         & |  & Object(x_1: v_1,\ x_2: v_2,\ \ldots) \\
+         & |  & Array(v_1,\ v_2,\ \ldots)
+\end{array}\f]
+
+\f$u_\Lambda,\ v_\Lambda,\ \ldots\f$ are the generic elements of
+\f$D_\Lambda\f$.
+
+\f$u_{JS},\ v_{JS},\ \ldots\f$ are the generic elements of \f$D_{JS}\f$.
 
 \f[\begin{array}{l}
-  \alpha,\ \beta \in R \\
-  n \in N \\
-  i \in Z \\
-  s \in \Sigma^*
-\end{array}\f]
-
-\f$V_{JS}\f$ is the generic element of the \f$JavaScript\f$ set.
-
-JavaScript values:
-
-\f[\begin{array}{rl}
-  V_{JS} := & undefined \\
-          & null \\
-          & false \\
-          & true \\
-          & Number(\alpha) \\
-          & String(s) \\
-          & Closure(this,\ x_1,\ x_2,\ \ldots) \\
-          & Object(x_1:V_{JS 1},\ x_2:V_{JS 2},\ \ldots) \\
-          & Array(V_{JS 1},\ V_{JS 2},\ \ldots)
-\end{array}\f]
-
-\f$V_{\Lambda}\f$ is the generic element of the \f$Lambda\f$ set.
-
-Lambda values:
-
-\f[\begin{array}{rl}
-  V_{\Lambda} := & Object \\
-                 & false \\
-                 & true \\
-                 & Natural(n) \\
-                 & Integer(i) \\
-                 & Real(\alpha) \\
-                 & Complex(\alpha + i\beta) \\
-                 & String(s) \\
-                 & Closure(x_1,\ x_2,\ \ldots) \\
-                 & List(V_{\Lambda 1},\ V_{\Lambda 2},\ \ldots)
-\end{array}\f]
-
-Functions:
-
-\f[\begin{array}{l}
-  marshal:\ Lambda \to JavaScript \\
-  unmarshal:\ JavaScript \to Lambda
+  marshal:\ D_\Lambda \to D_{JS} \\
+  unmarshal:\ D_{JS} \to D_\Lambda \\
 \end{array}\f]
 
 ## marshal
 
-\f[\begin{array}{rl}
-  marshal(false) & = false \\
-  marshal(true) & = true \\
-  marshal(Natural(n)) & = Number(n) \\
-  marshal(Integer(i)) & = Number(i) \\
-  marshal(Real(\alpha)) & = Number(\alpha) \\
-  marshal(Complex(\alpha + i \beta)) & = Object(r:\alpha,\ i:\beta) \\
-  marshal(String(s)) & = String(s) \\
-  marshal(List(V_{\Lambda 1},\ V_{\Lambda 2},\ \ldots) & = Array(marshal(V_{\Lambda 1}),\ marshal(V_{\Lambda 2}),\ \ldots)
+\f[\begin{array}{rcl}
+  marshal(Boolean(true,\ \mu)) & = & true \\
+  marshal(Boolean(false,\ \mu)) & = & false \\
+  marshal(Natural(n,\ \mu)) & = & Number(n) \\
+  marshal(Integer(z,\ \mu)) & = & Number(z) \\
+  marshal(Real(\alpha,\ \mu)) & = & Number(\alpha) \\
+  marshal(Complex(\alpha+i\beta,\ \mu)) & = & Object(r:\alpha,\ i:\beta) \\
+  marshal(String(s,\ \mu)) & = & String(s) \\
+  marshal(List(v_{\Lambda 1},\ v_{\Lambda 2},\ \ldots,\ \mu)) & = & Array(marshal(v_{\Lambda 1}),\ marshal(v_{\Lambda 2}),\ \ldots) \\
 \end{array}\f]
 
 TODO

@@ -4,27 +4,27 @@ Let \f$M\f$ be the generic Lambda term, \f$n\f$ the generic unsigned integer
 literal, \f$\alpha\f$ the generic unsigned floating point literal, and \f$s\f$
 the generic string literal.
 
-\f[\begin{array}{rl}
-  M\ :=\ & true \\
-         & false \\
-         & n \\
-         & \alpha \\
-         & \alpha i \\
-         & s \\
-         & \{\ M_1,\ M_2, \ldots \} \\
-         & x \\
-         & fix \\
-         & M.x \\
-         & fn\ x \rightarrow M \\
-         & fn\ x:\sigma \rightarrow M \\
-         & M\ N \\
-         & let\ x_1.x_2. \ldots = M\ in\ N \\
-         & if\ M_1\ then\ M_2\ else\ M_3 \\
-         & throw\ M \\
-         & try\ M_1\ catch\ M_2 \\
-         & try\ M_1\ finally\ M_2 \\
-         & try\ M_1\ catch\ M_2\ finally\ M_3 \\
-         & error
+\f[\begin{array}{rcl}
+  M & := & true \\
+    &    & false \\
+    &    & n \\
+    &    & \alpha \\
+    &    & \alpha i \\
+    &    & s \\
+    &    & \{\ M_1,\ M_2, \ldots \} \\
+    &    & x \\
+    &    & fix \\
+    &    & M.x \\
+    &    & fn\ x \rightarrow M \\
+    &    & fn\ x:\sigma \rightarrow M \\
+    &    & M\ N \\
+    &    & let\ x_1.x_2. \ldots = M\ in\ N \\
+    &    & if\ M_1\ then\ M_2\ else\ M_3 \\
+    &    & throw\ M \\
+    &    & try\ M_1\ catch\ M_2 \\
+    &    & try\ M_1\ finally\ M_2 \\
+    &    & try\ M_1\ catch\ M_2\ finally\ M_3 \\
+    &    & error \\
 \end{array}\f]
 
 Syntax sugar:
