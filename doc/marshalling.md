@@ -5,9 +5,9 @@
 Assumptions:
 
 \f[\begin{array}{l}
-  \alpha,\ \beta \in \R \\
-  n \in \N \\
-  i \in \Z \\
+  \alpha,\ \beta \in R \\
+  n \in N \\
+  i \in Z \\
   s \in \Sigma^*
 \end{array}\f]
 
@@ -22,9 +22,9 @@ JavaScript values:
           & true \\
           & Number(\alpha) \\
           & String(s) \\
-          & function\ (x_1,\ x_2,\ \ldots)\ \{\ \ldots\ \} \\
-          & \{\ x_1:\ V_{JS 1},\ x_2:\ V_{JS 2},\ \ldots\ \} \\
-          & \left[\ V_{JS 1},\ V_{JS 2},\ \ldots\ \right]
+          & Closure(this,\ x_1,\ x_2,\ \ldots) \\
+          & Object(x_1:V_{JS 1},\ x_2:V_{JS 2},\ \ldots) \\
+          & Array(V_{JS 1},\ V_{JS 2},\ \ldots)
 \end{array}\f]
 
 \f$V_{\Lambda}\f$ is the generic element of the \f$Lambda\f$ set.
@@ -32,10 +32,19 @@ JavaScript values:
 Lambda values:
 
 \f[\begin{array}{rl}
-  V_{\Lambda} := & TODO
+  V_{\Lambda} := & Object \\
+                 & false \\
+                 & true \\
+                 & Natural(n) \\
+                 & Integer(i) \\
+                 & Real(\alpha) \\
+                 & Complex(\alpha + i\beta) \\
+                 & String(s) \\
+                 & Closure(x_1,\ x_2,\ \ldots) \\
+                 & List(V_{\Lambda 1},\ V_{\Lambda 2},\ \ldots)
 \end{array}\f]
 
-Marshalling functions:
+Functions:
 
 \f[\begin{array}{l}
   marshal:\ Lambda \to JavaScript \\
@@ -44,19 +53,16 @@ Marshalling functions:
 
 ## marshal
 
-\f[marshal(false) = false\f]
-
-\f[marshal(true) = true\f]
-
-\f[marshal(Natural(n)) = Number(n)\f]
-
-\f[marshal(Integer(i)) = Number(i)\f]
-
-\f[marshal(Real(\alpha)) = Number(\alpha)\f]
-
-\f[marshal(Complex(\alpha + i \beta)) = NativeComplexValue(\alpha,\ \beta)\f]
-
-\f[marshal(String(s)) = String(s)\f]
+\f[\begin{array}{rl}
+  marshal(false) & = false \\
+  marshal(true) & = true \\
+  marshal(Natural(n)) & = Number(n) \\
+  marshal(Integer(i)) & = Number(i) \\
+  marshal(Real(\alpha)) & = Number(\alpha) \\
+  marshal(Complex(\alpha + i \beta)) & = Object(r:\alpha,\ i:\beta) \\
+  marshal(String(s)) & = String(s) \\
+  marshal(List(V_{\Lambda 1},\ V_{\Lambda 2},\ \ldots) & = Array(marshal(V_{\Lambda 1}),\ marshal(V_{\Lambda 2}),\ \ldots)
+\end{array}\f]
 
 TODO
 
