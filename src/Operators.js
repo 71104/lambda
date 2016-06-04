@@ -77,7 +77,7 @@ function PlusOperator() {
     },
     'list': {
       'list': function (x, y) {
-        return new ListValue(x.values.concat(y.values));
+        return new ListValue(x.getValues().concat(y.getValues()));
       }
     }
   });
@@ -482,10 +482,12 @@ function ComparisonOperator() {
         return BooleanValue.FALSE;
       },
       'list': function (x, y) {
-        if (x.values.length !== y.values.length) {
+        var xValues = x.getValues();
+        var yValues = y.getValues();
+        if (xValues.length !== yValues.length) {
           return BooleanValue.FALSE;
         } else {
-          for (var i = 0; i < x.values.length; i++) {
+          for (var i = 0; i < xValues.length; i++) {
             // TODO
             throw new LambdaInternalError();
           }
@@ -559,10 +561,12 @@ function NegatedComparisonOperator() {
         return BooleanValue.TRUE;
       },
       'list': function (x, y) {
-        if (x.values.length !== y.values.length) {
+        var xValues = x.getValues();
+        var yValues = y.getValues();
+        if (xValues.length !== yValues.length) {
           return BooleanValue.TRUE;
         } else {
-          for (var i = 0; i < x.values.length; i++) {
+          for (var i = 0; i < xValues.length; i++) {
             // TODO
             throw new LambdaInternalError();
           }

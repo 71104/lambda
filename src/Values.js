@@ -392,6 +392,10 @@ ListValue.prototype.toString = function () {
   }).join(', ') + ' }';
 };
 
+ListValue.prototype.getValues = function () {
+  return this.values;
+};
+
 ListValue.prototype.clone = function (context) {
   var result = new ListValue(this.values);
   result.context = context;
@@ -420,6 +424,12 @@ NativeArrayValue.prototype.toString = function () {
   return '{ ' + this.values.map(function (element) {
     return AbstractValue.unmarshal(element).toString();
   }).join(', ') + ' }';
+};
+
+NativeArrayValue.prototype.getValues = function () {
+  return this.values.map(function (value) {
+    return AbstractValue.unmarshal(value);
+  });
 };
 
 NativeArrayValue.prototype.clone = function (context) {
