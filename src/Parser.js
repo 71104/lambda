@@ -58,9 +58,6 @@ Parser.prototype.parseClass0 = function () {
   case 'keyword:fix':
     this.lexer.next();
     return FixNode.INSTANCE;
-  case 'keyword:this':
-    this.lexer.next();
-    return ThisNode.INSTANCE;
   case 'keyword:error':
     this.lexer.next();
     return ErrorNode.INSTANCE;

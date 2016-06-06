@@ -20,57 +20,6 @@ AbstractValue.prototype.bindThis = function () {
 };
 
 
-function LazyValue(expression, capture) {
-  AbstractValue.call(this);
-  this.expression = expression;
-  this.capture = capture;
-}
-
-exports.LazyValue = LazyValue;
-
-LazyValue.prototype = Object.create(AbstractValue.prototype);
-
-LazyValue.prototype.type = 'lazy';
-
-LazyValue.prototype.toString = function () {
-  return 'lazy';
-};
-
-LazyValue.prototype.bindThis = function (value) {
-  return new LazyValue(this.expression, this.capture.add('this', value));
-};
-
-LazyValue.prototype.marshal = function () {
-  var node = this.expression;
-  var context = this.capture;
-  return function () {
-    return (function () {
-      try {
-        return node.evaluate(context);
-      } catch (e) {
-        if (e instanceof LambdaUserError) {
-          throw e.value.marshal();
-        } else {
-          throw e;
-        }
-      }
-    }()).marshal();
-  };
-};
-
-LazyValue.unmarshal = function (value, context) {
-  return new LazyValue(new NativeNode(value, []), context || Context.EMPTY);
-};
-
-LazyValue.evaluate = function (value) {
-  if (value.is(LazyValue)) {
-    return value.expression.evaluate(value.capture);
-  } else {
-    return value;
-  }
-};
-
-
 function UndefinedValue() {
   AbstractValue.call(this);
 }
@@ -305,15 +254,19 @@ Closure.prototype.clone = function (context) {
 };
 
 Closure.prototype.bindThis = function (value) {
-  return new Closure(this.lambda, this.capture.add('this', value));
+  return this.lambda.body.evaluate(this.capture.add(this.lambda.name, value));
 };
 
 Closure.prototype.marshal = function () {
   var node = this.lambda;
   var context = this.capture;
   var length = this.getLength();
-  return arity(length, function () {
-    var values = arguments;
+  var hasThis = this.name === 'this';
+  return arity(length - !hasThis, function () {
+    var values = [].slice.call(arguments);
+    if (hasThis) {
+      values.unshift(this);
+    }
     return (function augment(node, context, index) {
       if (index < length) {
         return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
@@ -334,21 +287,22 @@ Closure.prototype.marshal = function () {
   });
 };
 
-Closure.unmarshal = function (value, context) {
+Closure.unmarshal = function (value, extraArgument) {
+  var minLength = 1 + !!extraArgument;
   return new Closure((function makeLambda(index, names) {
-    if (index < Math.max(value.length, 1)) {
+    if (index < Math.max(value.length + 1, minLength)) {
       var name = '' + index;
       names.push(name);
       return new LambdaNode(name, UndefinedType.INSTANCE, makeLambda(index + 1, names));
     } else {
       return new NativeNode(value, names);
     }
-  }(0, [])), context || Context.EMPTY);
+  }(0, [])), Context.EMPTY);
 };
 
 Closure.prototype.getLength = function () {
-  var length = 0;
-  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+  var length = 1;
+  for (var node = this.lambda.body; node.is(LambdaNode) && node.name !== 'this'; node = node.body) {
     length++;
   }
   return length;
@@ -488,7 +442,7 @@ AbstractValue.unmarshal = function (value) {
   case 'string':
     return new StringValue(value);
   case 'function':
-    return Closure.unmarshal(value);
+    return Closure.unmarshal(value, true);
   case 'object':
     if (value === null) {
       return UndefinedValue.INSTANCE;

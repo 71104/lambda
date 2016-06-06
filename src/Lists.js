@@ -3,13 +3,13 @@ ListType.prototype.context = ListType.prototype.context.addAll({
 });
 
 ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.prototype.context.addAll({
-  length: LazyValue.unmarshal(function () {
+  length: Closure.unmarshal(function () {
     return this.length;
   }),
-  head: LazyValue.unmarshal(function () {
+  head: Closure.unmarshal(function () {
     return this[0];
   }),
-  tail: LazyValue.unmarshal(function () {
+  tail: Closure.unmarshal(function () {
     return this.slice(1);
   }),
   slice: Closure.unmarshal(function (begin, end) {
@@ -130,7 +130,7 @@ ListValue.prototype.context = NativeArrayValue.prototype.context = ListValue.pro
       return callback(element, value);
     }, value);
   }),
-  reverse: LazyValue.unmarshal(function () {
+  reverse: Closure.unmarshal(function () {
     return this.slice().reverse();
   }),
   min: Closure.unmarshal(function (compare) {

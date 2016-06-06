@@ -36,7 +36,6 @@ module.exports.testArray5 = testSet('{x, y}', ['x', 'y']);
 
 module.exports.testVariable = testSet('blahblah', ['blahblah']);
 module.exports.testFix = testSet('fix', []);
-module.exports.testThis = testSet('this', ['this']);
 module.exports.testError = testSet('error', ['error']);
 
 module.exports.testField1 = testSet('x.y', ['x']);

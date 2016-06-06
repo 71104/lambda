@@ -7,7 +7,7 @@ BooleanType.prototype.context = BooleanType.prototype.context.addAll({
 });
 
 BooleanValue.prototype.context = BooleanValue.prototype.context.addAll({
-  str: LazyValue.unmarshal(function () {
+  str: Closure.unmarshal(function () {
     if (this.valueOf()) {
       return 'true';
     } else {
@@ -23,13 +23,13 @@ ComplexType.prototype.context = ComplexType.prototype.context.addAll({
 });
 
 ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
-  real: LazyValue.unmarshal(function () {
+  real: Closure.unmarshal(function () {
     return this.r;
   }),
-  imaginary: LazyValue.unmarshal(function () {
+  imaginary: Closure.unmarshal(function () {
     return this.i;
   }),
-  str: LazyValue.unmarshal(function () {
+  str: Closure.unmarshal(function () {
     return this.toString();
   })
 });
@@ -39,7 +39,7 @@ RealType.prototype.context = RealType.prototype.context.addAll({
 });
 
 RealValue.prototype.context = RealValue.prototype.context.addAll({
-  str: LazyValue.unmarshal(function () {
+  str: Closure.unmarshal(function () {
     return '' + this;
   })
 });
@@ -49,7 +49,7 @@ IntegerType.prototype.context = IntegerType.prototype.context.addAll({
 });
 
 IntegerValue.prototype.context = IntegerValue.prototype.context.addAll({
-  str: LazyValue.unmarshal(function () {
+  str: Closure.unmarshal(function () {
     return '' + this;
   })
 });
@@ -59,7 +59,7 @@ NaturalType.prototype.context = NaturalType.prototype.context.addAll({
 });
 
 NaturalValue.prototype.context = NaturalValue.prototype.context.addAll({
-  str: LazyValue.unmarshal(function () {
+  str: Closure.unmarshal(function () {
     return '' + this;
   })
 });
@@ -69,8 +69,6 @@ Closure.prototype.context = Closure.prototype.context.addAll({
     return this.apply(null, parameters);
   })
 });
-
-ThisNode.INSTANCE = new ThisNode();
 
 ErrorNode.INSTANCE = new ErrorNode();
 

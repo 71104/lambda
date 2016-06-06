@@ -34,7 +34,6 @@ module.exports.testAndKeyword = testTokens('and', ['keyword:and']);
 module.exports.testOrKeyword = testTokens('or', ['keyword:or']);
 module.exports.testXorKeyword = testTokens('xor', ['keyword:xor']);
 module.exports.testFixKeyword = testTokens('fix', ['keyword:fix']);
-module.exports.testThisKeyword = testTokens('this', ['keyword:this']);
 module.exports.testBoolKeyword = testTokens('bool', ['keyword:bool']);
 module.exports.testUnknownKeyword = testTokens('unknown', ['keyword:unknown']);
 module.exports.testIntKeyword = testTokens('integer', ['keyword:integer']);

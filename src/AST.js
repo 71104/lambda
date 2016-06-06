@@ -86,9 +86,9 @@ VariableNode.prototype.getType = function (context) {
 
 VariableNode.prototype.evaluate = function (context) {
   if (context.has(this.name)) {
-    return LazyValue.evaluate(context.top(this.name));
+    return context.top(this.name);
   } else {
-    return LazyValue.evaluate(AbstractValue.getGlobal(this.name, LambdaRuntimeError));
+    return AbstractValue.getGlobal(this.name, LambdaRuntimeError);
   }
 };
 
@@ -111,35 +111,6 @@ FixNode.prototype.getType = function () {
 
 FixNode.prototype.evaluate = function () {
   return FixNode.Z_COMBINATOR;
-};
-
-
-function ThisNode() {
-  AbstractNode.call(this);
-}
-
-exports.ThisNode = ThisNode;
-
-ThisNode.prototype = Object.create(AbstractNode.prototype);
-
-ThisNode.prototype.getFreeVariables = function () {
-  return ['this'];
-};
-
-ThisNode.prototype.getType = function (context) {
-  if (context.has('this')) {
-    return context.top('this');
-  } else {
-    throw new LambdaTypeError();
-  }
-};
-
-ThisNode.prototype.evaluate = function (context) {
-  if (context.has('this')) {
-    return context.top('this');
-  } else {
-    throw new LambdaRuntimeError();
-  }
 };
 
 
@@ -196,9 +167,9 @@ FieldAccessNode.prototype.getType = function (context) {
 };
 
 FieldAccessNode.prototype.evaluate = function (context) {
-  var left = LazyValue.evaluate(this.left.evaluate(context));
+  var left = this.left.evaluate(context);
   if (left.is(UndefinedValue) && left.context.has(this.name)) {
-    return LazyValue.evaluate(left.context.top(this.name).bindThis(left));
+    return left.context.top(this.name).bindThis(left);
   } else {
     throw new LambdaRuntimeError();
   }
@@ -230,21 +201,21 @@ SubscriptNode.prototype.getType = function (context) {
 };
 
 SubscriptNode.prototype.evaluate = function (context) {
-  var value = LazyValue.evaluate(this.expression.evaluate(context));
+  var value = this.expression.evaluate(context);
   if (value.isAny(ListValue, NativeArrayValue, StringValue)) {
     var index = this.index.evaluate(context);
     if (index.is(IntegerValue)) {
       if (value.is(ListValue)) {
         if (index.value >= 0 && index.value < value.values.length) {
-          return LazyValue.evaluate(value.values[index.value]);
+          return value.values[index.value];
         }
       } else if (value.is(NativeArrayValue)) {
         if (index.value >= 0 && index.value < value.values.length) {
-          return LazyValue.evaluate(AbstractValue.unmarshal(value.values[index.value]));
+          return AbstractValue.unmarshal(value.values[index.value]);
         }
       } else if (value.is(StringValue)) {
         if (index.value >= 0 && index.value < value.value.length) {
-          return LazyValue.evaluate(value.value[index.value]);
+          return value.value[index.value];
         }
       }
     }
@@ -281,28 +252,6 @@ LambdaNode.prototype.getType = function (context) {
 
 LambdaNode.prototype.evaluate = function (context) {
   return new Closure(this, context);
-};
-
-
-function LazyNode(expression) {
-  AbstractNode.call(this);
-  this.expression = expression;
-}
-
-exports.LazyNode = LazyNode;
-
-LazyNode.prototype = Object.create(AbstractNode.prototype);
-
-LazyNode.prototype.getFreeVariables = function () {
-  return this.expression.getFreeVariables();
-};
-
-LazyNode.prototype.getType = function (context) {
-  return this.expression.getType(context);
-};
-
-LazyNode.prototype.evaluate = function (context) {
-  return new LazyValue(this.expression, context);
 };
 
 
@@ -584,13 +533,6 @@ NativeNode.prototype.getType = function () {
 };
 
 NativeNode.prototype.evaluate = function (context) {
-  var thisValue = (function () {
-    if (context.has('this')) {
-      return context.top('this').marshal();
-    } else {
-      return null;
-    }
-  }());
   var argumentValues = this.argumentNames.map(function (name) {
     if (context.has(name)) {
       return context.top(name).marshal();
@@ -598,6 +540,7 @@ NativeNode.prototype.evaluate = function (context) {
       throw new LambdaInternalError();
     }
   });
+  var thisValue = argumentValues.shift();
   return AbstractValue.unmarshal(function () {
     try {
       return this.nativeFunction.apply(thisValue, argumentValues);
@@ -630,13 +573,6 @@ SemiNativeNode.prototype.getFreeVariables = function () {
 };
 
 SemiNativeNode.prototype.evaluate = function (context) {
-  var thisValue = (function () {
-    if (context.has('this')) {
-      return context.top('this');
-    } else {
-      return null;
-    }
-  }());
   var argumentValues = this.argumentNames.map(function (name) {
     if (context.has(name)) {
       return context.top(name);
@@ -644,7 +580,7 @@ SemiNativeNode.prototype.evaluate = function (context) {
       throw new LambdaInternalError();
     }
   });
-  return this.evaluator.apply(thisValue, argumentValues);
+  return this.evaluator.apply(null, argumentValues);
 };
 
 

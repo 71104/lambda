@@ -209,7 +209,8 @@ module.exports.testUnmarshalNoArgFunction = function (test) {
   var value = Lambda.AbstractValue.unmarshal(function () {});
   test.ok(value.is(Lambda.Closure));
   test.ok(value.lambda.is(Lambda.LambdaNode));
-  test.ok(value.lambda.body.is(Lambda.NativeNode));
+  test.ok(value.lambda.body.is(Lambda.LambdaNode));
+  test.ok(value.lambda.body.body.is(Lambda.NativeNode));
   test.done();
 };
 
@@ -218,7 +219,8 @@ module.exports.testUnmarshalOneArgFunction = function (test) {
   var value = Lambda.AbstractValue.unmarshal(function (x) {});
   test.ok(value.is(Lambda.Closure));
   test.ok(value.lambda.is(Lambda.LambdaNode));
-  test.ok(value.lambda.body.is(Lambda.NativeNode));
+  test.ok(value.lambda.body.is(Lambda.LambdaNode));
+  test.ok(value.lambda.body.body.is(Lambda.NativeNode));
   test.done();
 };
 
@@ -228,7 +230,8 @@ module.exports.testUnmarshalTwoArgFunction = function (test) {
   test.ok(value.is(Lambda.Closure));
   test.ok(value.lambda.is(Lambda.LambdaNode));
   test.ok(value.lambda.body.is(Lambda.LambdaNode));
-  test.ok(value.lambda.body.body.is(Lambda.NativeNode));
+  test.ok(value.lambda.body.body.is(Lambda.LambdaNode));
+  test.ok(value.lambda.body.body.body.is(Lambda.NativeNode));
   test.done();
 };
 

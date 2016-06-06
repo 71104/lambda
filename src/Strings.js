@@ -16,7 +16,7 @@ StringType.prototype.context = StringType.prototype.context.addAll({
 });
 
 StringValue.prototype.context = StringValue.prototype.context.addAll({
-  length: LazyValue.unmarshal(function () {
+  length: Closure.unmarshal(function () {
     return this.length;
   }),
   substring: Closure.unmarshal(function (index, length) {
@@ -48,10 +48,10 @@ StringValue.prototype.context = StringValue.prototype.context.addAll({
       return '';
     }
   }),
-  lowerCase: LazyValue.unmarshal(function () {
+  lowerCase: Closure.unmarshal(function () {
     return this.toLowerCase();
   }),
-  upperCase: LazyValue.unmarshal(function () {
+  upperCase: Closure.unmarshal(function () {
     return this.toUpperCase();
   }),
   startsWith: Closure.unmarshal(function (string) {
@@ -60,13 +60,13 @@ StringValue.prototype.context = StringValue.prototype.context.addAll({
   endsWith: Closure.unmarshal(function (string) {
     return this.lastIndexOf(string) === string.length;
   }),
-  trim: LazyValue.unmarshal(function () {
+  trim: Closure.unmarshal(function () {
     return this.trim();
   }),
-  trimLeft: LazyValue.unmarshal(function () {
+  trimLeft: Closure.unmarshal(function () {
     return this.trimLeft();
   }),
-  trimRight: LazyValue.unmarshal(function () {
+  trimRight: Closure.unmarshal(function () {
     return this.trimRight();
   })
 });

@@ -33,7 +33,6 @@ function Lexer(input) {
     'or',
     'xor',
     'fix',
-    'this',
     'bool',
     'unknown',
     'natural',
