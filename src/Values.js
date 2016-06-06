@@ -80,6 +80,7 @@ exports.UndefinedValue = UndefinedValue;
 UndefinedValue.prototype = Object.create(AbstractValue.prototype);
 
 UndefinedValue.prototype.context = Context.EMPTY;
+UndefinedValue.prototype.native = false;
 
 UndefinedValue.prototype.type = 'undefined';
 
@@ -94,11 +95,15 @@ UndefinedValue.prototype.clone = function (context) {
 };
 
 UndefinedValue.prototype.marshal = function () {
-  var object = {};
-  this.context.forEach(function (name, value) {
-    object[name] = value.marshal();
-  });
-  return object;
+  if (this.native) {
+    return this.context.object;
+  } else {
+    var object = {};
+    this.context.forEach(function (name, value) {
+      object[name] = value.marshal();
+    });
+    return object;
+  }
 };
 
 UndefinedValue.INSTANCE = new UndefinedValue();
@@ -106,6 +111,7 @@ UndefinedValue.INSTANCE = new UndefinedValue();
 UndefinedValue.unmarshal = function (object) {
   var value = new UndefinedValue();
   value.context = new NativeContext(object);
+  value.native = true;
   return value;
 };
 
