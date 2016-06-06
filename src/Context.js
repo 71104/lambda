@@ -83,7 +83,3 @@ NativeContext.prototype._marshal = function (value) {
 NativeContext.prototype._unmarshal = function (value) {
   return AbstractValue.unmarshal(value);
 };
-
-NativeContext.prototype.marshal = function () {
-  return this.object;
-};
