@@ -24,52 +24,52 @@ let sum = fn l ->
     l.reduce 0 +
 in
 
-let grid.slice_row = fn g, i, j ->
+let grid.slice_row = fn grid, g, i, j ->
     if in_range i 0 (- g.length 1)
     then g[i].slice (max (- j 1) 0) (min (+ j 2) (- g[i].length 1))
     else {}
 in
 
-let grid.neighbors = fn g, i, j ->
+let grid.neighbors = fn grid, g, i, j ->
     sum {sum (grid.slice_row g (- i 1) j),
          sum (grid.slice_row g i j),
          sum (grid.slice_row g (+ i 1) j),
          - 0 g[i][j]}
 in
 
-let grid.next_state_from = fn a, n ->
+let grid.next_state_from = fn grid, a, n ->
     if or (= n 3) (and (= a 1) (= n 2))
     then 1
     else 0
 in
 
-let grid.next_state = fn g, i, j ->
+let grid.next_state = fn grid, g, i, j ->
     grid.next_state_from g[i][j] (grid.neighbors g i j)
 in
 
-let grid.step_column = fix fn f, g, i, j ->
+let grid.step_column = fix fn f, grid, g, i, j ->
     if in_range j 0 (- g[i].length 1)
     then {grid.next_state g i j}.concat (f g i (+ j 1))
     else {}
 in
 
-let grid.step_row = fix fn f, g, i ->
+let grid.step_row = fix fn f, grid, g, i ->
     if in_range i 0 (- g.length 1)
     then {grid.step_column g i 0}.concat (f g (+ i 1))
     else {}
 in
 
-let grid.step = fn g ->
+let grid.step = fn grid, g ->
     grid.step_row g 0
 in
 
-let grid.advance_n_steps = fix fn f, g, n ->
+let grid.advance_n_steps = fix fn f, grid, g, n ->
     if > n 0
     then f (grid.step g) (- n 1)
     else g
 in
 
-let grid.print = fn g ->
+let grid.print = fn grid, g ->
     g.each fn r ->
         console.log (r.reduce "" (fn v, a -> + a (if = v 1 then "*" else " ")))
 in

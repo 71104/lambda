@@ -1,4 +1,4 @@
-let add = fn y -> + this.x y in
+let add = fn this, y -> + this.x y in
 let o1.x = 123, o1.add = add in
 let o2.x = 456, o2.add = add in
 
