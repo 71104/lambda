@@ -21,6 +21,15 @@ Array.prototype.union = function () {
   return this.concat.apply(this, arguments).unique();
 };
 
+Array.prototype.intersection = function () {
+  var arrays = [].slice(arguments);
+  return this.filter(function (value) {
+    return arrays.every(function (array) {
+      return array.contains(value);
+    });
+  });
+};
+
 function getGlobalValue(name, ErrorClass) {
   if (name in this) {
     try {

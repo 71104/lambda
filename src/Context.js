@@ -38,6 +38,16 @@ Context.prototype.forEach = function (callback, context) {
   }
 };
 
+Context.prototype.every = function (callback, context) {
+  for (var name in this._hash) {
+    // jshint forin: false
+    if (!callback.call(context, name, this._unmarshal(this._hash[name]))) {
+      return false;
+    }
+  }
+  return true;
+};
+
 Context.prototype.add = function (name, value) {
   var hash = Object.create(this._hash);
   hash[name] = this._marshal(value);

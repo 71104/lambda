@@ -54,6 +54,14 @@ ListLiteralNode.prototype.getFreeVariables = function () {
   return names;
 };
 
+ListLiteralNode.prototype.getType = function (context) {
+  return new ListType(this.expressions.map(function (expression) {
+    return expression.getType(context);
+  }).reduce(function (type1, type2) {
+    return type1.union(type2);
+  }, UnknownType.INSTANCE));
+};
+
 ListLiteralNode.prototype.evaluate = function (context) {
   return new ListValue(this.expressions.map(function (expression) {
     return expression.evaluate(context);
@@ -153,8 +161,14 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
-  if (left.is(UndefinedType) && left.context.has(this.name)) {
-    return left.context.top(this.name);
+  if (left.is(UnknownType)) {
+    if (left.context.has(this.name)) {
+      return left.context.top(this.name).bindThis(left);
+    } else {
+      return UnknownType.INSTANCE;
+    }
+  } else if (left.is(UndefinedType) && left.context.has(this.name)) {
+    return left.context.top(this.name).bindThis(left);
   } else {
     throw new LambdaTypeError();
   }
@@ -184,10 +198,13 @@ SubscriptNode.prototype.getFreeVariables = function () {
 };
 
 SubscriptNode.prototype.getType = function (context) {
-  if (this.index.getType(context).isSubTypeOf(IntegerType.INSTANCE)) {
-    var expression = this.expression.getType(context);
+  var expression = this.expression.getType(context);
+  var index = this.expression.getType(context);
+  if (index.isAny(IntegerType, UnknownType)) {
     if (expression.is(IndexedType)) {
       return expression.inner;
+    } else if (expression.is(UnknownType)) {
+      return UnknownType.INSTANCE;
     }
   }
   throw new LambdaTypeError();
@@ -260,6 +277,21 @@ ApplicationNode.prototype.getFreeVariables = function () {
   return this.left.getFreeVariables().union(this.right.getFreeVariables());
 };
 
+ApplicationNode.prototype.getType = function (context) {
+  var left = this.left.getType(context);
+  var right = this.right.getType(context);
+  if (left.is(ForEachType)) {
+    left = left.replace(left.name, right);
+  }
+  if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
+    return left.right;
+  } else if (left.is(UnknownType)) {
+    return UnknownType.INSTANCE;
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
 ApplicationNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   if (left.is(Closure)) {
@@ -301,10 +333,10 @@ LetNode.prototype._augmentType = function (context, index, type) {
   var name = this.names[index];
   if (index < this.names.length - 1) {
     var container = this._findType(context, index);
-    if (!container.isSubTypeOf(UndefinedType.INSTANCE)) {
+    if (!container.is(UndefinedType)) {
       container = UndefinedType.INSTANCE;
     }
-    var augmentedContext = this._augmentValue(container.context, index + 1, type);
+    var augmentedContext = this._augmentType(container.context, index + 1, type);
     return context.add(name, container.clone(augmentedContext));
   } else {
     return context.add(name, type);
@@ -312,8 +344,8 @@ LetNode.prototype._augmentType = function (context, index, type) {
 };
 
 LetNode.prototype.getType = function (context) {
-  var type = this.expression.evaluate(context);
-  return this.body.evaluate(this._augmentType(context, 0, type));
+  var type = this.expression.getType(context);
+  return this.body.getType(this._augmentType(context, 0, type));
 };
 
 LetNode.prototype._findValue = function (context, index) {
@@ -368,16 +400,10 @@ IfNode.prototype.getFreeVariables = function () {
 };
 
 IfNode.prototype.getType = function (context) {
-  if (this.condition.getType(context).is(BooleanType)) {
+  if (this.condition.getType(context).isAny(BooleanType, UnknownType)) {
     var thenType = this.thenExpression.getType(context);
     var elseType = this.elseExpression.getType(context);
-    if (elseType.isSubTypeOf(thenType)) {
-      return thenType;
-    } else if (thenType.isSubTypeOf(elseType)) {
-      return elseType;
-    } else {
-      throw new LambdaTypeError();
-    }
+    return thenType.union(elseType);
   } else {
     throw new LambdaTypeError();
   }
