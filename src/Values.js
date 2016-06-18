@@ -43,6 +43,10 @@ UndefinedValue.prototype.clone = function (context) {
   return result;
 };
 
+UndefinedValue.prototype.extend = function (hash) {
+  return this.clone(this.context.addAll(hash));
+};
+
 UndefinedValue.prototype.marshal = function () {
   if (this.native) {
     return this.context.object;
@@ -424,10 +428,50 @@ UnknownValue.prototype.marshal = function () {
 UnknownValue.INSTANCE = new UnknownValue();
 
 
+function JSUndefinedValue() {
+  AbstractValue.call(this);
+}
+
+exports.JSUndefinedValue = JSUndefinedValue;
+
+JSUndefinedValue.prototype = Object.create(AbstractValue.prototype);
+
+JSUndefinedValue.prototype.type = 'JavaScript.UNDEFINED';
+
+JSUndefinedValue.prototype.toString = function () {
+  return 'JavaScript.UNDEFINED';
+};
+
+JSUndefinedValue.prototype.marshal = function () {};
+
+JSUndefinedValue.INSTANCE = new JSUndefinedValue();
+
+
+function JSNullValue() {
+  AbstractValue.call(this);
+}
+
+exports.JSNullValue = JSNullValue;
+
+JSNullValue.prototype = Object.create(AbstractValue.prototype);
+
+JSNullValue.prototype.type = 'JavaScript.NULL';
+
+JSNullValue.prototype.toString = function () {
+  return 'JavaScript.NULL';
+};
+
+JSNullValue.prototype.marshal = function () {
+  return null;
+};
+
+JSNullValue.INSTANCE = new JSNullValue();
+
+
 AbstractValue.unmarshal = function (value) {
   switch (typeof value) {
   case 'undefined':
-    return UndefinedValue.INSTANCE;
+    return JSUndefinedValue.INSTANCE;
   case 'boolean':
     return BooleanValue.unmarshal(value);
   case 'number':
@@ -445,7 +489,7 @@ AbstractValue.unmarshal = function (value) {
     return Closure.unmarshal(value, true);
   case 'object':
     if (value === null) {
-      return UndefinedValue.INSTANCE;
+      return JSNullValue.INSTANCE;
     } else if (value instanceof Boolean || value instanceof Number || value instanceof String) {
       return AbstractValue.unmarshal(value.valueOf());
     } else if (Array.isArray(value)) {

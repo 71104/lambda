@@ -3,15 +3,9 @@ function DefaultContext() {
     return (new Operator()).evaluate(Context.EMPTY);
   }
 
-  var seq = (new ApplicationNode(
-    FixNode.INSTANCE,
-    new LambdaNode('f', null, new LambdaNode('x', null, new VariableNode('f')))
-  )).evaluate(Context.EMPTY);
-
   var hash = Object.create(null);
   hash.typeof = evaluate(TypeOfOperator);
   hash.not = evaluate(NotOperator);
-  hash.seq = seq;
   hash['+'] = evaluate(PlusOperator);
   hash['-'] = evaluate(MinusOperator);
   hash['*'] = evaluate(MultiplyOperator);
@@ -29,6 +23,16 @@ function DefaultContext() {
   hash.and = evaluate(AndOperator);
   hash.or = evaluate(OrOperator);
   hash.xor = evaluate(XorOperator);
+
+  hash.seq = (new ApplicationNode(
+    FixNode.INSTANCE,
+    new LambdaNode('f', null, new LambdaNode('x', null, new VariableNode('f')))
+  )).evaluate(Context.EMPTY);
+
+  hash.JavaScript = UndefinedValue.INSTANCE.extend({
+    UNDEFINED: JSUndefinedValue.INSTANCE,
+    NULL: JSNullValue.INSTANCE
+  });
 
   Context.call(this, hash);
 }

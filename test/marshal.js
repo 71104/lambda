@@ -117,12 +117,12 @@ module.exports.testMarshalEmptyObject = function (test) {
 // TODO test more object marshaling, including nested objects and lists
 
 module.exports.testUnmarshalUndefined = function (test) {
-  test.ok(Lambda.AbstractValue.unmarshal().is(Lambda.UndefinedValue));
+  test.ok(Lambda.AbstractValue.unmarshal().is(Lambda.JSUndefinedValue));
   test.done();
 };
 
 module.exports.testUnmarshalNull = function (test) {
-  test.ok(Lambda.AbstractValue.unmarshal(null).is(Lambda.UndefinedValue));
+  test.ok(Lambda.AbstractValue.unmarshal(null).is(Lambda.JSNullValue));
   test.done();
 };
 
