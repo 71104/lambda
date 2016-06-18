@@ -5,7 +5,7 @@ function Parser(input) {
 exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
-  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')), IntegerType.INSTANCE);
+  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')), NaturalType.INSTANCE);
 };
 
 Parser.prototype.parseComplex = function () {
