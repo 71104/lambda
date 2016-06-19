@@ -140,10 +140,6 @@ IndexedType.prototype.isSubTypeOf = function (type) {
     (!type.is(IndexedType) || this.inner.isSubTypeOf(type.inner));
 };
 
-IndexedType.prototype.replace = function (name, type) {
-  return new IndexedType(this.inner.replace(name, type));
-};
-
 
 function BooleanType() {
   UndefinedType.call(this);
@@ -262,6 +258,10 @@ StringType.prototype.clone = function (context) {
   return result;
 };
 
+StringType.prototype.replace = function (name, type) {
+  return new StringType(this.inner.replace(name, type));
+};
+
 StringType.INSTANCE = new StringType(true);
 
 
@@ -322,6 +322,10 @@ ListType.prototype.clone = function (context) {
   var result = new ListType(this.inner);
   result.context = context;
   return result;
+};
+
+ListType.prototype.replace = function (name, type) {
+  return new ListType(this.inner.replace(name, type));
 };
 
 
