@@ -47,13 +47,13 @@ let grid.next_state = fn grid, g, i, j ->
     grid.next_state_from g[i][j] (grid.neighbors g i j)
 in
 
-let grid.step_column = fix fn f, grid, g, i, j ->
+let grid.step_column = fn grid -> fix fn f, g, i, j ->
     if in_range j 0 (- g[i].length 1)
     then {grid.next_state g i j}.concat (f g i (+ j 1))
     else {}
 in
 
-let grid.step_row = fix fn f, grid, g, i ->
+let grid.step_row = fn grid -> fix fn f, g, i ->
     if in_range i 0 (- g.length 1)
     then {grid.step_column g i 0}.concat (f g (+ i 1))
     else {}
@@ -63,7 +63,7 @@ let grid.step = fn grid, g ->
     grid.step_row g 0
 in
 
-let grid.advance_n_steps = fix fn f, grid, g, n ->
+let grid.advance_n_steps = fn grid -> fix fn f, g, n ->
     if > n 0
     then f (grid.step g) (- n 1)
     else g
