@@ -21,8 +21,7 @@ function UnknownType() {
 }
 
 exports.UnknownType = UnknownType;
-
-UnknownType.prototype = Object.create(AbstractType.prototype);
+extend(AbstractType, UnknownType);
 
 UnknownType.prototype.toString = function () {
   return 'unknown';
@@ -40,8 +39,7 @@ function UndefinedType() {
 }
 
 exports.UndefinedType = UndefinedType;
-
-UndefinedType.prototype = Object.create(AbstractType.prototype);
+extend(AbstractType, UndefinedType);
 
 UndefinedType.prototype.context = Context.EMPTY;
 
@@ -72,8 +70,7 @@ function IndexedType(inner) {
 }
 
 exports.IndexedType = IndexedType;
-
-IndexedType.prototype = Object.create(UndefinedType.prototype);
+extend(UndefinedType, IndexedType);
 
 IndexedType.prototype.isSubTypeOf = function (type) {
   return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
@@ -86,8 +83,7 @@ function BooleanType() {
 }
 
 exports.BooleanType = BooleanType;
-
-BooleanType.prototype = Object.create(UndefinedType.prototype);
+extend(UndefinedType, BooleanType);
 
 BooleanType.prototype.toString = function () {
   return 'bool';
@@ -107,8 +103,7 @@ function ComplexType() {
 }
 
 exports.ComplexType = ComplexType;
-
-ComplexType.prototype = Object.create(UndefinedType.prototype);
+extend(UndefinedType, ComplexType);
 
 ComplexType.prototype.toString = function () {
   return 'complex';
@@ -128,8 +123,7 @@ function RealType() {
 }
 
 exports.RealType = RealType;
-
-RealType.prototype = Object.create(ComplexType.prototype);
+extend(ComplexType, RealType);
 
 RealType.prototype.toString = function () {
   return 'real';
@@ -149,8 +143,7 @@ function IntegerType() {
 }
 
 exports.IntegerType = IntegerType;
-
-IntegerType.prototype = Object.create(RealType.prototype);
+extend(RealType, IntegerType);
 
 IntegerType.prototype.toString = function () {
   return 'integer';
@@ -170,8 +163,7 @@ function NaturalType() {
 }
 
 exports.NaturalType = NaturalType;
-
-NaturalType.prototype = Object.create(IntegerType.prototype);
+extend(IntegerType, NaturalType);
 
 NaturalType.prototype.toString = function () {
   return 'natural';
@@ -191,8 +183,7 @@ function StringType(selfReference) {
 }
 
 exports.StringType = StringType;
-
-StringType.prototype = Object.create(IndexedType.prototype);
+extend(IndexedType, StringType);
 
 StringType.prototype.toString = function () {
   return 'string';
@@ -214,8 +205,7 @@ function LambdaType(left, right) {
 }
 
 exports.LambdaType = LambdaType;
-
-LambdaType.prototype = Object.create(UndefinedType.prototype);
+extend(UndefinedType, LambdaType);
 
 LambdaType.prototype.toString = function () {
   return '(' + this.left + ') -> (' + this.right + ')';
@@ -239,8 +229,7 @@ function ListType(inner) {
 }
 
 exports.ListType = ListType;
-
-ListType.prototype = Object.create(IndexedType.prototype);
+extend(IndexedType, ListType);
 
 ListType.prototype.toString = function () {
   return '(' + this.inner + ')*';
@@ -259,8 +248,7 @@ function VariableType(name) {
 }
 
 exports.VariableType = VariableType;
-
-VariableType.prototype = Object.create(AbstractType.prototype);
+extend(AbstractType, VariableType);
 
 VariableType.prototype.toString = function () {
   return this.name;
@@ -274,8 +262,7 @@ function ForEachType(name, inner) {
 }
 
 exports.ForEachType = ForEachType;
-
-ForEachType.prototype = Object.create(AbstractType.prototype);
+extend(AbstractType, ForEachType);
 
 ForEachType.prototype.toString = function () {
   return this.name + ' => ' + this.inner;

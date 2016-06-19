@@ -42,8 +42,8 @@ gulp.task('bin', function () {
 
 gulp.task('concat', ['bin'], function () {
   return gulp.src([
-    'src/Errors.js',
     'src/Utilities.js',
+    'src/Errors.js',
     'src/Context.js',
     'src/Types.js',
     'src/Values.js',

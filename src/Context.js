@@ -71,8 +71,7 @@ function NativeContext(object) {
 }
 
 exports.NativeContext = NativeContext;
-
-NativeContext.prototype = Object.create(Context.prototype);
+extend(Context, NativeContext);
 
 NativeContext.prototype._CLASS = NativeContext;
 

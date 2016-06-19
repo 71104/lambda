@@ -23,8 +23,7 @@ function LiteralNode(value, type) {
 }
 
 exports.LiteralNode = LiteralNode;
-
-LiteralNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, LiteralNode);
 
 LiteralNode.prototype.getFreeVariables = function () {
   return [];
@@ -45,8 +44,7 @@ function ListLiteralNode(expressions) {
 }
 
 exports.ListLiteralNode = ListLiteralNode;
-
-ListLiteralNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, ListLiteralNode);
 
 ListLiteralNode.prototype.getFreeVariables = function () {
   var names = [];
@@ -69,8 +67,7 @@ function VariableNode(name) {
 }
 
 exports.VariableNode = VariableNode;
-
-VariableNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, VariableNode);
 
 VariableNode.prototype.getFreeVariables = function () {
   return [this.name];
@@ -98,8 +95,7 @@ function FixNode() {
 }
 
 exports.FixNode = FixNode;
-
-FixNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, FixNode);
 
 FixNode.prototype.getFreeVariables = function () {
   return [];
@@ -119,8 +115,7 @@ function ErrorNode() {
 }
 
 exports.ErrorNode = ErrorNode;
-
-ErrorNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, ErrorNode);
 
 ErrorNode.prototype.getFreeVariables = function () {
   return ['error'];
@@ -150,8 +145,7 @@ function FieldAccessNode(left, name) {
 }
 
 exports.FieldAccessNode = FieldAccessNode;
-
-FieldAccessNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, FieldAccessNode);
 
 FieldAccessNode.prototype.getFreeVariables = function () {
   return this.left.getFreeVariables();
@@ -183,8 +177,7 @@ function SubscriptNode(expression, index) {
 }
 
 exports.SubscriptNode = SubscriptNode;
-
-SubscriptNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, SubscriptNode);
 
 SubscriptNode.prototype.getFreeVariables = function () {
   return this.expression.getFreeVariables().union(this.index.getFreeVariables());
@@ -232,8 +225,7 @@ function LambdaNode(name, type, body) {
 }
 
 exports.LambdaNode = LambdaNode;
-
-LambdaNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, LambdaNode);
 
 LambdaNode.prototype.getFreeVariables = function () {
   return this.body.getFreeVariables().filter(function (name) {
@@ -262,8 +254,7 @@ function ApplicationNode(left, right) {
 }
 
 exports.ApplicationNode = ApplicationNode;
-
-ApplicationNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, ApplicationNode);
 
 ApplicationNode.prototype.getFreeVariables = function () {
   return this.left.getFreeVariables().union(this.right.getFreeVariables());
@@ -287,8 +278,7 @@ function LetNode(names, expression, body) {
 }
 
 exports.LetNode = LetNode;
-
-LetNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, LetNode);
 
 LetNode.prototype.getFreeVariables = function () {
   return this.expression.getFreeVariables().union(this.body.getFreeVariables().filter(function (name) {
@@ -369,8 +359,7 @@ function IfNode(condition, thenExpression, elseExpression) {
 }
 
 exports.IfNode = IfNode;
-
-IfNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, IfNode);
 
 IfNode.prototype.getFreeVariables = function () {
   return this.condition.getFreeVariables()
@@ -414,8 +403,7 @@ function ThrowNode(expression) {
 }
 
 exports.ThrowNode = ThrowNode;
-
-ThrowNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, ThrowNode);
 
 ThrowNode.prototype.getFreeVariables = function () {
   return this.expression.getFreeVariables();
@@ -433,8 +421,7 @@ function TryCatchNode(tryExpression, catchExpression) {
 }
 
 exports.TryCatchNode = TryCatchNode;
-
-TryCatchNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, TryCatchNode);
 
 TryCatchNode.prototype.getFreeVariables = function () {
   return this.tryExpression.getFreeVariables()
@@ -463,8 +450,7 @@ function TryFinallyNode(tryExpression, finallyExpression) {
 }
 
 exports.TryFinallyNode = TryFinallyNode;
-
-TryFinallyNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, TryFinallyNode);
 
 TryFinallyNode.prototype.getFreeVariables = function () {
   return this.tryExpression.getFreeVariables()
@@ -488,8 +474,7 @@ function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) 
 }
 
 exports.TryCatchFinallyNode = TryCatchFinallyNode;
-
-TryCatchFinallyNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, TryCatchFinallyNode);
 
 TryCatchFinallyNode.prototype.getFreeVariables = function () {
   return this.tryExpression.getFreeVariables()
@@ -521,8 +506,7 @@ function NativeNode(nativeFunction, argumentNames) {
 }
 
 exports.NativeNode = NativeNode;
-
-NativeNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, NativeNode);
 
 NativeNode.prototype.getFreeVariables = function () {
   return this.argumentNames;
@@ -565,8 +549,7 @@ function SemiNativeNode(evaluator, ariety) {
 }
 
 exports.SemiNativeNode = SemiNativeNode;
-
-SemiNativeNode.prototype = Object.create(AbstractNode.prototype);
+extend(AbstractNode, SemiNativeNode);
 
 SemiNativeNode.prototype.getFreeVariables = function () {
   return this.argumentNames;
@@ -603,8 +586,7 @@ function OperatorNode(overloads, ariety) {
 }
 
 exports.OperatorNode = OperatorNode;
-
-OperatorNode.prototype = Object.create(SemiNativeNode.prototype);
+extend(SemiNativeNode, OperatorNode);
 
 
 // TODO: operators are not completely polymorphic, they must be typed correctly.
@@ -614,8 +596,7 @@ function UnaryOperatorNode(overloads) {
 }
 
 exports.UnaryOperatorNode = UnaryOperatorNode;
-
-UnaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
+extend(LambdaNode, UnaryOperatorNode);
 
 
 function BinaryOperatorNode(overloads) {
@@ -623,5 +604,4 @@ function BinaryOperatorNode(overloads) {
 }
 
 exports.BinaryOperatorNode = BinaryOperatorNode;
-
-BinaryOperatorNode.prototype = Object.create(LambdaNode.prototype);
+extend(LambdaNode, BinaryOperatorNode);

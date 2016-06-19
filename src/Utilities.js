@@ -1,3 +1,8 @@
+function extend(BaseClass, DerivedClass) {
+  DerivedClass.prototype = Object.create(BaseClass.prototype);
+  DerivedClass.prototype.constructor = DerivedClass;
+}
+
 Array.prototype.contains = function () {
   return this.indexOf.apply(this, arguments) >= 0;
 };

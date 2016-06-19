@@ -7,8 +7,7 @@ function TypeOfOperator() {
 }
 
 exports.TypeOfOperator = TypeOfOperator;
-
-TypeOfOperator.prototype = Object.create(UnaryOperatorNode.prototype);
+extend(UnaryOperatorNode, TypeOfOperator);
 
 
 function NotOperator() {
@@ -23,8 +22,7 @@ function NotOperator() {
 }
 
 exports.NotOperator = NotOperator;
-
-NotOperator.prototype = Object.create(UnaryOperatorNode.prototype);
+extend(UnaryOperatorNode, NotOperator);
 
 
 function PlusOperator() {
@@ -84,8 +82,7 @@ function PlusOperator() {
 }
 
 exports.PlusOperator = PlusOperator;
-
-PlusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, PlusOperator);
 
 
 function MinusOperator() {
@@ -132,8 +129,7 @@ function MinusOperator() {
 }
 
 exports.MinusOperator = MinusOperator;
-
-MinusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, MinusOperator);
 
 
 function MultiplyOperator() {
@@ -186,8 +182,7 @@ function MultiplyOperator() {
 }
 
 exports.MultiplyOperator = MultiplyOperator;
-
-MultiplyOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, MultiplyOperator);
 
 
 function DivideOperator() {
@@ -218,8 +213,7 @@ function DivideOperator() {
 }
 
 exports.DivideOperator = DivideOperator;
-
-DivideOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, DivideOperator);
 
 
 function PowerOperator() {
@@ -249,8 +243,7 @@ function PowerOperator() {
 }
 
 exports.PowerOperator = PowerOperator;
-
-PowerOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, PowerOperator);
 
 
 function ModulusOperator() {
@@ -280,8 +273,7 @@ function ModulusOperator() {
 }
 
 exports.ModulusOperator = ModulusOperator;
-
-ModulusOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, ModulusOperator);
 
 
 function LessThanOperator() {
@@ -305,8 +297,7 @@ function LessThanOperator() {
 }
 
 exports.LessThanOperator = LessThanOperator;
-
-LessThanOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, LessThanOperator);
 
 
 function LessThanOrEqualOperator() {
@@ -330,8 +321,7 @@ function LessThanOrEqualOperator() {
 }
 
 exports.LessThanOrEqualOperator = LessThanOrEqualOperator;
-
-LessThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, LessThanOrEqualOperator);
 
 
 function GreaterThanOperator() {
@@ -355,8 +345,7 @@ function GreaterThanOperator() {
 }
 
 exports.GreaterThanOperator = GreaterThanOperator;
-
-GreaterThanOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, GreaterThanOperator);
 
 
 function GreaterThanOrEqualOperator() {
@@ -380,8 +369,7 @@ function GreaterThanOrEqualOperator() {
 }
 
 exports.GreaterThanOrEqualOperator = GreaterThanOrEqualOperator;
-
-GreaterThanOrEqualOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, GreaterThanOrEqualOperator);
 
 
 function LeftShiftOperator() {
@@ -400,8 +388,7 @@ function LeftShiftOperator() {
 }
 
 exports.LeftShiftOperator = LeftShiftOperator;
-
-LeftShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, LeftShiftOperator);
 
 
 function RightShiftOperator() {
@@ -420,8 +407,7 @@ function RightShiftOperator() {
 }
 
 exports.RightShiftOperator = RightShiftOperator;
-
-RightShiftOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, RightShiftOperator);
 
 
 function ComparisonOperator() {
@@ -471,8 +457,7 @@ function ComparisonOperator() {
 }
 
 exports.ComparisonOperator = ComparisonOperator;
-
-ComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, ComparisonOperator);
 
 
 function NegatedComparisonOperator() {
@@ -522,8 +507,7 @@ function NegatedComparisonOperator() {
 }
 
 exports.NegatedComparisonOperator = NegatedComparisonOperator;
-
-NegatedComparisonOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, NegatedComparisonOperator);
 
 
 function AndOperator() {
@@ -542,8 +526,7 @@ function AndOperator() {
 }
 
 exports.AndOperator = AndOperator;
-
-AndOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, AndOperator);
 
 
 function OrOperator() {
@@ -562,8 +545,7 @@ function OrOperator() {
 }
 
 exports.OrOperator = OrOperator;
-
-OrOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, OrOperator);
 
 
 function XorOperator() {
@@ -582,5 +564,4 @@ function XorOperator() {
 }
 
 exports.XorOperator = XorOperator;
-
-XorOperator.prototype = Object.create(BinaryOperatorNode.prototype);
+extend(BinaryOperatorNode, XorOperator);

@@ -25,8 +25,7 @@ function UndefinedValue() {
 }
 
 exports.UndefinedValue = UndefinedValue;
-
-UndefinedValue.prototype = Object.create(AbstractValue.prototype);
+extend(AbstractValue, UndefinedValue);
 
 UndefinedValue.prototype.context = Context.EMPTY;
 UndefinedValue.prototype.native = false;
@@ -75,8 +74,7 @@ function BooleanValue(value) {
 }
 
 exports.BooleanValue = BooleanValue;
-
-BooleanValue.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, BooleanValue);
 
 BooleanValue.prototype.type = 'bool';
 
@@ -131,8 +129,7 @@ function ComplexValue(real, imaginary) {
 }
 
 exports.ComplexValue = ComplexValue;
-
-ComplexValue.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, ComplexValue);
 
 ComplexValue.prototype.type = 'complex';
 
@@ -161,8 +158,7 @@ function RealValue(value) {
 }
 
 exports.RealValue = RealValue;
-
-RealValue.prototype = Object.create(ComplexValue.prototype);
+extend(ComplexValue, RealValue);
 
 RealValue.prototype.type = 'real';
 
@@ -186,8 +182,7 @@ function IntegerValue(value) {
 }
 
 exports.IntegerValue = IntegerValue;
-
-IntegerValue.prototype = Object.create(RealValue.prototype);
+extend(RealValue, IntegerValue);
 
 IntegerValue.prototype.type = 'integer';
 
@@ -214,8 +209,7 @@ function NaturalValue(value) {
 }
 
 exports.NaturalValue = NaturalValue;
-
-NaturalValue.prototype = Object.create(IntegerValue.prototype);
+extend(IntegerValue, NaturalValue);
 
 NaturalValue.prototype.type = 'natural';
 
@@ -242,8 +236,7 @@ function Closure(lambda, capture) {
 }
 
 exports.Closure = Closure;
-
-Closure.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, Closure);
 
 Closure.prototype.type = 'closure';
 
@@ -319,8 +312,7 @@ function StringValue(value) {
 }
 
 exports.StringValue = StringValue;
-
-StringValue.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, StringValue);
 
 StringValue.prototype.type = 'string';
 
@@ -345,8 +337,7 @@ function ListValue(values) {
 }
 
 exports.ListValue = ListValue;
-
-ListValue.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, ListValue);
 
 ListValue.prototype.type = 'list';
 
@@ -379,8 +370,7 @@ function NativeArrayValue(array) {
 }
 
 exports.NativeArrayValue = NativeArrayValue;
-
-NativeArrayValue.prototype = Object.create(UndefinedValue.prototype);
+extend(UndefinedValue, NativeArrayValue);
 
 NativeArrayValue.prototype.type = 'list';
 
@@ -412,8 +402,7 @@ function UnknownValue() {
 }
 
 exports.UnknownValue = UnknownValue;
-
-UnknownValue.prototype = Object.create(AbstractValue.prototype);
+extend(AbstractValue, UnknownValue);
 
 UnknownValue.prototype.type = 'unknown';
 
@@ -433,8 +422,7 @@ function JSUndefinedValue() {
 }
 
 exports.JSUndefinedValue = JSUndefinedValue;
-
-JSUndefinedValue.prototype = Object.create(AbstractValue.prototype);
+extend(AbstractValue, JSUndefinedValue);
 
 JSUndefinedValue.prototype.type = 'JavaScript.UNDEFINED';
 
@@ -452,8 +440,7 @@ function JSNullValue() {
 }
 
 exports.JSNullValue = JSNullValue;
-
-JSNullValue.prototype = Object.create(AbstractValue.prototype);
+extend(AbstractValue, JSNullValue);
 
 JSNullValue.prototype.type = 'JavaScript.NULL';
 

@@ -38,5 +38,4 @@ function DefaultContext() {
 }
 
 exports.DefaultContext = DefaultContext;
-
-DefaultContext.prototype = Object.create(Context.prototype);
+extend(Context, DefaultContext);

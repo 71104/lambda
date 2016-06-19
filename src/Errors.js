@@ -15,8 +15,7 @@ function LambdaInternalError() {
 }
 
 exports.InternalError = LambdaInternalError;
-
-LambdaInternalError.prototype = Object.create(LambdaError.prototype);
+extend(LambdaError, LambdaInternalError);
 
 
 function LambdaSyntaxError() {
@@ -24,8 +23,7 @@ function LambdaSyntaxError() {
 }
 
 exports.SyntaxError = LambdaSyntaxError;
-
-LambdaSyntaxError.prototype = Object.create(LambdaError.prototype);
+extend(LambdaError, LambdaSyntaxError);
 
 
 function LambdaTypeError() {
@@ -33,8 +31,7 @@ function LambdaTypeError() {
 }
 
 exports.TypeError = LambdaTypeError;
-
-LambdaTypeError.prototype = Object.create(LambdaError.prototype);
+extend(LambdaError, LambdaTypeError);
 
 
 function LambdaRuntimeError() {
@@ -42,8 +39,7 @@ function LambdaRuntimeError() {
 }
 
 exports.RuntimeError = LambdaRuntimeError;
-
-LambdaRuntimeError.prototype = Object.create(LambdaError.prototype);
+extend(LambdaError, LambdaRuntimeError);
 
 
 function LambdaUserError(value) {
@@ -52,5 +48,4 @@ function LambdaUserError(value) {
 }
 
 exports.UserError = LambdaUserError;
-
-LambdaUserError.prototype = Object.create(LambdaError.prototype);
+extend(LambdaError, LambdaUserError);
