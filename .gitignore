@@ -1,0 +1,4 @@
+node_modules/
+/bin/
+/doc/html/
+/*.log
