@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var del = require('del');
-var eslint = require('eslint');
+var eslint = require('gulp-eslint');
 var uglify = require('gulp-uglify');
 
 gulp.task('default', ['uglify']);
