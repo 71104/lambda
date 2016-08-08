@@ -30,21 +30,14 @@ Array.prototype.intersection = function () {
   });
 };
 
-function getGlobalValue(name, ErrorClass) {
+function getGlobalValue(name) {
   if (name in this) {
     try {
       return this[name];
     } catch (e) {
-      throw new ErrorClass();
+      throw new LambdaRuntimeError();
     }
   } else {
-    throw new ErrorClass();
+    throw new LambdaRuntimeError();
   }
-}
-
-function arity(length, nativeFunction) {
-  // jshint evil: true
-  return (new Function('f', 'return function (' + Array.apply(null, Array(length)).map(function (_, index) {
-    return '_' + index;
-  }).join(',') + ') { return f.apply(this, arguments); }'))(nativeFunction);
 }
