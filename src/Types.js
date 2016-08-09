@@ -12,7 +12,18 @@ UndefinedType.prototype.isProper = function (Class) {
 
 UndefinedType.prototype.context = Context.EMPTY;
 
+UndefinedType.prototype.isSubPrototypeOf = function (type) {
+  return type.context.keys().every(function (key) {
+    return this.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
+  }, this);
+};
+
 UndefinedType.DEFAULT = new UndefinedType();
+
+UndefinedType.prototype.isSubTypeOf = function (type) {
+  return type.isProper(UndefinedType) &&
+      (type === UndefinedType.DEFAULT || this.isSubPrototypeOf(type));
+};
 
 
 function ComplexType() {
@@ -23,6 +34,11 @@ exports.ComplexType = ComplexType;
 extend(UndefinedType, ComplexType);
 
 ComplexType.DEFAULT = new ComplexType();
+
+ComplexType.prototype.isSubTypeOf = function (type) {
+  return (type.isProper(ComplexType) || type.isProper(UndefinedType)) &&
+      (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
+};
 
 
 function RealType() {

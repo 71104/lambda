@@ -93,7 +93,13 @@ ApplicationNode.prototype.getFreeVariables = function () {
 };
 
 ApplicationNode.prototype.getType = function (context) {
-  // TODO
+  var left = this.left.getType(context);
+  var right = this.right.getType(context);
+  if (left.is(ClosureType) && right.isSubTypeOf(left.left)) {
+    return left.right;
+  } else {
+    throw new LambdaTypeError();
+  }
 };
 
 ApplicationNode.prototype.evaluate = function (context) {
