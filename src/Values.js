@@ -95,3 +95,13 @@ ListValue.prototype.lookup = function (index) {
   }
   return this.values[index];
 };
+
+
+function Closure(lambda, capture) {
+  UndefinedValue.call(this);
+  this.lambda = lambda;
+  this.capture = capture;
+}
+
+exports.Closure = Closure;
+extend(UndefinedValue, Closure);

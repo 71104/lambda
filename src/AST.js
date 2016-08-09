@@ -12,6 +12,10 @@ function LiteralNode(value, type) {
 exports.LiteralNode = LiteralNode;
 extend(AbstractNode, LiteralNode);
 
+LiteralNode.prototype.getFreeVariables = function () {
+  return [];
+};
+
 LiteralNode.prototype.getType = function () {
   return this.type;
 };
@@ -29,6 +33,10 @@ function VariableNode(name) {
 exports.VariableNode = VariableNode;
 extend(AbstractNode, VariableNode);
 
+VariableNode.prototype.getFreeVariables = function () {
+  return [this.name];
+};
+
 VariableNode.prototype.getType = function (context) {
   if (context.has(this.name)) {
     return context.top(this.name);
@@ -42,5 +50,58 @@ VariableNode.prototype.evaluate = function (context) {
     return context.top(this.name);
   } else {
     return getGlobalValue(this.name);
+  }
+};
+
+
+function LambdaNode(name, type, body) {
+  AbstractNode.call(this);
+  this.name = name;
+  this.type = type;
+  this.body = body;
+}
+
+exports.LambdaNode = LambdaNode;
+extend(AbstractNode, LambdaNode);
+
+LambdaNode.prototype.getFreeVariables = function () {
+  return this.body.getFreeVariables().filter(function (name) {
+    return name === this.name;
+  }, this);
+};
+
+LambdaNode.prototype.getType = function (context) {
+  return new ClosureType(this.type, this.body.getType(context.add(this.name, this.type)));
+};
+
+LambdaNode,prototype.evaluate = function (context) {
+  return new Closure(this, context);
+};
+
+
+function ApplicationNode(left, right) {
+  AbstractNode.call(this);
+  this.left = left;
+  this.right = right;
+}
+
+exports.ApplicationNode = ApplicationNode;
+extend(AbstractNode, ApplicationNode);
+
+ApplicationNode.prototype.getFreeVariables = function () {
+  return this.left.getFreeVariables().union(this.right.getFreeVariables());
+};
+
+ApplicationNode.prototype.getType = function (context) {
+  // TODO
+};
+
+ApplicationNode.prototype.evaluate = function (context) {
+  var left = this.left.evaluate(context);
+  var right = this.right.evaluate(context);
+  if (left.is(Closure)) {
+    return left.lambda.body.evaluate(left.capture.add(left.name, right));
+  } else {
+    throw new LambdaRuntimeError();
   }
 };
