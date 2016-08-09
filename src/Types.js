@@ -10,6 +10,13 @@ UndefinedType.prototype.isProper = function (Class) {
   return this.constructor === Class;
 };
 
+UndefinedType.prototype.isProperlyAny = function () {
+  for (var i = 0; i < arguments.length; i++) {
+    return true;
+  }
+  return false;
+};
+
 UndefinedType.prototype.context = Context.EMPTY;
 
 UndefinedType.prototype.isSubPrototypeOf = function (type) {
@@ -36,7 +43,7 @@ extend(UndefinedType, ComplexType);
 ComplexType.DEFAULT = new ComplexType();
 
 ComplexType.prototype.isSubTypeOf = function (type) {
-  return (type.isProper(ComplexType) || type.isProper(UndefinedType)) &&
+  return type.isProperlyAny(ComplexType, UndefinedType) &&
       (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
@@ -50,6 +57,11 @@ extend(ComplexType, RealType);
 
 RealType.DEFAULT = new RealType();
 
+RealType.prototype.isSubTypeOf = function (type) {
+  return type.isProperlyAny(RealType, ComplexType, UndefinedType) &&
+      (type === RealType.DEFAULT || this.isSubPrototypeOf(type));
+};
+
 
 function IntegerType() {
   RealType.call(this);
@@ -59,6 +71,11 @@ exports.IntegerType = IntegerType;
 extend(RealType, IntegerType);
 
 IntegerType.DEFAULT = new IntegerType();
+
+IntegerType.prototype.isSubTypeOf = function (type) {
+  return type.isProperlyAny(IntegerType, RealType, ComplexType, UndefinedType) &&
+      (type === IntegerType.DEFAULT || this.isSubPrototypeOf(type));
+};
 
 
 function NaturalType() {
@@ -70,6 +87,11 @@ extend(IntegerType, NaturalType);
 
 NaturalType.DEFAULT = new NaturalType();
 
+NaturalType.prototype.isSubTypeOf = function (type) {
+  return type.isProperlyAny(NaturalType, IntegerType, RealType, ComplexType, UndefinedType) &&
+      (type === NaturalType.DEFAULT || this.isSubPrototypeOf(type));
+};
+
 
 function BooleanType() {
   UndefinedType.call(this);
@@ -80,17 +102,27 @@ extend(UndefinedType, BooleanType);
 
 BooleanType.DEFAULT = new BooleanType();
 
+BooleanType.prototype.isSubTypeOf = function (type) {
+  return type.isProperlyAny(BooleanType, UndefinedType) &&
+      (type === BooleanType.DEFAULT || this.isSubPrototypeOf(type));
+};
 
-function IndexedType() {
+
+function IndexedType(inner) {
   UndefinedType.call(this);
+  this.inner = inner;
 }
 
 exports.IndexedType = IndexedType;
 extend(UndefinedType, IndexedType);
 
 
-function StringType() {
-  IndexedType.call(this);
+function StringType(selfReference) {
+  if (selfReference) {
+    IndexedType.call(this, this);
+  } else {
+    IndexedType.call(this, StringType.DEFAULT);
+  }
 }
 
 exports.StringType = StringType;
@@ -98,14 +130,21 @@ extend(IndexedType, StringType);
 
 StringType.DEFAULT = new StringType();
 
+StringType.prototype.isSubTypeOf = function (type) {
+  // TODO
+};
+
 
 function ListType(inner) {
-  IndexedType.call(this);
-  this.inner = inner;
+  IndexedType.call(this, inner);
 }
 
 exports.ListType = ListType;
 extend(IndexedType, ListType);
+
+ListType.prototype.isSubTypeOf = function (type) {
+  // TODO
+};
 
 
 function ClosureType(left, right) {
@@ -117,6 +156,10 @@ function ClosureType(left, right) {
 exports.Closure = Closure;
 extend(UndefinedType, Closure);
 
+ClosureType.prototype.isSubTypeOf = function (type) {
+  // TODO
+};
+
 
 function UnknownType() {
   UndefinedType.call(this);
@@ -126,3 +169,10 @@ exports.UnknownType = UnknownType;
 extend(UndefinedType, UnknownType);
 
 UnknownType.DEFAULT = new UnknownType();
+
+UnknownType.prototype.isSubTypeOf = function (type) {
+  return !type.isProper(UnknownType) || this === UnknownType.DEFAULT ||
+      type !== UnknownType.DEFAULT && this.context.keys().every(function (key) {
+        return type.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
+      }, this);
+};
