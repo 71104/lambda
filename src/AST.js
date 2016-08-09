@@ -54,6 +54,38 @@ VariableNode.prototype.evaluate = function (context) {
 };
 
 
+function FieldAccessNode(left, name) {
+  AbstractNode.call(this);
+  this.left = left;
+  this.name = name;
+}
+
+exports.FieldAccessNode = FieldAccessNode;
+extend(AbstractNode, FieldAccessNode);
+
+FieldAccessNode.prototype.getFreeVariables = function () {
+  return this.left.getFreeVariables();
+};
+
+FieldAccessNode.prototype.getType = function (context) {
+  var left = this.left.getType(context);
+  if (left.context.has(this.name)) {
+    return left.context.top(this.name);
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+FieldAccessNode.prototype.evaluate = function (context) {
+  var left = this.left.evaluate(context);
+  if (left.context.has(this.name)) {
+    return left.context.top(this.name);
+  } else {
+    throw new LambdaRuntimeError();
+  }
+};
+
+
 function LambdaNode(name, type, body) {
   AbstractNode.call(this);
   this.name = name;

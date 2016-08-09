@@ -5,19 +5,19 @@ function Parser(input) {
 exports.Parser = Parser;
 
 Parser.prototype.parseInteger = function () {
-  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')), NaturalType.INSTANCE);
+  return new LiteralNode(new NaturalValue(this.lexer.expect('integer')), NaturalType.DEFAULT);
 };
 
 Parser.prototype.parseComplex = function () {
-  return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')), ComplexType.INSTANCE);
+  return new LiteralNode(new ComplexValue(0, this.lexer.expect('complex')), ComplexType.DEFAULT);
 };
 
 Parser.prototype.parseReal = function () {
-  return new LiteralNode(new RealValue(this.lexer.expect('real')), RealType.INSTANCE);
+  return new LiteralNode(new RealValue(this.lexer.expect('real')), RealType.DEFAULT);
 };
 
 Parser.prototype.parseString = function () {
-  return new LiteralNode(new StringValue(this.lexer.expect('string')), StringType.INSTANCE);
+  return new LiteralNode(new StringValue(this.lexer.expect('string')), StringType.DEFAULT);
 };
 
 Parser.prototype.parseVariable = function () {
@@ -30,13 +30,13 @@ Parser.prototype.parseClass0 = function () {
   switch (this.lexer.token()) {
   case 'keyword:undefined':
     this.lexer.next();
-    return new LiteralNode(UndefinedValue.INSTANCE, UndefinedType.INSTANCE);
+    return new LiteralNode(UndefinedValue.INSTANCE, UndefinedType.DEFAULT);
   case 'keyword:true':
     this.lexer.next();
-    return new LiteralNode(BooleanValue.TRUE, BooleanType.INSTANCE);
+    return new LiteralNode(BooleanValue.TRUE, BooleanType.DEFAULT);
   case 'keyword:false':
     this.lexer.next();
-    return new LiteralNode(BooleanValue.FALSE, BooleanType.INSTANCE);
+    return new LiteralNode(BooleanValue.FALSE, BooleanType.DEFAULT);
   case 'integer':
     return this.parseInteger();
   case 'complex':
@@ -113,21 +113,21 @@ Parser.prototype.parseTypeClass0 = function () {
   this.lexer.next();
   switch (token) {
   case 'keyword:undefined':
-    return UndefinedType.INSTANCE;
+    return UndefinedType.DEFAULT;
   case 'keyword:bool':
-    return BooleanType.INSTANCE;
+    return BooleanType.DEFAULT;
   case 'keyword:complex':
-    return ComplexType.INSTANCE;
+    return ComplexType.DEFAULT;
   case 'keyword:real':
-    return RealType.INSTANCE;
+    return RealType.DEFAULT;
   case 'keyword:integer':
-    return IntegerType.INSTANCE;
+    return IntegerType.DEFAULT;
   case 'keyword:natural':
-    return NaturalType.INSTANCE;
+    return NaturalType.DEFAULT;
   case 'keyword:string':
-    return StringType.INSTANCE;
+    return StringType.DEFAULT;
   case 'keyword:unknown':
-    return UnknownType.INSTANCE;
+    return UnknownType.DEFAULT;
   case 'left':
     var type = this.parseTypeClass2();
     this.lexer.expect('right');
