@@ -143,3 +143,40 @@ ApplicationNode.prototype.evaluate = function (context) {
     throw new LambdaRuntimeError();
   }
 };
+
+
+function LetNode(names, expression, body) {
+  AbstractNode.call(this);
+  if (names.length < 1) {
+    throw new LambdaInternalError();
+  }
+  this.names = names;
+  this.expression = expression;
+  this.body = body;
+}
+
+exports.LetNode = LetNode;
+extend(AbstractNode, LetNode);
+
+LetNode.prototype.getFreeVariables = function () {
+  return this.body.getFreeVariables().filter(function (name) {
+    return name !== this.names[0];
+  }, this);
+};
+
+LetNode.prototype.evaluate = function (context) {
+  var rootContext = context;
+  return this.body.evaluate(function augment(context, index) {
+    var name = this.names[index];
+    if (index < this.names.length - 1) {
+      if (context.has(name)) {
+        var value = context.top(name);
+        return context.add(name, value.clone(augment(value.context, index + 1)));
+      } else {
+        return context.add(name, UndefinedValue.fromContext(augment(Context.EMPTY, index + 1)));
+      }
+    } else {
+      return context.add(name, this.expression.evaluate(rootContext));
+    }
+  }(context, 0));
+};

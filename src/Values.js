@@ -4,6 +4,18 @@ exports.UndefinedValue = UndefinedValue;
 
 UndefinedValue.prototype.context = Context.EMPTY;
 
+UndefinedValue.prototype.clone = function (context) {
+  var value = new UndefinedValue();
+  value.context = context;
+  return value;
+};
+
+UndefinedValue.DEFAULT = new UndefinedValue();
+
+UndefinedValue.fromContext = function (context) {
+  return UndefinedValue.DEFAULT.clone(context);
+};
+
 
 function ComplexValue(real, imaginary) {
   real = +real;
@@ -16,6 +28,12 @@ function ComplexValue(real, imaginary) {
 exports.ComplexValue = ComplexValue;
 extend(UndefinedValue, ComplexValue);
 
+ComplexValue.prototype.clone = function (context) {
+  var value = new ComplexValue(this.real, this.imaginary);
+  value.context = context;
+  return value;
+};
+
 
 function RealValue(value) {
   value = +value;
@@ -26,6 +44,12 @@ function RealValue(value) {
 exports.RealValue = RealValue;
 extend(ComplexValue, RealValue);
 
+RealValue.prototype.clone = function (context) {
+  var value = new RealValue(this.value);
+  value.context = context;
+  return value;
+};
+
 
 function IntegerValue(value) {
   RealValue.call(this, ~~value);
@@ -33,6 +57,12 @@ function IntegerValue(value) {
 
 exports.IntegerValue = IntegerValue;
 extend(RealValue, IntegerValue);
+
+IntegerValue.prototype.clone = function (context) {
+  var value = new IntegerValue(this.value);
+  value.context = context;
+  return value;
+};
 
 
 function NaturalValue(value) {
@@ -46,6 +76,12 @@ function NaturalValue(value) {
 exports.NaturalValue = NaturalValue;
 extend(IntegerValue, NaturalValue);
 
+NaturalValue.prototype.clone = function (context) {
+  var value = new NaturalValue(this.value);
+  value.context = context;
+  return value;
+};
+
 
 function BooleanValue(value) {
   value = !!value;
@@ -54,6 +90,12 @@ function BooleanValue(value) {
 
 exports.BooleanValue = BooleanValue;
 extend(UndefinedValue, BooleanValue);
+
+BooleanValue.prototype.clone = function (context) {
+  var value = new BooleanValue(this.value);
+  value.context = context;
+  return value;
+};
 
 
 function IndexedValue() {
@@ -73,6 +115,12 @@ function StringValue(value) {
 exports.StringValue = StringValue;
 extend(IndexedValue, StringValue);
 
+StringValue.prototype.clone = function (context) {
+  var value = new StringValue(this.value);
+  value.context = context;
+  return value;
+};
+
 StringValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.value.length) {
     throw new LambdaRuntimeError();
@@ -88,6 +136,12 @@ function ListValue(values) {
 
 exports.ListValue = ListValue;
 extend(IndexedValue, ListValue);
+
+ListValue.prototype.clone = function (context) {
+  var value = new ListValue(this.values);
+  value.context = context;
+  return value;
+};
 
 ListValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.values.length) {
@@ -105,3 +159,9 @@ function Closure(lambda, capture) {
 
 exports.Closure = Closure;
 extend(UndefinedValue, Closure);
+
+Closure.prototype.clone = function (context) {
+  var value = new Closure(this.lambda, this.capture);
+  value.context = context;
+  return value;
+};
