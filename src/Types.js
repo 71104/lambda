@@ -201,8 +201,8 @@ function ClosureType(left, right) {
   this.right = right;
 }
 
-exports.Closure = Closure;
-extend(UndefinedType, Closure);
+exports.ClosureType = ClosureType;
+extend(UndefinedType, ClosureType);
 
 ClosureType.prototype.clone = function (context) {
   var type = new ClosureType(this.left, this.right);
