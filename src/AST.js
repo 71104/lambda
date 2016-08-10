@@ -25,6 +25,31 @@ LiteralNode.prototype.evaluate = function () {
 };
 
 
+function ListLiteralNode(expressions) {
+  AbstractNode.call(this);
+  this.expressions = expressions;
+}
+
+exports.ListLiteralNode = ListLiteralNode;
+extend(AbstractNode, ListLiteralNode);
+
+ListLiteralNode.prototype.getFreeVariables = function () {
+  return this.expressions.reduce(function (names, expression) {
+    return names.union(expression.getFreeVariables());
+  }, []);
+};
+
+ListLiteralNode.prototype.getType = function (context) {
+  // TODO merge
+};
+
+ListLiteralNode.prototype.evaluate = function (context) {
+  return new ListValue(this.expressions.map(function (expression) {
+    return expression.evaluate(context);
+  }));
+};
+
+
 function VariableNode(name) {
   AbstractNode.call(this);
   this.name = name;

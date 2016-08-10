@@ -23,6 +23,7 @@ gulp.task('concat', ['lint'], function () {
     'src/Values.js',
     'src/Types.js',
     'src/AST.js',
+    'src/DefaultContext.js',
     'src/Lexer.js',
     'src/Parser.js',
   ]).pipe(concat('lambda.js')).pipe(gulp.dest('bin'));
