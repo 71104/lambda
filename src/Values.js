@@ -110,6 +110,7 @@ NaturalValue.prototype.clone = function (context) {
 function BooleanValue(value) {
   value = !!value;
   UndefinedValue.call(this);
+  this.value = value;
 }
 
 exports.BooleanValue = BooleanValue;
@@ -128,6 +129,9 @@ BooleanValue.prototype.clone = function (context) {
   value.context = context;
   return value;
 };
+
+BooleanValue.TRUE = new BooleanValue(true);
+BooleanValue.FALSE = new BooleanValue(false);
 
 
 function IndexedValue() {
