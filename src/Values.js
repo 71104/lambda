@@ -53,7 +53,7 @@ function BooleanValue(value) {
 }
 
 exports.BooleanValue = BooleanValue;
-expand(UndefinedValue, BooleanValue);
+extend(UndefinedValue, BooleanValue);
 
 
 function IndexedValue() {

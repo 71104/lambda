@@ -106,7 +106,7 @@ LambdaNode.prototype.getType = function (context) {
   return new ClosureType(this.type, this.body.getType(context.add(this.name, this.type)));
 };
 
-LambdaNode,prototype.evaluate = function (context) {
+LambdaNode.prototype.evaluate = function (context) {
   return new Closure(this, context);
 };
 
