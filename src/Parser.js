@@ -30,7 +30,7 @@ Parser.prototype.parseClass0 = function () {
   switch (this.lexer.token()) {
   case 'keyword:undefined':
     this.lexer.next();
-    return new LiteralNode(UndefinedValue.INSTANCE, UndefinedType.DEFAULT);
+    return new LiteralNode(UndefinedValue.DEFAULT, UndefinedType.DEFAULT);
   case 'keyword:true':
     this.lexer.next();
     return new LiteralNode(BooleanValue.TRUE, BooleanType.DEFAULT);

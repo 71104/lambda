@@ -1,21 +1,29 @@
-function UndefinedType() {}
+function AbstractType() {}
 
-exports.UndefinedType = UndefinedType;
+exports.AbstractType = AbstractType;
 
-UndefinedType.prototype.is = function (Class) {
+AbstractType.prototype.is = function (Class) {
   return this instanceof Class;
 };
 
-UndefinedType.prototype.isProper = function (Class) {
+AbstractType.prototype.isProper = function (Class) {
   return this.constructor === Class;
 };
 
-UndefinedType.prototype.isProperlyAny = function () {
+AbstractType.prototype.isProperlyAny = function () {
   for (var i = 0; i < arguments.length; i++) {
     return true;
   }
   return false;
 };
+
+
+function UndefinedType() {
+  AbstractType.call(this);
+}
+
+exports.UndefinedType = UndefinedType;
+extend(AbstractType, UndefinedType);
 
 UndefinedType.prototype.context = Context.EMPTY;
 

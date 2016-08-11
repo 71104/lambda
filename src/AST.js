@@ -70,7 +70,7 @@ VariableNode.prototype.getType = function (context) {
   if (context.has(this.name)) {
     return context.top(this.name);
   } else {
-    return UnknownType.INSTANCE;
+    return UnknownType.DEFAULT;
   }
 };
 
