@@ -83,6 +83,34 @@ VariableNode.prototype.evaluate = function (context) {
 };
 
 
+function ErrorNode() {
+  AbstractNode.call(this);
+}
+
+exports.ErrorNode = ErrorNode;
+extend(AbstractNode, ErrorNode);
+
+ErrorNode.prototype.getFreeVariables = function () {
+  return ['error'];
+};
+
+ErrorNode.prototype.getType = function (context) {
+  if (context.has('error')) {
+    return context.top('error');
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+ErrorNode.prototype.evaluate = function (context) {
+  if (context.has('error')) {
+    return context.top('error');
+  } else {
+    throw new LambdaRuntimeError();
+  }
+};
+
+
 function FieldAccessNode(left, name) {
   AbstractNode.call(this);
   this.left = left;
@@ -214,4 +242,124 @@ LetNode.prototype.evaluate = function (context) {
       return context.add(name, this.expression.evaluate(rootContext));
     }
   }.call(this, context, 0));
+};
+
+
+function ThrowNode(expression) {
+  AbstractNode.call(this);
+  this.expression = expression;
+}
+
+exports.ThrowNode = ThrowNode;
+extend(AbstractNode, ThrowNode);
+
+ThrowNode.prototype.getFreeVariables = function () {
+  return this.expression.getFreeVariables();
+};
+
+ThrowNode.prototype.getType = function () {
+  // TODO
+};
+
+ThrowNode.prototype.evaluate = function (context) {
+  throw new LambdaUserError(this.expression.evaluate(context));
+};
+
+
+function TryCatchNode(tryExpression, catchExpression) {
+  AbstractNode.call(this);
+  this.tryExpression = tryExpression;
+  this.catchExpression = catchExpression;
+}
+
+exports.TryCatchNode = TryCatchNode;
+extend(AbstractNode, TryCatchNode);
+
+TryCatchNode.prototype.getFreeVariables = function () {
+  return this.tryExpression.getFreeVariables().union(
+      this.catchExpression().getFreeVariables().filter(function (name) {
+        return 'error' !== name;
+      }));
+};
+
+TryCatchNode.prototype.getType = function () {
+  // TODO
+};
+
+TryCatchNode.prototype.evaluate = function (context) {
+  try {
+    return this.tryExpression.evaluate(context);
+  } catch (error) {
+    if (error instanceof LambdaUserError) {
+      return this.catchExpression.evaluate(context.add('error', error.value));
+    } else {
+      throw error;
+    }
+  }
+};
+
+
+function TryFinallyNode(tryExpression, finallyExpression) {
+  AbstractNode.call(this);
+  this.tryExpression = tryExpression;
+  this.finallyExpression = finallyExpression;
+}
+
+exports.TryFinallyNode = TryFinallyNode;
+extend(AbstractNode, TryFinallyNode);
+
+TryFinallyNode.prototype.getFreeVariables = function () {
+  return this.tryExpression.getFreeVariables().union(
+      this.finallyExpression.getFreeVariables());
+};
+
+TryFinallyNode.prototype.getType = function () {
+  // TODO
+};
+
+TryFinallyNode.prototype.evaluate = function (context) {
+  try {
+    return this.tryExpression.evaluate(context);
+  } catch (error) {
+    return UndefinedValue.DEFAULT;
+  } finally {
+    this.finallyExpression.evaluate(context);
+  }
+};
+
+
+function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) {
+  AbstractValue.call(this);
+  this.tryExpression = tryExpression;
+  this.catchExpression = catchExpression;
+  this.finallyExpression = finallyExpression;
+}
+
+exports.TryCatchFinallyNode = TryCatchFinallyNode;
+extend(AbstractNode, TryCatchFinallyNode);
+
+TryCatchFinallyNode.prototype.getFreeVariables = function () {
+  return this.tryExpression.getFreeVariables()
+    .union(this.catchExpression.getFreeVariables().filter(function (name) {
+      return 'error' !== name;
+    }))
+    .union(this.finallyExpression.getFreeVariables());
+};
+
+TryCatchFinallyNode.prototype.getType = function () {
+  // TODO
+};
+
+TryCatchFinallyNode.prototype.evaluate = function (context) {
+  try {
+    return this.tryExpression.evaluate(context);
+  } catch (error) {
+    if (error instanceof LambdaUserError) {
+      return this.catchExpression.evaluate(context.add('error', error.value));
+    } else {
+      throw error;
+    }
+  } finally {
+    this.finallyExpression.evaluate(context);
+  }
 };

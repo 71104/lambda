@@ -150,7 +150,7 @@ function Lexer(input) {
   };
 
   this.end = function () {
-    return token === 'end';
+    return 'end' === token;
   };
 
   this.label = function () {

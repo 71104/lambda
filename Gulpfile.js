@@ -72,7 +72,9 @@ gulp.task('lint', function () {
       'no-unmodified-loop-condition': 1,
       'no-unused-expressions': 2,
       'radix': 2,
-      'yoda': 1,
+      'yoda': [1, 'always', {
+        onlyEquality: true,
+      }],
       'init-declarations': 2,
       'no-catch-shadow': 1,
       'no-delete-var': 1,
