@@ -6,17 +6,6 @@ AbstractType.prototype.is = function (Class) {
   return this instanceof Class;
 };
 
-AbstractType.prototype.isProper = function (Class) {
-  return this.constructor === Class;
-};
-
-AbstractType.prototype.isProperlyAny = function () {
-  for (var i = 0; i < arguments.length; i++) {
-    return true;
-  }
-  return false;
-};
-
 AbstractType.prototype.bindThis = function () {
   return this;
 };
@@ -55,8 +44,7 @@ UndefinedType.prototype.isSubPrototypeOf = function (type) {
 UndefinedType.DEFAULT = new UndefinedType();
 
 UndefinedType.prototype.isSubTypeOf = function (type) {
-  return type.isProper(UndefinedType) &&
-      (type === UndefinedType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === UndefinedType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 UndefinedType.prototype.instance = function () {
@@ -80,8 +68,7 @@ ComplexType.prototype.clone = function (context) {
 ComplexType.DEFAULT = new ComplexType();
 
 ComplexType.prototype.isSubTypeOf = function (type) {
-  return type.isProperlyAny(ComplexType, UndefinedType) &&
-      (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 ComplexType.prototype.instance = function () {
@@ -105,8 +92,7 @@ RealType.prototype.clone = function (context) {
 RealType.DEFAULT = new RealType();
 
 RealType.prototype.isSubTypeOf = function (type) {
-  return type.isProperlyAny(RealType, ComplexType, UndefinedType) &&
-      (type === RealType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === RealType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 RealType.prototype.instance = function () {
@@ -130,8 +116,7 @@ IntegerType.prototype.clone = function (context) {
 IntegerType.DEFAULT = new IntegerType();
 
 IntegerType.prototype.isSubTypeOf = function (type) {
-  return type.isProperlyAny(IntegerType, RealType, ComplexType, UndefinedType) &&
-      (type === IntegerType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === IntegerType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 IntegerType.prototype.instance = function () {
@@ -155,8 +140,7 @@ NaturalType.prototype.clone = function (context) {
 NaturalType.DEFAULT = new NaturalType();
 
 NaturalType.prototype.isSubTypeOf = function (type) {
-  return type.isProperlyAny(NaturalType, IntegerType, RealType, ComplexType, UndefinedType) &&
-      (type === NaturalType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === NaturalType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 NaturalType.prototype.instance = function () {
@@ -180,8 +164,7 @@ BooleanType.prototype.clone = function (context) {
 BooleanType.DEFAULT = new BooleanType();
 
 BooleanType.prototype.isSubTypeOf = function (type) {
-  return type.isProperlyAny(BooleanType, UndefinedType) &&
-      (type === BooleanType.DEFAULT || this.isSubPrototypeOf(type));
+  return this.is(type.constructor) && (type === BooleanType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 BooleanType.prototype.instance = function () {
@@ -217,8 +200,8 @@ StringType.prototype.clone = function (context) {
 
 StringType.DEFAULT = new StringType();
 
-StringType.prototype.isSubTypeOf = function () {
-  // TODO
+StringType.prototype.isSubTypeOf = function (type) {
+  return this.is(type.constructor) && (type === StringType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
 StringType.prototype.instance = function () {
@@ -302,7 +285,7 @@ UnknownType.prototype.clone = function (context) {
 UnknownType.DEFAULT = new UnknownType();
 
 UnknownType.prototype.isSubTypeOf = function (type) {
-  return !type.isProper(UnknownType) || this === UnknownType.DEFAULT ||
+  return !type.is(UnknownType) || this === UnknownType.DEFAULT ||
       type !== UnknownType.DEFAULT && this.context.keys().every(function (key) {
         return type.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
       }, this);

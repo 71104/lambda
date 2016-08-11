@@ -227,6 +227,27 @@ LetNode.prototype.getFreeVariables = function () {
   }, this);
 };
 
+LetNode.prototype.getType = function (context) {
+  var rootContext = context;
+  return this.body.evaluate(function augment(context, index) {
+    var name = this.names[index];
+    if (index < this.names.length - 1) {
+      if (context.has(name)) {
+        var type = context.top(name);
+        if (type.is(VariableType)) {
+          // TODO
+        } else {
+          return context.add(name, type.clone(augment.call(this, type.context, index + 1)));
+        }
+      } else {
+        return context.add(name, UndefinedType.fromContext(augment.call(this, Context.EMPTY, index + 1)));
+      }
+    } else {
+      return context.add(name, this.expression.getType(rootContext));
+    }
+  }.call(this, context, 0));
+};
+
 LetNode.prototype.evaluate = function (context) {
   var rootContext = context;
   return this.body.evaluate(function augment(context, index) {
