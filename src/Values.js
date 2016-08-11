@@ -1,10 +1,18 @@
-function UndefinedValue() {}
+function AbstractValue() {}
 
-exports.UndefinedValue = UndefinedValue;
+exports.AbstractValue = AbstractValue;
 
-UndefinedValue.prototype.is = function (Class) {
+AbstractValue.prototype.is = function (Class) {
   return this instanceof Class;
 };
+
+
+function UndefinedValue() {
+  AbstractValue.call(this);
+}
+
+exports.UndefinedValue = UndefinedValue;
+extend(AbstractValue, UndefinedValue);
 
 UndefinedValue.prototype.context = Context.EMPTY;
 
@@ -12,8 +20,12 @@ UndefinedValue.prototype.toString = function () {
   return 'undefined';
 };
 
+UndefinedValue.prototype._clone = function () {
+  return new UndefinedValue();
+};
+
 UndefinedValue.prototype.clone = function (context) {
-  var value = new UndefinedValue();
+  var value = this._clone();
   value.context = context;
   return value;
 };
@@ -44,10 +56,8 @@ ComplexValue.prototype.toString = function () {
   }
 };
 
-ComplexValue.prototype.clone = function (context) {
-  var value = new ComplexValue(this.real, this.imaginary);
-  value.context = context;
-  return value;
+ComplexValue.prototype._clone = function () {
+  return new ComplexValue(this.real, this.imaginary);
 };
 
 
@@ -64,10 +74,8 @@ RealValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-RealValue.prototype.clone = function (context) {
-  var value = new RealValue(this.value);
-  value.context = context;
-  return value;
+RealValue.prototype._clone = function () {
+  return new RealValue(this.value);
 };
 
 
@@ -82,10 +90,8 @@ IntegerValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-IntegerValue.prototype.clone = function (context) {
-  var value = new IntegerValue(this.value);
-  value.context = context;
-  return value;
+IntegerValue.prototype._clone = function () {
+  return new IntegerValue(this.value);
 };
 
 
@@ -104,10 +110,8 @@ NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-NaturalValue.prototype.clone = function (context) {
-  var value = new NaturalValue(this.value);
-  value.context = context;
-  return value;
+NaturalValue.prototype._clone = function () {
+  return new NaturalValue(this.value);
 };
 
 
@@ -128,10 +132,8 @@ BooleanValue.prototype.toString = function () {
   }
 };
 
-BooleanValue.prototype.clone = function (context) {
-  var value = new BooleanValue(this.value);
-  value.context = context;
-  return value;
+BooleanValue.prototype._clone = function () {
+  return new BooleanValue(this.value);
 };
 
 BooleanValue.TRUE = new BooleanValue(true);
@@ -159,10 +161,8 @@ StringValue.prototype.toString = function () {
   return this.value;
 };
 
-StringValue.prototype.clone = function (context) {
-  var value = new StringValue(this.value);
-  value.context = context;
-  return value;
+StringValue.prototype._clone = function () {
+  return new StringValue(this.value);
 };
 
 StringValue.prototype.lookup = function (index) {
@@ -187,10 +187,8 @@ ListValue.prototype.toString = function () {
   }).join(', ') + ' }';
 };
 
-ListValue.prototype.clone = function (context) {
-  var value = new ListValue(this.values);
-  value.context = context;
-  return value;
+ListValue.prototype._clone = function () {
+  return new ListValue(this.values);
 };
 
 ListValue.prototype.lookup = function (index) {
@@ -214,8 +212,6 @@ Closure.prototype.toString = function () {
   return 'closure';
 };
 
-Closure.prototype.clone = function (context) {
-  var value = new Closure(this.lambda, this.capture);
-  value.context = context;
-  return value;
+Closure.prototype._clone = function () {
+  return new Closure(this.lambda, this.capture);
 };
