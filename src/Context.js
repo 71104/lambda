@@ -51,5 +51,5 @@ NativeContext.prototype._marshal = function (value) {
 };
 
 NativeContext.prototype._unmarshal = function (value) {
-  return UndefinedValue.unmarshal(value);
+  return AbstractValue.unmarshal(value);
 };
