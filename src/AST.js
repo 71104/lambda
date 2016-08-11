@@ -78,7 +78,7 @@ VariableNode.prototype.evaluate = function (context) {
   if (context.has(this.name)) {
     return context.top(this.name);
   } else {
-    return getGlobalValue(this.name);
+    return AbstractValue.unmarshal(getGlobalValue(this.name));
   }
 };
 
