@@ -206,7 +206,7 @@ LetNode.prototype.evaluate = function (context) {
     if (index < this.names.length - 1) {
       if (context.has(name)) {
         var value = context.top(name);
-        return context.add(name, value.clone(augment(value.context, index + 1)));
+        return context.add(name, value.clone(augment.call(this, value.context, index + 1)));
       } else {
         return context.add(name, UndefinedValue.fromContext(augment.call(this, Context.EMPTY, index + 1)));
       }
