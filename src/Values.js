@@ -2,6 +2,10 @@ function UndefinedValue() {}
 
 exports.UndefinedValue = UndefinedValue;
 
+UndefinedValue.prototype.is = function (Class) {
+  return this instanceof Class;
+};
+
 UndefinedValue.prototype.context = Context.EMPTY;
 
 UndefinedValue.prototype.toString = function () {
