@@ -118,7 +118,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
 function LambdaNode(name, type, body) {
   AbstractNode.call(this);
   this.name = name;
-  this.type = type;
+  this.type = type || new VariableType(name);
   this.body = body;
 }
 
@@ -157,7 +157,13 @@ ApplicationNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
   var right = this.right.getType(context);
   if (left.is(ClosureType) && right.isSubTypeOf(left.left)) {
-    return left.right;
+    if (left.left.is(VariableType)) {
+      return left.right.instance(left.left.name, right);
+    } else if (right.isSubTypeOf(left.left)) {
+      return left.right;
+    } else {
+      throw new LambdaTypeError();
+    }
   } else {
     throw new LambdaTypeError();
   }

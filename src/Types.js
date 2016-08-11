@@ -46,6 +46,10 @@ UndefinedType.prototype.isSubTypeOf = function (type) {
       (type === UndefinedType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
+UndefinedType.prototype.instance = function () {
+  return this;
+};
+
 
 function ComplexType() {
   UndefinedType.call(this);
@@ -65,6 +69,10 @@ ComplexType.DEFAULT = new ComplexType();
 ComplexType.prototype.isSubTypeOf = function (type) {
   return type.isProperlyAny(ComplexType, UndefinedType) &&
       (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
+};
+
+ComplexType.prototype.instance = function () {
+  return this;
 };
 
 
@@ -88,6 +96,10 @@ RealType.prototype.isSubTypeOf = function (type) {
       (type === RealType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
+RealType.prototype.instance = function () {
+  return this;
+};
+
 
 function IntegerType() {
   RealType.call(this);
@@ -107,6 +119,10 @@ IntegerType.DEFAULT = new IntegerType();
 IntegerType.prototype.isSubTypeOf = function (type) {
   return type.isProperlyAny(IntegerType, RealType, ComplexType, UndefinedType) &&
       (type === IntegerType.DEFAULT || this.isSubPrototypeOf(type));
+};
+
+IntegerType.prototype.instance = function () {
+  return this;
 };
 
 
@@ -130,6 +146,10 @@ NaturalType.prototype.isSubTypeOf = function (type) {
       (type === NaturalType.DEFAULT || this.isSubPrototypeOf(type));
 };
 
+NaturalType.prototype.instance = function () {
+  return this;
+};
+
 
 function BooleanType() {
   UndefinedType.call(this);
@@ -149,6 +169,10 @@ BooleanType.DEFAULT = new BooleanType();
 BooleanType.prototype.isSubTypeOf = function (type) {
   return type.isProperlyAny(BooleanType, UndefinedType) &&
       (type === BooleanType.DEFAULT || this.isSubPrototypeOf(type));
+};
+
+BooleanType.prototype.instance = function () {
+  return this;
 };
 
 
@@ -184,6 +208,10 @@ StringType.prototype.isSubTypeOf = function () {
   // TODO
 };
 
+StringType.prototype.instance = function () {
+  return this;
+};
+
 
 function ListType(inner) {
   IndexedType.call(this, inner);
@@ -200,6 +228,12 @@ ListType.prototype.clone = function (context) {
 
 ListType.prototype.isSubTypeOf = function () {
   // TODO
+};
+
+ListType.prototype.instance = function (name, type) {
+  var result = new ListType(this.inner.instance(name, type));
+  result.context = this.context;
+  return result;
 };
 
 
@@ -220,6 +254,12 @@ ClosureType.prototype.clone = function (context) {
 
 ClosureType.prototype.isSubTypeOf = function () {
   // TODO
+};
+
+ClosureType.prototype.instance = function (name, type) {
+  var result = new Closure(this.left.instance(name, type), this.right.instance(name, type));
+  result.context = this.context;
+  return result;
 };
 
 
@@ -244,3 +284,16 @@ UnknownType.prototype.isSubTypeOf = function (type) {
         return type.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
       }, this);
 };
+
+UnknownType.prototype.instance = function () {
+  return this;
+};
+
+
+function VariableType(name) {
+  AbstractType.call(this);
+  this.name = name;
+}
+
+exports.VariableType = VariableType;
+extend(AbstractType, VariableType);
