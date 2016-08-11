@@ -3,7 +3,7 @@ function Lexer(input) {
   var line = 0;
   var column = 0;
 
-  var token, label;
+  var token, label; // eslint-disable-line init-declarations
 
   function match(re) {
     var result = re.exec(input);

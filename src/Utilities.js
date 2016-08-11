@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 function extend(BaseClass, DerivedClass) {
   DerivedClass.prototype = Object.create(BaseClass.prototype);
   DerivedClass.prototype.constructor = DerivedClass;
@@ -30,6 +31,7 @@ Array.prototype.intersection = function () {
   });
 };
 
+// eslint-disable-next-line no-unused-vars
 function getGlobalValue(name) {
   if (name in this) {
     try {

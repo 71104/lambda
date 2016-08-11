@@ -40,7 +40,11 @@ ListLiteralNode.prototype.getFreeVariables = function () {
 };
 
 ListLiteralNode.prototype.getType = function (context) {
-  // TODO merge
+  return new ListType(this.expressions.map(function (expression) {
+    return expression.getType(context);
+  }).reduce(function (result, type) {
+    return result.merge(type);
+  }, UnknownType.DEFAULT));
 };
 
 ListLiteralNode.prototype.evaluate = function (context) {

@@ -172,7 +172,7 @@ StringType.prototype.clone = function (context) {
 
 StringType.DEFAULT = new StringType();
 
-StringType.prototype.isSubTypeOf = function (type) {
+StringType.prototype.isSubTypeOf = function () {
   // TODO
 };
 
@@ -190,7 +190,7 @@ ListType.prototype.clone = function (context) {
   return type;
 };
 
-ListType.prototype.isSubTypeOf = function (type) {
+ListType.prototype.isSubTypeOf = function () {
   // TODO
 };
 
@@ -210,7 +210,7 @@ ClosureType.prototype.clone = function (context) {
   return type;
 };
 
-ClosureType.prototype.isSubTypeOf = function (type) {
+ClosureType.prototype.isSubTypeOf = function () {
   // TODO
 };
 
