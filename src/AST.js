@@ -173,7 +173,7 @@ ApplicationNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   var right = this.right.evaluate(context);
   if (left.is(Closure)) {
-    return left.lambda.body.evaluate(left.capture.add(left.name, right));
+    return left.lambda.body.evaluate(left.capture.add(left.lambda.name, right));
   } else {
     throw new LambdaRuntimeError();
   }

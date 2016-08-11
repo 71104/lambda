@@ -23,7 +23,7 @@ Context.prototype.top = function (name) {
 Context.prototype.add = function (name, value) {
   var hash = Object.create(this._hash);
   hash[name] = this._marshal(value);
-  return new Context(value);
+  return new Context(hash);
 };
 
 Context.prototype.addAll = function (map) {
