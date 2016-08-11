@@ -208,10 +208,10 @@ LetNode.prototype.evaluate = function (context) {
         var value = context.top(name);
         return context.add(name, value.clone(augment(value.context, index + 1)));
       } else {
-        return context.add(name, UndefinedValue.fromContext(augment(Context.EMPTY, index + 1)));
+        return context.add(name, UndefinedValue.fromContext(augment.call(this, Context.EMPTY, index + 1)));
       }
     } else {
       return context.add(name, this.expression.evaluate(rootContext));
     }
-  }(context, 0));
+  }.call(this, context, 0));
 };
