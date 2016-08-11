@@ -19,6 +19,10 @@ function VariableType(name) {
 exports.VariableType = VariableType;
 extend(AbstractType, VariableType);
 
+VariableType.prototype.toString = function () {
+  return this.name;
+};
+
 
 function UndefinedType() {
   AbstractType.call(this);
@@ -28,6 +32,10 @@ exports.UndefinedType = UndefinedType;
 extend(AbstractType, UndefinedType);
 
 UndefinedType.prototype.context = Context.EMPTY;
+
+UndefinedType.prototype.toString = function () {
+  return 'undefined';
+};
 
 UndefinedType.prototype.clone = function (context) {
   var type = new UndefinedType();
@@ -59,6 +67,10 @@ function ComplexType() {
 exports.ComplexType = ComplexType;
 extend(UndefinedType, ComplexType);
 
+ComplexType.prototype.toString = function () {
+  return 'complex';
+};
+
 ComplexType.prototype.clone = function (context) {
   var type = new ComplexType();
   type.context = context;
@@ -82,6 +94,10 @@ function RealType() {
 
 exports.RealType = RealType;
 extend(ComplexType, RealType);
+
+RealType.prototype.toString = function () {
+  return 'real';
+};
 
 RealType.prototype.clone = function (context) {
   var type = new RealType();
@@ -107,6 +123,10 @@ function IntegerType() {
 exports.IntegerType = IntegerType;
 extend(RealType, IntegerType);
 
+IntegerType.prototype.toString = function () {
+  return 'integer';
+};
+
 IntegerType.prototype.clone = function (context) {
   var type = new IntegerType();
   type.context = context;
@@ -131,6 +151,10 @@ function NaturalType() {
 exports.NaturalType = NaturalType;
 extend(IntegerType, NaturalType);
 
+NaturalType.prototype.toString = function () {
+  return 'natural';
+};
+
 NaturalType.prototype.clone = function (context) {
   var type = new NaturalType();
   type.context = context;
@@ -154,6 +178,10 @@ function BooleanType() {
 
 exports.BooleanType = BooleanType;
 extend(UndefinedType, BooleanType);
+
+BooleanType.prototype.toString = function () {
+  return 'boolean';
+};
 
 BooleanType.prototype.clone = function (context) {
   var type = new BooleanType();
@@ -192,6 +220,10 @@ function StringType(selfReference) {
 exports.StringType = StringType;
 extend(IndexedType, StringType);
 
+StringType.prototype.toString = function () {
+  return 'string';
+};
+
 StringType.prototype.clone = function (context) {
   var type = new StringType();
   type.context = context;
@@ -215,6 +247,10 @@ function ListType(inner) {
 
 exports.ListType = ListType;
 extend(IndexedType, ListType);
+
+ListType.prototype.toString = function () {
+  return '(' + this.inner.toString() + ')*';
+};
 
 ListType.prototype.clone = function (context) {
   var type = new ListType(this.inner);
@@ -241,6 +277,10 @@ function ClosureType(left, right) {
 
 exports.ClosureType = ClosureType;
 extend(UndefinedType, ClosureType);
+
+ClosureType.prototype.toString = function () {
+  return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
+};
 
 ClosureType.prototype.clone = function (context) {
   var type = new ClosureType(this.left, this.right);
@@ -275,6 +315,10 @@ function UnknownType() {
 
 exports.UnknownType = UnknownType;
 extend(UndefinedType, UnknownType);
+
+UnknownType.prototype.toString = function () {
+  return 'unknown';
+};
 
 UnknownType.prototype.clone = function (context) {
   var type = new UnknownType();
