@@ -6,6 +6,10 @@ AbstractValue.prototype.is = function (Class) {
   return this instanceof Class;
 };
 
+AbstractValue.prototype.bindThis = function () {
+  return this;
+};
+
 
 function UndefinedValue() {
   AbstractValue.call(this);
@@ -214,4 +218,8 @@ Closure.prototype.toString = function () {
 
 Closure.prototype._clone = function () {
   return new Closure(this.lambda, this.capture);
+};
+
+Closure.prototype.bindThis = function (value) {
+  return this.lambda.body.evaluate(this.capture.add(this.lambda.name, value));
 };

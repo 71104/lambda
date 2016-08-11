@@ -17,6 +17,19 @@ AbstractType.prototype.isProperlyAny = function () {
   return false;
 };
 
+AbstractType.prototype.bindThis = function () {
+  return this;
+};
+
+
+function VariableType(name) {
+  AbstractType.call(this);
+  this.name = name;
+}
+
+exports.VariableType = VariableType;
+extend(AbstractType, VariableType);
+
 
 function UndefinedType() {
   AbstractType.call(this);
@@ -262,6 +275,16 @@ ClosureType.prototype.instance = function (name, type) {
   return result;
 };
 
+ClosureType.prototype.bindThis = function (type) {
+  if (this.left.is(VariableType)) {
+    return this.right.instance(this.left.name, type);
+  } else if (type.isSubTypeOf(this.left)) {
+    return this.right;
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
 
 function UnknownType() {
   UndefinedType.call(this);
@@ -288,12 +311,3 @@ UnknownType.prototype.isSubTypeOf = function (type) {
 UnknownType.prototype.instance = function () {
   return this;
 };
-
-
-function VariableType(name) {
-  AbstractType.call(this);
-  this.name = name;
-}
-
-exports.VariableType = VariableType;
-extend(AbstractType, VariableType);

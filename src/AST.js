@@ -108,7 +108,7 @@ FieldAccessNode.prototype.getType = function (context) {
 FieldAccessNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   if (left.context.has(this.name)) {
-    return left.context.top(this.name);
+    return left.context.top(this.name).bindThis(left);
   } else {
     throw new LambdaRuntimeError();
   }
