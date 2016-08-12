@@ -43,3 +43,10 @@ function getGlobalValue(name) {
     throw new LambdaRuntimeError();
   }
 }
+
+// eslint-disable-next-line no-unused-vars
+function arity(length, nativeFunction) {
+  return (new Function('f', 'return function (' + Array.apply(null, Array(length)).map(function (_, index) {
+    return '_' + index;
+  }).join(',') + ') { return f.apply(this, arguments); }'))(nativeFunction);
+}

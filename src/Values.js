@@ -34,10 +34,30 @@ UndefinedValue.prototype.clone = function (context) {
   return value;
 };
 
+UndefinedValue.prototype.marshal = function () {
+  return this.context.toObject();
+};
+
 UndefinedValue.DEFAULT = new UndefinedValue();
 
 UndefinedValue.fromContext = function (context) {
   return UndefinedValue.DEFAULT.clone(context);
+};
+
+
+function NativeComplexValue(real, imaginary) {
+  this.r = +real;
+  this.i = +imaginary;
+}
+
+exports.NativeComplexValue = NativeComplexValue;
+
+NativeComplexValue.prototype.toString = function () {
+  if (this.i < 0) {
+    return this.r + '' + this.i + 'i';
+  } else {
+    return this.r + '+' + this.i + 'i';
+  }
 };
 
 
@@ -64,6 +84,10 @@ ComplexValue.prototype._clone = function () {
   return new ComplexValue(this.real, this.imaginary);
 };
 
+ComplexValue.prototype.marshal = function () {
+  return new NativeComplexValue(this.real, this.imaginary);
+};
+
 
 function RealValue(value) {
   value = +value;
@@ -82,6 +106,10 @@ RealValue.prototype._clone = function () {
   return new RealValue(this.value);
 };
 
+RealValue.prototype.marshal = function () {
+  return this.value;
+};
+
 
 function IntegerValue(value) {
   RealValue.call(this, ~~value);
@@ -96,6 +124,10 @@ IntegerValue.prototype.toString = function () {
 
 IntegerValue.prototype._clone = function () {
   return new IntegerValue(this.value);
+};
+
+IntegerValue.prototype.marshal = function () {
+  return this.value;
 };
 
 
@@ -118,6 +150,10 @@ NaturalValue.prototype._clone = function () {
   return new NaturalValue(this.value);
 };
 
+NaturalValue.prototype.marshal = function () {
+  return this.value;
+};
+
 
 function BooleanValue(value) {
   value = !!value;
@@ -138,6 +174,10 @@ BooleanValue.prototype.toString = function () {
 
 BooleanValue.prototype._clone = function () {
   return new BooleanValue(this.value);
+};
+
+BooleanValue.prototype.marshal = function () {
+  return this.value;
 };
 
 BooleanValue.TRUE = new BooleanValue(true);
@@ -169,6 +209,10 @@ StringValue.prototype._clone = function () {
   return new StringValue(this.value);
 };
 
+StringValue.prototype.marshal = function () {
+  return this.value;
+};
+
 StringValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.value.length) {
     throw new LambdaRuntimeError();
@@ -193,6 +237,12 @@ ListValue.prototype.toString = function () {
 
 ListValue.prototype._clone = function () {
   return new ListValue(this.values);
+};
+
+ListValue.prototype.marshal = function () {
+  return this.values.map(function (value) {
+    return value.marshal();
+  });
 };
 
 ListValue.prototype.lookup = function (index) {
@@ -220,6 +270,44 @@ Closure.prototype._clone = function () {
   return new Closure(this.lambda, this.capture);
 };
 
+Closure.prototype.getLength = function () {
+  var length = 0;
+  for (var node = this.lambda; node.is(LambdaNode); node = node.body) {
+    length++;
+  }
+  return length;
+};
+
 Closure.prototype.bindThis = function (value) {
   return this.lambda.body.evaluate(this.capture.add(this.lambda.name, value));
+};
+
+Closure.prototype.marshal = function () {
+  var node = this.lambda;
+  var context = this.capture;
+  var length = this.getLength();
+  var hasThis = 'this' === this.lambda.name;
+  return arity(length - !hasThis, function () {
+    var values = [].slice.call(arguments);
+    if (hasThis) {
+      values.unshift(this);
+    }
+    return (function augment(node, context, index) {
+      if (index < length) {
+        return augment(node.body, context.add(node.name, AbstractValue.unmarshal(values[index])), index + 1);
+      } else {
+        return (function () {
+          try {
+            return node.evaluate(context);
+          } catch (error) {
+            if (error instanceof LambdaUserError) {
+              throw error.value.marshal();
+            } else {
+              throw error;
+            }
+          }
+        }()).marshal();
+      }
+    }(node, context, 0));
+  });
 };

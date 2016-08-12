@@ -68,6 +68,14 @@ Context.prototype.intersection = function (other, merge) {
   return new Context(hash);
 };
 
+Context.prototype.toObject = function () {
+  var result = {};
+  this.keys().forEach(function (key) {
+    result[key] = this.top(key).marshal();
+  }, this);
+  return result;
+};
+
 Context.EMPTY = new Context;
 
 
@@ -84,4 +92,8 @@ NativeContext.prototype._marshal = function (value) {
 
 NativeContext.prototype._unmarshal = function (value) {
   return AbstractValue.unmarshal(value);
+};
+
+NativeContext.prototype.toObject = function () {
+  return this._hash;
 };
