@@ -36,7 +36,6 @@ gulp.task('lint', function () {
       'no-dupe-keys': 2,
       'no-duplicate-case': 2,
       'no-extra-boolean-cast': 1,
-      'no-extra-parens': 1,
       'no-extra-semi': 2,
       'no-func-assign': 1,
       'no-irregular-whitespace': 2,

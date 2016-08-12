@@ -311,3 +311,76 @@ Closure.prototype.marshal = function () {
     }(node, context, 0));
   });
 };
+
+
+function JSUndefinedValue() {
+  AbstractValue.call(this);
+}
+
+exports.JSUndefinedValue = JSUndefinedValue;
+extend(AbstractValue, JSUndefinedValue);
+
+JSUndefinedValue.prototype.toString = function () {
+  return 'JavaScript.UNDEFINED';
+};
+
+JSUndefinedValue.prototype.marshal = function () {};
+
+JSUndefinedValue.INSTANCE = new JSUndefinedValue();
+
+
+function JSNullValue() {
+  AbstractValue.call(this);
+}
+
+exports.JSNullValue = JSNullValue;
+extend(AbstractValue, JSNullValue);
+
+JSNullValue.prototype.toString = function () {
+  return 'JavaScript.NULL';
+};
+
+JSNullValue.prototype.marshal = function () {
+  return null;
+};
+
+JSNullValue.INSTANCE = new JSNullValue();
+
+
+AbstractValue.unmarshal = function (value) {
+  switch (typeof value) {
+  case 'undefined':
+    return JSUndefinedValue.INSTANCE;
+  case 'boolean':
+    return BooleanValue.unmarshal(value);
+  case 'number':
+    if (value % 1) {
+      return new RealValue(value);
+    } else if (value < 0) {
+      return new IntegerValue(~~value);
+    } else {
+      return new NaturalValue(~~value);
+    }
+  case 'string':
+    return new StringValue(value);
+  case 'function':
+    // TODO
+    break;
+  case 'object':
+    if (null === value) {
+      return JSNullValue.INSTANCE;
+    } else if (value instanceof Boolean || value instanceof Number || value instanceof String) {
+      return AbstractValue.unmarshal(value.valueOf());
+    } else if (Array.isArray(value)) {
+      return new NativeArrayValue(value);
+    } else if (value instanceof NativeComplexValue) {
+      return new ComplexValue(value.r, value.i);
+    } else {
+      return UndefinedValue.fromContext(new NativeContext(value));
+    }
+  }
+};
+
+AbstractValue.getGlobal = function (name) {
+  return AbstractValue.unmarshal(getGlobalValue(name));
+};

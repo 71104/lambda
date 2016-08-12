@@ -36,7 +36,7 @@ function getGlobalValue(name) {
   if (name in this) {
     try {
       return this[name];
-    } catch (e) {
+    } catch (error) {
       throw new LambdaRuntimeError();
     }
   } else {
