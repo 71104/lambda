@@ -266,6 +266,45 @@ LetNode.prototype.evaluate = function (context) {
 };
 
 
+function IfNode(condition, thenExpression, elseExpression) {
+  AbstractNode.call(this);
+  this.condition = condition;
+  this.thenExpression = thenExpression;
+  this.elseExpression = elseExpression;
+}
+
+exports.IfNode = IfNode;
+extend(AbstractNode, IfNode);
+
+IfNode.prototype.getFreeVariables = function () {
+  return this.condition.getFreeVariables()
+    .union(this.thenExpression.getFreeVariables())
+    .union(this.elseExpression.getFreeVariables());
+};
+
+IfNode.prototype.getType = function (context) {
+  var condition = this.condition.getType(context);
+  if (condition.isSubTypeOf(BooleanType.DEFAULT)) {
+    return this.thenExpression.getType(context).merge(this.elseExpression.getType(context));
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+IfNode.prototype.evaluate = function (context) {
+  var condition = this.condition.evaluate(context);
+  if (condition.is(BooleanValue)) {
+    if (condition.value) {
+      return this.thenExpression.evaluate(context);
+    } else {
+      return this.elseExpression.evaluate(context);
+    }
+  } else {
+    throw new LambdaRuntimeError();
+  }
+};
+
+
 function ThrowNode(expression) {
   AbstractNode.call(this);
   this.expression = expression;
