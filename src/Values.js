@@ -312,6 +312,10 @@ Closure.prototype.marshal = function () {
   });
 };
 
+Closure.unmarshal = function () {
+  // TODO
+};
+
 
 function JSUndefinedValue() {
   AbstractValue.call(this);
@@ -364,8 +368,7 @@ AbstractValue.unmarshal = function (value) {
   case 'string':
     return new StringValue(value);
   case 'function':
-    // TODO
-    break;
+    return Closure.unmarshal(value);
   case 'object':
     if (null === value) {
       return JSNullValue.INSTANCE;
@@ -378,6 +381,8 @@ AbstractValue.unmarshal = function (value) {
     } else {
       return UndefinedValue.fromContext(new NativeContext(value));
     }
+  default:
+    throw new LambdaInternalError();
   }
 };
 
