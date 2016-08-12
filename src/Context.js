@@ -22,7 +22,7 @@ Context.prototype.top = function (name) {
 
 Context.prototype.keys = function () {
   var keys = [];
-  for (var key in this._hash) {
+  for (var key in this._hash) {  // eslint-disable-line guard-for-in
     keys.push(key);
   }
   return keys;
