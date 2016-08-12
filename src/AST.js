@@ -126,8 +126,14 @@ FieldAccessNode.prototype.getFreeVariables = function () {
 
 FieldAccessNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
-  if (left.context.has(this.name)) {
-    return left.context.top(this.name);
+  if (left.is(UnknownType)) {
+    if (left.context.has(this.name)) {
+      return left.context.top(this.name).bindThis(left);
+    } else {
+      return UnknownType.DEFAULT;
+    }
+  } else if (left.context.has(this.name)) {
+    return left.context.top(this.name).bindThis(left);
   } else {
     throw new LambdaTypeError();
   }
