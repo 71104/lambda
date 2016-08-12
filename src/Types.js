@@ -10,6 +10,20 @@ AbstractType.prototype.bindThis = function () {
   return this;
 };
 
+AbstractType.merge = function (type1, type2) {
+  if (type1.is(type2.constructor)) {
+    return type2.clone(type1.context.intersection(type2.context, AbstractType.merge));
+  } else if (type2.is(type1.constructor)) {
+    return type1.clone(type1.context.intersection(type2.context, AbstractType.merge));
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+AbstractType.prototype.merge = function (type) {
+  return AbstractType.merge(this, type);
+};
+
 
 function VariableType(name) {
   AbstractType.call(this);
@@ -21,6 +35,10 @@ extend(AbstractType, VariableType);
 
 VariableType.prototype.toString = function () {
   return this.name;
+};
+
+VariableType.prototype.merge = function () {
+  // TODO
 };
 
 
@@ -333,6 +351,14 @@ UnknownType.prototype.isSubTypeOf = function (type) {
       type !== UnknownType.DEFAULT && this.context.keys().every(function (key) {
         return type.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
       }, this);
+};
+
+UnknownType.prototype.merge = function (type) {
+  if (type.is(UnknownType)) {
+    return this.clone(this.context.union(type.context, AbstractType.merge));
+  } else {
+    return type.clone(this.context.intersection(type.context, AbstractType.merge));
+  }
 };
 
 UnknownType.prototype.instance = function () {

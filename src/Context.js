@@ -20,6 +20,14 @@ Context.prototype.top = function (name) {
   return this._unmarshal(this._hash[name]);
 };
 
+Context.prototype.keys = function () {
+  var keys = [];
+  for (var key in this._hash) {
+    keys.push(key);
+  }
+  return keys;
+};
+
 Context.prototype.add = function (name, value) {
   var hash = Object.create(this._hash);
   hash[name] = this._marshal(value);
@@ -33,6 +41,30 @@ Context.prototype.addAll = function (map) {
       hash[key] = this._marshal(map[key]);
     }
   }
+  return new Context(hash);
+};
+
+Context.prototype.union = function (other, merge) {
+  var hash = Object.create(null);
+  this.keys().union(other.keys()).forEach(function (key) {
+    if (this.has(key)) {
+      if (other.has(key)) {
+        hash[key] = merge(this.top(key), other.top(key));
+      } else {
+        hash[key] = this.top(key);
+      }
+    } else {
+      hash[key] = other.top(key);
+    }
+  }, this);
+  return new Context(hash);
+};
+
+Context.prototype.intersection = function (other, merge) {
+  var hash = Object.create(null);
+  this.keys().intersection(other.keys()).forEach(function (key) {
+    hash[key] = merge(this.top(key), other.top(key));
+  }, this);
   return new Context(hash);
 };
 
