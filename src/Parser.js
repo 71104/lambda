@@ -71,7 +71,7 @@ Parser.prototype.parseClass0 = function () {
     var expressions = [];
     while (this.lexer.token() !== 'right-curly') {
       expressions.push(this.parseClass3(['comma', 'right-curly']));
-      if (this.lexer.token() === 'comma') {
+      if ('comma' === this.lexer.token()) {
         this.lexer.next();
       }
     }
@@ -142,9 +142,9 @@ Parser.prototype.parseTypeClass1 = function () {
   while (true) {
     var token = this.lexer.token();
     var label = this.lexer.label();
-    if (token === 'asterisk') {
+    if ('asterisk' === token) {
       type = new ListType(type);
-    } else if (token === 'symbol' && label === '**') {
+    } else if ('symbol' === token && '**' === label) {
       type = new ListType(new ListType(type));
     } else {
       return type;
@@ -196,7 +196,7 @@ Parser.prototype.parseLambda = function (terminators) {
 
 Parser.prototype.parseLetPartial = function (terminators) {
   var names = [this.lexer.expect('identifier')];
-  while (this.lexer.token() === 'point') {
+  while ('point' === this.lexer.token()) {
     var token = this.lexer.next();
     if (token !== 'identifier' && !token.match(/^keyword\:/)) {
       throw new LambdaSyntaxError();
@@ -244,7 +244,7 @@ Parser.prototype.parseTry = function (terminators) {
   case 'keyword:catch':
     this.lexer.next();
     var catchExpression = this.parseClass3(terminators.union(['keyword:finally']));
-    if (this.lexer.token() === 'keyword:finally') {
+    if ('keyword:finally' === this.lexer.token()) {
       this.lexer.next();
       return new TryCatchFinallyNode(tryExpression, catchExpression, this.parseClass3(terminators));
     } else if (terminators.contains(this.lexer.token())) {
