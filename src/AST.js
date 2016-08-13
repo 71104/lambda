@@ -166,7 +166,7 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.getType = function (context) {
-  return new ClosureType(this.type, this.body.getType(context.add(this.name, this.type)));
+  return new LambdaType(this.type, this.body.getType(context.add(this.name, this.type)));
 };
 
 LambdaNode.prototype.evaluate = function (context) {
@@ -190,14 +190,11 @@ ApplicationNode.prototype.getFreeVariables = function () {
 ApplicationNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
   var right = this.right.getType(context);
-  if (left.is(ClosureType) && right.isSubTypeOf(left.left)) {
-    if (left.left.is(VariableType)) {
-      return left.right.instance(left.left.name, right);
-    } else if (right.isSubTypeOf(left.left)) {
-      return left.right;
-    } else {
-      throw new LambdaTypeError();
-    }
+  if (left.is(ForEachType)) {
+    left = left.inner.instance(left.name, right);
+  }
+  if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
+    return left.right;
   } else {
     throw new LambdaTypeError();
   }
@@ -270,6 +267,59 @@ LetNode.prototype.evaluate = function (context) {
     }
   }.call(this, context, 0));
 };
+
+
+function FixNode() {
+  AbstractNode.call(this);
+}
+
+exports.FixNode = FixNode;
+extend(AbstractNode, FixNode);
+
+FixNode.prototype.getFreeVariables = function () {
+  return [];
+};
+
+FixNode.TYPE = new ForEachType('T', new LambdaType(
+  new LambdaType(
+    new VariableType('T'),
+    new VariableType('T')
+  ),
+  new VariableType('T')
+));
+
+FixNode.prototype.getType = function () {
+  return FixNode.TYPE;
+};
+
+FixNode.Z_COMBINATOR = (new LambdaNode('f', null, new ApplicationNode(
+  new LambdaNode('x', null, new ApplicationNode(
+    new VariableNode('f'),
+    new LambdaNode('v', null, new ApplicationNode(
+      new ApplicationNode(
+        new VariableNode('x'),
+        new VariableNode('x')
+      ),
+      new VariableNode('v')
+    ))
+  )),
+  new LambdaNode('x', null, new ApplicationNode(
+    new VariableNode('f'),
+    new LambdaNode('v', null, new ApplicationNode(
+      new ApplicationNode(
+        new VariableNode('x'),
+        new VariableNode('x')
+      ),
+      new VariableNode('v')
+    ))
+  ))
+))).evaluate(Context.EMPTY);
+
+FixNode.prototype.evaluate = function () {
+  return FixNode.Z_COMBINATOR;
+};
+
+FixNode.INSTANCE = new FixNode();
 
 
 function IfNode(condition, thenExpression, elseExpression) {

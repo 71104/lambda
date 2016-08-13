@@ -41,6 +41,14 @@ VariableType.prototype.merge = function () {
   // TODO
 };
 
+VariableType.prototype.instance = function (name, type) {
+  if (this.name !== name) {
+    return this;
+  } else {
+    return type;
+  }
+};
+
 
 function UndefinedType() {
   AbstractType.call(this);
@@ -287,40 +295,78 @@ ListType.prototype.instance = function (name, type) {
 };
 
 
-function ClosureType(left, right) {
+function LambdaType(left, right) {
   UndefinedType.call(this);
   this.left = left;
   this.right = right;
 }
 
-exports.ClosureType = ClosureType;
-extend(UndefinedType, ClosureType);
+exports.LambdaType = LambdaType;
+extend(UndefinedType, LambdaType);
 
-ClosureType.prototype.toString = function () {
+LambdaType.prototype.toString = function () {
   return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
 };
 
-ClosureType.prototype.clone = function (context) {
-  var type = new ClosureType(this.left, this.right);
+LambdaType.prototype.clone = function (context) {
+  var type = new LambdaType(this.left, this.right);
   type.context = context;
   return type;
 };
 
-ClosureType.prototype.isSubTypeOf = function () {
+LambdaType.prototype.isSubTypeOf = function () {
   // TODO
 };
 
-ClosureType.prototype.instance = function (name, type) {
-  var result = new Closure(this.left.instance(name, type), this.right.instance(name, type));
+LambdaType.prototype.instance = function (name, type) {
+  var result = new LambdaType(this.left.instance(name, type), this.right.instance(name, type));
   result.context = this.context;
   return result;
 };
 
-ClosureType.prototype.bindThis = function (type) {
+LambdaType.prototype.bindThis = function (type) {
   if (this.left.is(VariableType)) {
     return this.right.instance(this.left.name, type);
   } else if (type.isSubTypeOf(this.left)) {
     return this.right;
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+
+function ForEachType(name, inner) {
+  if (!inner.is(LambdaType)) {
+    throw new LambdaInternalError();
+  }
+  AbstractType.call(this);
+  this.name = name;
+  this.inner = inner;
+}
+
+exports.ForEachType = ForEachType;
+extend(AbstractType, ForEachType);
+
+ForEachType.prototype.toString = function () {
+  return this.inner.toString();
+};
+
+ForEachType.prototype.merge = function () {
+  // TODO
+};
+
+ForEachType.prototype.instance = function (name, type) {
+  if (this.name !== name) {
+    return new ForEachType(this.name, this.inner.instance(name, type));
+  } else {
+    return this;
+  }
+};
+
+ForEachType.prototype.bindThis = function (type) {
+  var inner = this.inner.instance(this.name, type);
+  if (inner.isSubTypeOf(inner.left)) {
+    return inner.right;
   } else {
     throw new LambdaTypeError();
   }
