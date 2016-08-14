@@ -149,6 +149,46 @@ FieldAccessNode.prototype.evaluate = function (context) {
 };
 
 
+function SubscriptNode(expression, index) {
+  AbstractNode.call(this);
+  this.expression = expression;
+  this.index = index;
+}
+
+exports.SubscriptNode = SubscriptNode;
+extend(AbstractNode, SubscriptNode);
+
+SubscriptNode.prototype.getFreeVariables = function () {
+  return this.expression.getFreeVariables().union(this.index.getFreeVariables());
+};
+
+SubscriptNode.prototype.getType = function (context) {
+  var expression = this.expression.getType(context);
+  var index = this.index.getType(context);
+  if (index.isSubTypeOf(IntegerType.DEFAULT)) {
+    if (expression.is(IndexedType)) {
+      return expression.inner;
+    } else if (expression.is(UnknownType)) {
+      return UnknownType.INSTANCE;
+    } else {
+      throw new LambdaTypeError();
+    }
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+SubscriptNode.prototype.evaluate = function (context) {
+  var value = this.expression.evaluate(context);
+  var index = this.index.evaluate(context);
+  if (value.is(IndexedValue) && index.is(IntegerValue)) {
+    return value.lookup(index.value);
+  } else {
+    throw new LambdaRuntimeError();
+  }
+};
+
+
 function LambdaNode(name, type, body) {
   AbstractNode.call(this);
   this.name = name;

@@ -256,7 +256,7 @@ StringType.prototype.clone = function (context) {
   return type;
 };
 
-StringType.DEFAULT = new StringType();
+StringType.DEFAULT = new StringType(true);
 
 StringType.prototype.isSubTypeOf = function (type) {
   return this.is(type.constructor) && (type === StringType.DEFAULT || this.isSubPrototypeOf(type));
