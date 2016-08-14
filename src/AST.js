@@ -152,7 +152,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
 function LambdaNode(name, type, body) {
   AbstractNode.call(this);
   this.name = name;
-  this.type = type || new VariableType(name);
+  this.type = type;
   this.body = body;
 }
 
@@ -166,7 +166,12 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.getType = function (context) {
-  return new LambdaType(this.type, this.body.getType(context.add(this.name, this.type)));
+  if (this.type) {
+    return new LambdaType(this.type, this.body.getType(context.add(this.name, this.type)));
+  } else {
+    var left = new VariableType(this.name);
+    return new ForEachType(this.name, new LambdaType(left, this.body.getType(context.add(this.name, left))));
+  }
 };
 
 LambdaNode.prototype.evaluate = function (context) {
