@@ -524,3 +524,43 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
     this.finallyExpression.evaluate(context);
   }
 };
+
+
+function NativeNode(nativeFunction, argumentNames) {
+  AbstractNode.call(this);
+  this.nativeFunction = nativeFunction;
+  this.argumentNames = argumentNames;
+}
+
+exports.NativeNode = NativeNode;
+extend(AbstractNode, NativeNode);
+
+NativeNode.prototype.getFreeVariables = function () {
+  return this.argumentNames;
+};
+
+NativeNode.prototype.getType = function () {
+  return UnknownType.DEFAULT;
+};
+
+NativeNode.prototype.evaluate = function (context) {
+  var argumentValues = this.argumentNames.map(function (name) {
+    if (context.has(name)) {
+      return context.top(name).marshal();
+    } else {
+      throw new LambdaInternalError();
+    }
+  });
+  var thisValue = argumentValues.shift();
+  return AbstractValue.unmarshal(function () {
+    try {
+      return this.nativeFunction.apply(thisValue, argumentValues);
+    } catch (error) {
+      if (error instanceof LambdaError) {
+        throw error;
+      } else {
+        throw new LambdaUserError(AbstractValue.unmarshal(error));
+      }
+    }
+  }.call(this));
+};

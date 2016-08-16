@@ -85,6 +85,10 @@ UndefinedType.prototype.instance = function () {
   return this;
 };
 
+UndefinedType.fromContext = function (context) {
+  return UndefinedType.DEFAULT.clone(context);
+};
+
 
 function ComplexType() {
   UndefinedType.call(this);

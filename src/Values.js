@@ -312,6 +312,18 @@ Closure.prototype.marshal = function () {
   });
 };
 
+Closure.fromFunction = function (nativeFunction) {
+  return new Closure((function makeLambda(index, names) {
+    if (index < nativeFunction.length + 1) {
+      var name = '' + index;
+      names.push(name);
+      return new LambdaNode(name, UndefinedType.DEFAULT, makeLambda(index + 1, names));
+    } else {
+      return new NativeNode(nativeFunction, names);
+    }
+  }(0, [])), Context.EMPTY);
+};
+
 Closure.unmarshal = function () {
   // TODO
 };
