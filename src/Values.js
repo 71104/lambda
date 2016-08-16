@@ -368,7 +368,7 @@ AbstractValue.unmarshal = function (value) {
   case 'undefined':
     return JSUndefinedValue.INSTANCE;
   case 'boolean':
-    return BooleanValue.unmarshal(value);
+    return new BooleanValue(value);
   case 'number':
     if (value % 1) {
       return new RealValue(value);

@@ -24,6 +24,7 @@ gulp.task('concat', ['lint'], function () {
     'src/Types.js',
     'src/AST.js',
     'src/Scalars.js',
+    'src/Strings.js',
     'src/DefaultContext.js',
     'src/Lexer.js',
     'src/Parser.js',
