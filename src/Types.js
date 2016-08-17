@@ -77,27 +77,6 @@ ContextType.prototype.merge = function (type) {
 };
 
 
-function VariableType(name) {
-  ContextType.call(this);
-  this.name = name;
-}
-
-exports.VariableType = VariableType;
-extend(ContextType, VariableType);
-
-VariableType.prototype.toString = function () {
-  return this.name;
-};
-
-VariableType.prototype.instance = function (name, type) {
-  if (this.name !== name) {
-    return this;
-  } else {
-    return type;
-  }
-};
-
-
 function UndefinedType() {
   ContextType.call(this);
 }
@@ -123,6 +102,92 @@ UndefinedType.prototype.instance = function () {
 
 UndefinedType.fromContext = function (context) {
   return UndefinedType.DEFAULT.clone(context);
+};
+
+
+function UnknownType() {
+  UndefinedType.call(this);
+}
+
+exports.UnknownType = UnknownType;
+extend(UndefinedType, UnknownType);
+
+UnknownType.prototype.toString = function () {
+  return 'unknown';
+};
+
+UnknownType.prototype.clone = function (context) {
+  var type = new UnknownType();
+  type.context = context;
+  return type;
+};
+
+UnknownType.DEFAULT = new UnknownType();
+
+UnknownType.prototype.isSubPrototypeOf = function (type) {
+  return this.context.keys().every(function (key) {
+    if (type.context.has(key)) {
+      return this.context.top(key).isSubTypeOf(type.context.top(key));
+    } else if (type.is(UnknownType)) {
+      return this.context.top(key).isSubTypeOf(UnknownType.DEFAULT);
+    } else {
+      return false;
+    }
+  }, this);
+};
+
+UnknownType.prototype.isSubTypeOf = function (type) {
+  return this.hasDefaultPrototype || this.isSubPrototypeOf(type);
+};
+
+UnknownType.prototype.merge = function (type) {
+  if (type.is(UnknownType)) {
+    return this.clone(this.context.union(type.context, ContextType.merge));
+  } else {
+    return type.clone(this.context.intersection(type.context, ContextType.merge));
+  }
+};
+
+
+function VariableType(name) {
+  UndefinedType.call(this);
+  this.name = name;
+}
+
+exports.VariableType = VariableType;
+extend(UndefinedType, VariableType);
+
+VariableType.prototype.toString = function () {
+  return this.name;
+};
+
+VariableType.prototype.isSubPrototypeOf = function (type) {
+  return this.context.keys().every(function (key) {
+    if (type.context.has(key)) {
+      return this.context.top(key).isSubTypeOf(type.context.top(key));
+    } else {
+      // TODO
+      return false;
+    }
+  }, this);
+};
+
+VariableType.prototype.isSubTypeOf = function (type) {
+  return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
+    (!type.is(VariableType) || type.name === this.name);
+};
+
+VariableType.prototype.merge = function () {
+  // TODO
+  return UnknownType.DEFAULT;
+};
+
+VariableType.prototype.instance = function (name, type) {
+  if (this.name !== name) {
+    return this;
+  } else {
+    return type;
+  }
 };
 
 
@@ -325,40 +390,5 @@ LambdaType.prototype.bindThis = function (type) {
     return this.right;
   } else {
     throw new LambdaTypeError();
-  }
-};
-
-
-function UnknownType() {
-  UndefinedType.call(this);
-}
-
-exports.UnknownType = UnknownType;
-extend(UndefinedType, UnknownType);
-
-UnknownType.prototype.toString = function () {
-  return 'unknown';
-};
-
-UnknownType.prototype.clone = function (context) {
-  var type = new UnknownType();
-  type.context = context;
-  return type;
-};
-
-UnknownType.DEFAULT = new UnknownType();
-
-UnknownType.prototype.isSubTypeOf = function (type) {
-  return !type.is(UnknownType) || this === UnknownType.DEFAULT ||
-      type !== UnknownType.DEFAULT && this.context.keys().every(function (key) {
-        return type.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
-      }, this);
-};
-
-UnknownType.prototype.merge = function (type) {
-  if (type.is(UnknownType)) {
-    return this.clone(this.context.union(type.context, ContextType.merge));
-  } else {
-    return type.clone(this.context.intersection(type.context, ContextType.merge));
   }
 };
