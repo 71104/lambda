@@ -6,6 +6,20 @@ AbstractValue.prototype.is = function (Class) {
   return this instanceof Class;
 };
 
+AbstractValue.prototype._setContext = function (context) {
+  var constructor = this.constructor;
+  var Value = function () {
+    constructor.apply(this, arguments);
+  };
+  extend(constructor, Value);
+  Value.prototype.context = context;
+  return Value;
+};
+
+AbstractValue.prototype._extend = function (name, value) {
+  return this._setContext(this.context.add(name, value));
+};
+
 AbstractValue.prototype.bindThis = function () {
   return this;
 };
@@ -24,14 +38,8 @@ UndefinedValue.prototype.toString = function () {
   return 'undefined';
 };
 
-UndefinedValue.prototype._clone = function () {
-  return new UndefinedValue();
-};
-
-UndefinedValue.prototype.clone = function (context) {
-  var value = this._clone();
-  value.context = context;
-  return value;
+UndefinedValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))();
 };
 
 UndefinedValue.prototype.marshal = function () {
@@ -41,7 +49,7 @@ UndefinedValue.prototype.marshal = function () {
 UndefinedValue.DEFAULT = new UndefinedValue();
 
 UndefinedValue.fromContext = function (context) {
-  return UndefinedValue.DEFAULT.clone(context);
+  return new (UndefinedValue.DEFAULT._setContext(context))();
 };
 
 
@@ -80,8 +88,8 @@ ComplexValue.prototype.toString = function () {
   }
 };
 
-ComplexValue.prototype._clone = function () {
-  return new ComplexValue(this.real, this.imaginary);
+ComplexValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.real, this.imaginary);
 };
 
 ComplexValue.prototype.marshal = function () {
@@ -102,8 +110,8 @@ RealValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-RealValue.prototype._clone = function () {
-  return new RealValue(this.value);
+RealValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.value);
 };
 
 RealValue.prototype.marshal = function () {
@@ -122,8 +130,8 @@ IntegerValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-IntegerValue.prototype._clone = function () {
-  return new IntegerValue(this.value);
+IntegerValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.value);
 };
 
 IntegerValue.prototype.marshal = function () {
@@ -146,8 +154,8 @@ NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
 
-NaturalValue.prototype._clone = function () {
-  return new NaturalValue(this.value);
+NaturalValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.value);
 };
 
 NaturalValue.prototype.marshal = function () {
@@ -172,8 +180,8 @@ BooleanValue.prototype.toString = function () {
   }
 };
 
-BooleanValue.prototype._clone = function () {
-  return new BooleanValue(this.value);
+BooleanValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.value);
 };
 
 BooleanValue.prototype.marshal = function () {
@@ -205,8 +213,8 @@ StringValue.prototype.toString = function () {
   return this.value;
 };
 
-StringValue.prototype._clone = function () {
-  return new StringValue(this.value);
+StringValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.value);
 };
 
 StringValue.prototype.marshal = function () {
@@ -235,8 +243,8 @@ ListValue.prototype.toString = function () {
   }).join(', ') + ' }';
 };
 
-ListValue.prototype._clone = function () {
-  return new ListValue(this.values);
+ListValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.values);
 };
 
 ListValue.prototype.marshal = function () {
@@ -266,8 +274,8 @@ Closure.prototype.toString = function () {
   return 'closure';
 };
 
-Closure.prototype._clone = function () {
-  return new Closure(this.lambda, this.capture);
+Closure.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.lambda, this.capture);
 };
 
 Closure.prototype.getLength = function () {
@@ -340,6 +348,10 @@ JSUndefinedValue.prototype.toString = function () {
   return 'JavaScript.UNDEFINED';
 };
 
+JSUndefinedValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))();
+};
+
 JSUndefinedValue.prototype.marshal = function () {};
 
 JSUndefinedValue.INSTANCE = new JSUndefinedValue();
@@ -354,6 +366,10 @@ extend(AbstractValue, JSNullValue);
 
 JSNullValue.prototype.toString = function () {
   return 'JavaScript.NULL';
+};
+
+JSNullValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))();
 };
 
 JSNullValue.prototype.marshal = function () {

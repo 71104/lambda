@@ -257,10 +257,10 @@ ApplicationNode.prototype.evaluate = function (context) {
 
 
 function LetNode(names, expression, body) {
-  AbstractNode.call(this);
   if (names.length < 1) {
     throw new LambdaInternalError();
   }
+  AbstractNode.call(this);
   this.names = names;
   this.expression = expression;
   this.body = body;
@@ -277,40 +277,36 @@ LetNode.prototype.getFreeVariables = function () {
 
 LetNode.prototype.getType = function (context) {
   var rootContext = context;
-  return this.body.getType(function augment(context, index) {
+  var global = function extend(type, index) {
     var name = this.names[index];
     if (index < this.names.length - 1) {
-      if (context.has(name)) {
-        var type = context.top(name);
-        if (type.is(VariableType)) {
-          // TODO
-        } else {
-          return context.add(name, type.clone(augment.call(this, type.context, index + 1)));
-        }
+      if (type.context.has(name)) {
+        return type.extend(name, extend.call(this, type.context.top(name), index + 1));
       } else {
-        return context.add(name, UndefinedType.fromContext(augment.call(this, Context.EMPTY, index + 1)));
+        return type.extend(name, extend.call(this, UndefinedType.DEFAULT, index + 1));
       }
     } else {
-      return context.add(name, this.expression.getType(rootContext));
+      return type.extend(name, this.expression.getType(rootContext));
     }
-  }.call(this, context, 0));
+  }.call(this, UndefinedType.fromContext(context), 0);
+  return this.body.getType(global.context);
 };
 
 LetNode.prototype.evaluate = function (context) {
   var rootContext = context;
-  return this.body.evaluate(function augment(context, index) {
+  var global = function extend(value, index) {
     var name = this.names[index];
     if (index < this.names.length - 1) {
-      if (context.has(name)) {
-        var value = context.top(name);
-        return context.add(name, value.clone(augment.call(this, value.context, index + 1)));
+      if (value.context.has(name)) {
+        return value.extend(name, extend.call(this, value.context.top(name), index + 1));
       } else {
-        return context.add(name, UndefinedValue.fromContext(augment.call(this, Context.EMPTY, index + 1)));
+        return value.extend(name, extend.call(this, UndefinedValue.DEFAULT, index + 1));
       }
     } else {
-      return context.add(name, this.expression.evaluate(rootContext));
+      return value.extend(name, this.expression.evaluate(rootContext));
     }
-  }.call(this, context, 0));
+  }.call(this, UndefinedValue.fromContext(context), 0);
+  return this.body.evaluate(global.context);
 };
 
 

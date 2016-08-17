@@ -52,6 +52,21 @@ extend(AbstractType, PrototypedType);
 PrototypedType.prototype.context = Context.EMPTY;
 PrototypedType.prototype.hasDefaultPrototype = true;
 
+PrototypedType.prototype._setContext = function (context) {
+  var constructor = this.constructor;
+  var SubType = function () {
+    constructor.apply(this, arguments);
+  };
+  extend(constructor, SubType);
+  SubType.prototype.context = context;
+  SubType.prototype.hasDefaultPrototype = false;
+  return SubType;
+};
+
+PrototypedType.prototype._extend = function (name, value) {
+  return this._setContext(this.context.add(name, value));
+};
+
 PrototypedType.prototype.isSubPrototypeOf = function (type) {
   return type.context.keys().every(function (key) {
     return this.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
@@ -64,9 +79,9 @@ PrototypedType.prototype.isSubTypeOf = function (type) {
 
 PrototypedType.merge = function (type1, type2) {
   if (type1.is(type2.constructor)) {
-    return type2.clone(type1.context.intersection(type2.context, PrototypedType.merge));
+    return type2._setContext(type1.context.intersection(type2.context, PrototypedType.merge));
   } else if (type2.is(type1.constructor)) {
-    return type1.clone(type1.context.intersection(type2.context, PrototypedType.merge));
+    return type1._setContext(type1.context.intersection(type2.context, PrototypedType.merge));
   } else {
     throw new LambdaTypeError();
   }
@@ -88,10 +103,8 @@ UndefinedType.prototype.toString = function () {
   return 'undefined';
 };
 
-UndefinedType.prototype.clone = function (context) {
-  var type = new UndefinedType();
-  type.context = context;
-  return type;
+UndefinedType.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))();
 };
 
 UndefinedType.DEFAULT = new UndefinedType();
@@ -101,7 +114,7 @@ UndefinedType.prototype.instance = function () {
 };
 
 UndefinedType.fromContext = function (context) {
-  return UndefinedType.DEFAULT.clone(context);
+  return new (UndefinedType.DEFAULT._setContext(context))();
 };
 
 
@@ -114,12 +127,6 @@ extend(UndefinedType, UnknownType);
 
 UnknownType.prototype.toString = function () {
   return 'unknown';
-};
-
-UnknownType.prototype.clone = function (context) {
-  var type = new UnknownType();
-  type.context = context;
-  return type;
 };
 
 UnknownType.DEFAULT = new UnknownType();
@@ -142,9 +149,9 @@ UnknownType.prototype.isSubTypeOf = function (type) {
 
 UnknownType.prototype.merge = function (type) {
   if (type.is(UnknownType)) {
-    return this.clone(this.context.union(type.context, PrototypedType.merge));
+    return this._setContext(this.context.union(type.context, PrototypedType.merge));
   } else {
-    return type.clone(this.context.intersection(type.context, PrototypedType.merge));
+    return type._setContext(this.context.intersection(type.context, PrototypedType.merge));
   }
 };
 
@@ -159,6 +166,10 @@ extend(UndefinedType, VariableType);
 
 VariableType.prototype.toString = function () {
   return this.name;
+};
+
+VariableType.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.name);
 };
 
 VariableType.prototype.isSubPrototypeOf = function (type) {
@@ -202,12 +213,6 @@ ComplexType.prototype.toString = function () {
   return 'complex';
 };
 
-ComplexType.prototype.clone = function (context) {
-  var type = new ComplexType();
-  type.context = context;
-  return type;
-};
-
 ComplexType.DEFAULT = new ComplexType();
 
 
@@ -220,12 +225,6 @@ extend(ComplexType, RealType);
 
 RealType.prototype.toString = function () {
   return 'real';
-};
-
-RealType.prototype.clone = function (context) {
-  var type = new RealType();
-  type.context = context;
-  return type;
 };
 
 RealType.DEFAULT = new RealType();
@@ -242,12 +241,6 @@ IntegerType.prototype.toString = function () {
   return 'integer';
 };
 
-IntegerType.prototype.clone = function (context) {
-  var type = new IntegerType();
-  type.context = context;
-  return type;
-};
-
 IntegerType.DEFAULT = new IntegerType();
 
 
@@ -262,12 +255,6 @@ NaturalType.prototype.toString = function () {
   return 'natural';
 };
 
-NaturalType.prototype.clone = function (context) {
-  var type = new NaturalType();
-  type.context = context;
-  return type;
-};
-
 NaturalType.DEFAULT = new NaturalType();
 
 
@@ -280,12 +267,6 @@ extend(UndefinedType, BooleanType);
 
 BooleanType.prototype.toString = function () {
   return 'boolean';
-};
-
-BooleanType.prototype.clone = function (context) {
-  var type = new BooleanType();
-  type.context = context;
-  return type;
 };
 
 BooleanType.DEFAULT = new BooleanType();
@@ -315,12 +296,6 @@ StringType.prototype.toString = function () {
   return 'string';
 };
 
-StringType.prototype.clone = function (context) {
-  var type = new StringType();
-  type.context = context;
-  return type;
-};
-
 StringType.DEFAULT = new StringType(true);
 
 
@@ -335,10 +310,8 @@ ListType.prototype.toString = function () {
   return '(' + this.inner.toString() + ')*';
 };
 
-ListType.prototype.clone = function (context) {
-  var type = new ListType(this.inner);
-  type.context = context;
-  return type;
+ListType.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.inner);
 };
 
 ListType.prototype.isSubTypeOf = function (type) {
@@ -366,10 +339,8 @@ LambdaType.prototype.toString = function () {
   return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
 };
 
-LambdaType.prototype.clone = function (context) {
-  var type = new LambdaType(this.left, this.right);
-  type.context = context;
-  return type;
+LambdaType.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.left, this.right);
 };
 
 LambdaType.prototype.isSubTypeOf = function () {
