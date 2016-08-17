@@ -277,7 +277,7 @@ LetNode.prototype.getFreeVariables = function () {
 
 LetNode.prototype.getType = function (context) {
   var rootContext = context;
-  return this.body.evaluate(function augment(context, index) {
+  return this.body.getType(function augment(context, index) {
     var name = this.names[index];
     if (index < this.names.length - 1) {
       if (context.has(name)) {
