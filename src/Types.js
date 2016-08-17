@@ -10,35 +10,83 @@ AbstractType.prototype.bindThis = function () {
   return this;
 };
 
-AbstractType.merge = function (type1, type2) {
-  if (type1.is(type2.constructor)) {
-    return type2.clone(type1.context.intersection(type2.context, AbstractType.merge));
-  } else if (type2.is(type1.constructor)) {
-    return type1.clone(type1.context.intersection(type2.context, AbstractType.merge));
+
+function ForEachType(name, inner) {
+  AbstractType.call(this);
+  this.name = name;
+  this.inner = inner;
+}
+
+exports.ForEachType = ForEachType;
+extend(AbstractType, ForEachType);
+
+ForEachType.prototype.toString = function () {
+  return this.inner.toString();
+};
+
+ForEachType.prototype.instance = function (name, type) {
+  if (this.name !== name) {
+    return new ForEachType(this.name, this.inner.instance(name, type));
+  } else {
+    return this;
+  }
+};
+
+ForEachType.prototype.bindThis = function (type) {
+  var inner = this.inner.instance(this.name, type);
+  if (inner.isSubTypeOf(inner.left)) {
+    return inner.right;
   } else {
     throw new LambdaTypeError();
   }
 };
 
-AbstractType.prototype.merge = function (type) {
-  return AbstractType.merge(this, type);
+
+function ContextType() {
+  AbstractType.call(this);
+}
+
+exports.ContextType = ContextType;
+extend(AbstractType, ContextType);
+
+ContextType.prototype.context = Context.EMPTY;
+ContextType.prototype.hasDefaultPrototype = true;
+
+ContextType.prototype.isSubPrototypeOf = function (type) {
+  return type.context.keys().every(function (key) {
+    return this.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
+  }, this);
+};
+
+ContextType.prototype.isSubTypeOf = function (type) {
+  return this.is(type.constructor) && (type.hasDefaultPrototype || this.isSubPrototypeOf(type));
+};
+
+ContextType.merge = function (type1, type2) {
+  if (type1.is(type2.constructor)) {
+    return type2.clone(type1.context.intersection(type2.context, ContextType.merge));
+  } else if (type2.is(type1.constructor)) {
+    return type1.clone(type1.context.intersection(type2.context, ContextType.merge));
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+ContextType.prototype.merge = function (type) {
+  return ContextType.merge(this, type);
 };
 
 
 function VariableType(name) {
-  AbstractType.call(this);
+  ContextType.call(this);
   this.name = name;
 }
 
 exports.VariableType = VariableType;
-extend(AbstractType, VariableType);
+extend(ContextType, VariableType);
 
 VariableType.prototype.toString = function () {
   return this.name;
-};
-
-VariableType.prototype.merge = function () {
-  // TODO
 };
 
 VariableType.prototype.instance = function (name, type) {
@@ -51,13 +99,11 @@ VariableType.prototype.instance = function (name, type) {
 
 
 function UndefinedType() {
-  AbstractType.call(this);
+  ContextType.call(this);
 }
 
 exports.UndefinedType = UndefinedType;
-extend(AbstractType, UndefinedType);
-
-UndefinedType.prototype.context = Context.EMPTY;
+extend(ContextType, UndefinedType);
 
 UndefinedType.prototype.toString = function () {
   return 'undefined';
@@ -69,17 +115,7 @@ UndefinedType.prototype.clone = function (context) {
   return type;
 };
 
-UndefinedType.prototype.isSubPrototypeOf = function (type) {
-  return type.context.keys().every(function (key) {
-    return this.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
-  }, this);
-};
-
 UndefinedType.DEFAULT = new UndefinedType();
-
-UndefinedType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === UndefinedType.DEFAULT || this.isSubPrototypeOf(type));
-};
 
 UndefinedType.prototype.instance = function () {
   return this;
@@ -109,14 +145,6 @@ ComplexType.prototype.clone = function (context) {
 
 ComplexType.DEFAULT = new ComplexType();
 
-ComplexType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === ComplexType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-ComplexType.prototype.instance = function () {
-  return this;
-};
-
 
 function RealType() {
   ComplexType.call(this);
@@ -136,14 +164,6 @@ RealType.prototype.clone = function (context) {
 };
 
 RealType.DEFAULT = new RealType();
-
-RealType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === RealType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-RealType.prototype.instance = function () {
-  return this;
-};
 
 
 function IntegerType() {
@@ -165,14 +185,6 @@ IntegerType.prototype.clone = function (context) {
 
 IntegerType.DEFAULT = new IntegerType();
 
-IntegerType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === IntegerType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-IntegerType.prototype.instance = function () {
-  return this;
-};
-
 
 function NaturalType() {
   IntegerType.call(this);
@@ -193,14 +205,6 @@ NaturalType.prototype.clone = function (context) {
 
 NaturalType.DEFAULT = new NaturalType();
 
-NaturalType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === NaturalType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-NaturalType.prototype.instance = function () {
-  return this;
-};
-
 
 function BooleanType() {
   UndefinedType.call(this);
@@ -220,14 +224,6 @@ BooleanType.prototype.clone = function (context) {
 };
 
 BooleanType.DEFAULT = new BooleanType();
-
-BooleanType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === BooleanType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-BooleanType.prototype.instance = function () {
-  return this;
-};
 
 
 function IndexedType(inner) {
@@ -262,14 +258,6 @@ StringType.prototype.clone = function (context) {
 
 StringType.DEFAULT = new StringType(true);
 
-StringType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type === StringType.DEFAULT || this.isSubPrototypeOf(type));
-};
-
-StringType.prototype.instance = function () {
-  return this;
-};
-
 
 function ListType(inner) {
   IndexedType.call(this, inner);
@@ -288,8 +276,9 @@ ListType.prototype.clone = function (context) {
   return type;
 };
 
-ListType.prototype.isSubTypeOf = function () {
-  // TODO
+ListType.prototype.isSubTypeOf = function (type) {
+  return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
+    (!type.is(IndexedType) || this.inner.isSubTypeOf(type.inner));
 };
 
 ListType.prototype.instance = function (name, type) {
@@ -319,7 +308,8 @@ LambdaType.prototype.clone = function (context) {
 };
 
 LambdaType.prototype.isSubTypeOf = function () {
-  // TODO
+  return UndefinedType.prototype.isSubTypeOf.call(this, type) && (!type.is(LambdaType) ||
+    type.left.isSubTypeOf(this.left) && this.right.isSubTypeOf(type.right));
 };
 
 LambdaType.prototype.instance = function (name, type) {
@@ -333,44 +323,6 @@ LambdaType.prototype.bindThis = function (type) {
     return this.right.instance(this.left.name, type);
   } else if (type.isSubTypeOf(this.left)) {
     return this.right;
-  } else {
-    throw new LambdaTypeError();
-  }
-};
-
-
-function ForEachType(name, inner) {
-  if (!inner.is(LambdaType)) {
-    throw new LambdaInternalError();
-  }
-  AbstractType.call(this);
-  this.name = name;
-  this.inner = inner;
-}
-
-exports.ForEachType = ForEachType;
-extend(AbstractType, ForEachType);
-
-ForEachType.prototype.toString = function () {
-  return this.inner.toString();
-};
-
-ForEachType.prototype.merge = function () {
-  // TODO
-};
-
-ForEachType.prototype.instance = function (name, type) {
-  if (this.name !== name) {
-    return new ForEachType(this.name, this.inner.instance(name, type));
-  } else {
-    return this;
-  }
-};
-
-ForEachType.prototype.bindThis = function (type) {
-  var inner = this.inner.instance(this.name, type);
-  if (inner.isSubTypeOf(inner.left)) {
-    return inner.right;
   } else {
     throw new LambdaTypeError();
   }
@@ -405,12 +357,8 @@ UnknownType.prototype.isSubTypeOf = function (type) {
 
 UnknownType.prototype.merge = function (type) {
   if (type.is(UnknownType)) {
-    return this.clone(this.context.union(type.context, AbstractType.merge));
+    return this.clone(this.context.union(type.context, ContextType.merge));
   } else {
-    return type.clone(this.context.intersection(type.context, AbstractType.merge));
+    return type.clone(this.context.intersection(type.context, ContextType.merge));
   }
-};
-
-UnknownType.prototype.instance = function () {
-  return this;
 };
