@@ -42,47 +42,47 @@ ForEachType.prototype.bindThis = function (type) {
 };
 
 
-function ContextType() {
+function PrototypedType() {
   AbstractType.call(this);
 }
 
-exports.ContextType = ContextType;
-extend(AbstractType, ContextType);
+exports.PrototypedType = PrototypedType;
+extend(AbstractType, PrototypedType);
 
-ContextType.prototype.context = Context.EMPTY;
-ContextType.prototype.hasDefaultPrototype = true;
+PrototypedType.prototype.context = Context.EMPTY;
+PrototypedType.prototype.hasDefaultPrototype = true;
 
-ContextType.prototype.isSubPrototypeOf = function (type) {
+PrototypedType.prototype.isSubPrototypeOf = function (type) {
   return type.context.keys().every(function (key) {
     return this.context.has(key) && this.context.top(key).isSubTypeOf(type.context.top(key));
   }, this);
 };
 
-ContextType.prototype.isSubTypeOf = function (type) {
+PrototypedType.prototype.isSubTypeOf = function (type) {
   return this.is(type.constructor) && (type.hasDefaultPrototype || this.isSubPrototypeOf(type));
 };
 
-ContextType.merge = function (type1, type2) {
+PrototypedType.merge = function (type1, type2) {
   if (type1.is(type2.constructor)) {
-    return type2.clone(type1.context.intersection(type2.context, ContextType.merge));
+    return type2.clone(type1.context.intersection(type2.context, PrototypedType.merge));
   } else if (type2.is(type1.constructor)) {
-    return type1.clone(type1.context.intersection(type2.context, ContextType.merge));
+    return type1.clone(type1.context.intersection(type2.context, PrototypedType.merge));
   } else {
     throw new LambdaTypeError();
   }
 };
 
-ContextType.prototype.merge = function (type) {
-  return ContextType.merge(this, type);
+PrototypedType.prototype.merge = function (type) {
+  return PrototypedType.merge(this, type);
 };
 
 
 function UndefinedType() {
-  ContextType.call(this);
+  PrototypedType.call(this);
 }
 
 exports.UndefinedType = UndefinedType;
-extend(ContextType, UndefinedType);
+extend(PrototypedType, UndefinedType);
 
 UndefinedType.prototype.toString = function () {
   return 'undefined';
@@ -142,9 +142,9 @@ UnknownType.prototype.isSubTypeOf = function (type) {
 
 UnknownType.prototype.merge = function (type) {
   if (type.is(UnknownType)) {
-    return this.clone(this.context.union(type.context, ContextType.merge));
+    return this.clone(this.context.union(type.context, PrototypedType.merge));
   } else {
-    return type.clone(this.context.intersection(type.context, ContextType.merge));
+    return type.clone(this.context.intersection(type.context, PrototypedType.merge));
   }
 };
 
