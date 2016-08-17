@@ -2,6 +2,7 @@ ComplexType.prototype.context = ComplexType.prototype.context.addAll({
   str: StringType.DEFAULT,
   real: RealType.DEFAULT,
   imaginary: RealType.DEFAULT,
+  abs: RealType.DEFAULT,
 });
 
 ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
@@ -14,15 +15,18 @@ ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
   imaginary: Closure.fromFunction(function () {
     return this.i;
   }),
+  abs: Closure.fromFunction(function () {
+    return Math.sqrt(this.r * this.r + this.i * this.i);
+  }),
 });
 
 
 RealType.prototype.context = RealType.prototype.context.addAll({
-  abs: RealType.DEFAULT,
   ceil: IntegerType.DEFAULT,
   floor: IntegerType.DEFAULT,
   round: IntegerType.DEFAULT,
   trunc: IntegerType.DEFAULT,
+  sign: IntegerType.DEFAULT,
   sqrt: RealType.DEFAULT,
   cbrt: RealType.DEFAULT,
   exp: RealType.DEFAULT,
@@ -36,6 +40,12 @@ RealType.prototype.context = RealType.prototype.context.addAll({
   asin: RealType.DEFAULT,
   acos: RealType.DEFAULT,
   atan: RealType.DEFAULT,
+  sinh: RealType.DEFAULT,
+  cosh: RealType.DEFAULT,
+  tanh: RealType.DEFAULT,
+  asinh: RealType.DEFAULT,
+  acosh: RealType.DEFAULT,
+  atanh: RealType.DEFAULT,
 });
 
 function _makeMathFunction(name) {
@@ -45,11 +55,18 @@ function _makeMathFunction(name) {
 }
 
 RealValue.prototype.context = RealValue.prototype.context.addAll({
+  real: Closure.fromFunction(function () {
+    return this;
+  }),
+  imaginary: Closure.fromFunction(function () {
+    return 0;
+  }),
   abs: _makeMathFunction('abs'),
   ceil: _makeMathFunction('ceil'),
   floor: _makeMathFunction('floor'),
   round: _makeMathFunction('round'),
   trunc: _makeMathFunction('trunc'),
+  sign: _makeMathFunction('sign'),
   sqrt: _makeMathFunction('sqrt'),
   cbrt: _makeMathFunction('cbrt'),
   exp: _makeMathFunction('exp'),
@@ -63,6 +80,17 @@ RealValue.prototype.context = RealValue.prototype.context.addAll({
   asin: _makeMathFunction('asin'),
   acos: _makeMathFunction('acos'),
   atan: _makeMathFunction('atan'),
+  sinh: _makeMathFunction('sinh'),
+  cosh: _makeMathFunction('cosh'),
+  tanh: _makeMathFunction('tanh'),
+  asinh: _makeMathFunction('asinh'),
+  acosh: _makeMathFunction('acosh'),
+  atanh: _makeMathFunction('atanh'),
+});
+
+
+IntegerType.prototype.context = IntegerType.prototype.context.addAll({
+  abs: NaturalType.DEFAULT,
 });
 
 
