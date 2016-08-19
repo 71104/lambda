@@ -34,7 +34,7 @@ ForEachType.prototype.instance = function (name, type) {
 
 ForEachType.prototype.bindThis = function (type) {
   var inner = this.inner.instance(this.name, type);
-  if (inner.isSubTypeOf(inner.left)) {
+  if (type.isSubTypeOf(inner.left)) {
     return inner.right;
   } else {
     throw new LambdaTypeError();
@@ -320,9 +320,7 @@ ListType.prototype.isSubTypeOf = function (type) {
 };
 
 ListType.prototype.instance = function (name, type) {
-  var result = new ListType(this.inner.instance(name, type));
-  result.context = this.context;
-  return result;
+  return new (this._setContext(this.context))(this.inner.instance(name, type));
 };
 
 
@@ -349,9 +347,7 @@ LambdaType.prototype.isSubTypeOf = function () {
 };
 
 LambdaType.prototype.instance = function (name, type) {
-  var result = new LambdaType(this.left.instance(name, type), this.right.instance(name, type));
-  result.context = this.context;
-  return result;
+  return new (this._setContext(this.context))(this.left.instance(name, type), this.right.instance(name, type));
 };
 
 LambdaType.prototype.bindThis = function (type) {
