@@ -63,8 +63,8 @@ PrototypedType.prototype._setContext = function (context) {
   return SubType;
 };
 
-PrototypedType.prototype._extend = function (name, value) {
-  return this._setContext(this.context.add(name, value));
+PrototypedType.prototype._extend = function (name, type) {
+  return this._setContext(this.context.add(name, type));
 };
 
 PrototypedType.prototype.isSubPrototypeOf = function (type) {
@@ -103,8 +103,8 @@ UndefinedType.prototype.toString = function () {
   return 'undefined';
 };
 
-UndefinedType.prototype.extend = function (name, value) {
-  return new (this._extend(name, value))();
+UndefinedType.prototype.extend = function (name, type) {
+  return new (this._extend(name, type))();
 };
 
 UndefinedType.DEFAULT = new UndefinedType();
@@ -168,8 +168,8 @@ VariableType.prototype.toString = function () {
   return this.name;
 };
 
-VariableType.prototype.extend = function (name, value) {
-  return new (this._extend(name, value))(this.name);
+VariableType.prototype.extend = function (name, type) {
+  return new (this._extend(name, type))(this.name);
 };
 
 VariableType.prototype.isSubPrototypeOf = function (type) {
@@ -310,8 +310,8 @@ ListType.prototype.toString = function () {
   return '(' + this.inner.toString() + ')*';
 };
 
-ListType.prototype.extend = function (name, value) {
-  return new (this._extend(name, value))(this.inner);
+ListType.prototype.extend = function (name, type) {
+  return new (this._extend(name, type))(this.inner);
 };
 
 ListType.prototype.isSubTypeOf = function (type) {
@@ -337,8 +337,8 @@ LambdaType.prototype.toString = function () {
   return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
 };
 
-LambdaType.prototype.extend = function (name, value) {
-  return new (this._extend(name, value))(this.left, this.right);
+LambdaType.prototype.extend = function (name, type) {
+  return new (this._extend(name, type))(this.left, this.right);
 };
 
 LambdaType.prototype.isSubTypeOf = function () {
