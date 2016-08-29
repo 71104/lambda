@@ -335,11 +335,9 @@ Closure.fromFunction = function (nativeFunction) {
 Closure.unmarshal = function (value) {
   return new Closure(
       new LambdaNode('this', null,
-        new LambdaNode(
-          'arguments',
-          new ForEachType('T', new ListType(new VariableType('T'))),
-          new NativeNode(function () {
-            return value.apply(this, arguments);
+        new LambdaNode('arguments', new ListType(UndefinedType.DEFAULT),
+          new NativeNode(function (parameters) {
+            return value.apply(this, parameters);
           }, ['this', 'arguments']))), Context.EMPTY);
 };
 

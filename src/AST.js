@@ -240,6 +240,8 @@ ApplicationNode.prototype.getType = function (context) {
   }
   if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
     return left.right;
+  } else if (left.is(UnknownType)) {
+    return UnknownType.DEFAULT;
   } else {
     throw new LambdaTypeError();
   }
