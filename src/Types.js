@@ -79,9 +79,9 @@ PrototypedType.prototype.isSubTypeOf = function (type) {
 
 PrototypedType.merge = function (type1, type2) {
   if (type1.is(type2.constructor)) {
-    return type2._setContext(type1.context.intersection(type2.context, PrototypedType.merge));
+    return type2.setContext(type1.context.intersection(type2.context, PrototypedType.merge));
   } else if (type2.is(type1.constructor)) {
-    return type1._setContext(type1.context.intersection(type2.context, PrototypedType.merge));
+    return type1.setContext(type1.context.intersection(type2.context, PrototypedType.merge));
   } else {
     throw new LambdaTypeError();
   }
@@ -103,6 +103,10 @@ UndefinedType.prototype.toString = function () {
   return 'undefined';
 };
 
+UndefinedType.prototype.setContext = function (context) {
+  return new (this._setContext(context))();
+};
+
 UndefinedType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))();
 };
@@ -114,7 +118,7 @@ UndefinedType.prototype.instance = function () {
 };
 
 UndefinedType.fromContext = function (context) {
-  return new (UndefinedType.DEFAULT._setContext(context))();
+  return UndefinedType.DEFAULT.setContext(context);
 };
 
 
@@ -149,9 +153,9 @@ UnknownType.prototype.isSubTypeOf = function (type) {
 
 UnknownType.prototype.merge = function (type) {
   if (type.is(UnknownType)) {
-    return this._setContext(this.context.union(type.context, PrototypedType.merge));
+    return this.setContext(this.context.union(type.context, PrototypedType.merge));
   } else {
-    return type._setContext(this.context.intersection(type.context, PrototypedType.merge));
+    return type.setContext(this.context.intersection(type.context, PrototypedType.merge));
   }
 };
 
@@ -166,6 +170,10 @@ extend(UndefinedType, VariableType);
 
 VariableType.prototype.toString = function () {
   return this.name;
+};
+
+VariableType.prototype.setContext = function (context) {
+  return new (this._setContext(context))(this.name);
 };
 
 VariableType.prototype.extend = function (name, type) {
@@ -310,6 +318,10 @@ ListType.prototype.toString = function () {
   return '(' + this.inner.toString() + ')*';
 };
 
+ListType.prototype.setContext = function (context) {
+  return new (this._setContext(context))(this.inner);
+};
+
 ListType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))(this.inner);
 };
@@ -335,6 +347,10 @@ extend(UndefinedType, LambdaType);
 
 LambdaType.prototype.toString = function () {
   return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
+};
+
+LambdaType.prototype.setContext = function (context) {
+  return new (this._setContext(context))(this.left, this.right);
 };
 
 LambdaType.prototype.extend = function (name, type) {
