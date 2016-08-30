@@ -20,6 +20,7 @@ gulp.task('concat', ['lint'], function () {
     'src/Errors.js',
     'src/Utilities.js',
     'src/Context.js',
+    'src/Characters.js',
     'src/Values.js',
     'src/Types.js',
     'src/AST.js',

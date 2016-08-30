@@ -32,6 +32,7 @@ function UndefinedValue() {
 exports.UndefinedValue = UndefinedValue;
 extend(AbstractValue, UndefinedValue);
 
+UndefinedValue.prototype.character = Character.UNDEFINED;
 UndefinedValue.prototype.context = Context.EMPTY;
 
 UndefinedValue.prototype.toString = function () {
@@ -80,6 +81,8 @@ function ComplexValue(real, imaginary) {
 exports.ComplexValue = ComplexValue;
 extend(UndefinedValue, ComplexValue);
 
+ComplexValue.prototype.character = Character.COMPLEX;
+
 ComplexValue.prototype.toString = function () {
   if (this.imaginary < 0) {
     return this.real + '' + this.imaginary + 'i';
@@ -106,6 +109,8 @@ function RealValue(value) {
 exports.RealValue = RealValue;
 extend(ComplexValue, RealValue);
 
+RealValue.prototype.character = Character.REAL;
+
 RealValue.prototype.toString = function () {
   return '' + this.value;
 };
@@ -125,6 +130,8 @@ function IntegerValue(value) {
 
 exports.IntegerValue = IntegerValue;
 extend(RealValue, IntegerValue);
+
+IntegerValue.prototype.character = Character.INTEGER;
 
 IntegerValue.prototype.toString = function () {
   return '' + this.value;
@@ -150,6 +157,8 @@ function NaturalValue(value) {
 exports.NaturalValue = NaturalValue;
 extend(IntegerValue, NaturalValue);
 
+NaturalValue.prototype.character = Character.NATURAL;
+
 NaturalValue.prototype.toString = function () {
   return '' + this.value;
 };
@@ -171,6 +180,8 @@ function BooleanValue(value) {
 
 exports.BooleanValue = BooleanValue;
 extend(UndefinedValue, BooleanValue);
+
+BooleanValue.prototype.character = Character.BOOLEAN;
 
 BooleanValue.prototype.toString = function () {
   if (this.value) {
@@ -209,6 +220,8 @@ function StringValue(value) {
 exports.StringValue = StringValue;
 extend(IndexedValue, StringValue);
 
+StringValue.prototype.character = Character.STRING;
+
 StringValue.prototype.toString = function () {
   return this.value;
 };
@@ -236,6 +249,8 @@ function ListValue(values) {
 
 exports.ListValue = ListValue;
 extend(IndexedValue, ListValue);
+
+ListValue.prototype.character = Character.LIST;
 
 ListValue.prototype.toString = function () {
   return '{ ' + this.values.map(function (value) {
@@ -269,6 +284,8 @@ function Closure(lambda, capture) {
 
 exports.Closure = Closure;
 extend(UndefinedValue, Closure);
+
+Closure.prototype.character = Character.LAMBDA;
 
 Closure.prototype.toString = function () {
   return 'closure';
@@ -349,6 +366,8 @@ function JSUndefinedValue() {
 exports.JSUndefinedValue = JSUndefinedValue;
 extend(AbstractValue, JSUndefinedValue);
 
+JSUndefinedValue.prototype.character = Character.JS.UNDEFINED;
+
 JSUndefinedValue.prototype.toString = function () {
   return 'JavaScript.UNDEFINED';
 };
@@ -368,6 +387,8 @@ function JSNullValue() {
 
 exports.JSNullValue = JSNullValue;
 extend(AbstractValue, JSNullValue);
+
+JSNullValue.prototype.character = Character.JS.NULL;
 
 JSNullValue.prototype.toString = function () {
   return 'JavaScript.NULL';

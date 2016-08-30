@@ -74,13 +74,13 @@ PrototypedType.prototype.isSubPrototypeOf = function (type) {
 };
 
 PrototypedType.prototype.isSubTypeOf = function (type) {
-  return this.is(type.constructor) && (type.hasDefaultPrototype || this.isSubPrototypeOf(type));
+  return this.isSubCharacterOf(type) && (type.hasDefaultPrototype || this.isSubPrototypeOf(type));
 };
 
 PrototypedType.merge = function (type1, type2) {
-  if (type1.is(type2.constructor)) {
+  if (type1.isSubCharacterOf(type2)) {
     return type2.setContext(type1.context.intersection(type2.context, PrototypedType.merge));
-  } else if (type2.is(type1.constructor)) {
+  } else if (type2.isSubCharacterOf(type1)) {
     return type1.setContext(type1.context.intersection(type2.context, PrototypedType.merge));
   } else {
     throw new LambdaTypeError();
@@ -99,6 +99,8 @@ function UndefinedType() {
 exports.UndefinedType = UndefinedType;
 extend(PrototypedType, UndefinedType);
 
+UndefinedType.prototype.character = Character.UNDEFINED;
+
 UndefinedType.prototype.toString = function () {
   return 'undefined';
 };
@@ -109,6 +111,10 @@ UndefinedType.prototype.setContext = function (context) {
 
 UndefinedType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))();
+};
+
+UndefinedType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character;
 };
 
 UndefinedType.DEFAULT = new UndefinedType();
@@ -129,11 +135,17 @@ function UnknownType() {
 exports.UnknownType = UnknownType;
 extend(UndefinedType, UnknownType);
 
+UnknownType.prototype.character = Character.UNKNOWN;
+
 UnknownType.prototype.toString = function () {
   return 'unknown';
 };
 
 UnknownType.DEFAULT = new UnknownType();
+
+UnknownType.prototype.isSubCharacterOf = function () {
+  return true;
+};
 
 UnknownType.prototype.isSubPrototypeOf = function (type) {
   return this.context.keys().every(function (key) {
@@ -180,6 +192,10 @@ VariableType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))(this.name);
 };
 
+VariableType.prototype.isSubCharacterOf = function () {
+  // TODO
+};
+
 VariableType.prototype.isSubPrototypeOf = function (type) {
   return this.context.keys().every(function (key) {
     if (type.context.has(key)) {
@@ -217,8 +233,15 @@ function ComplexType() {
 exports.ComplexType = ComplexType;
 extend(UndefinedType, ComplexType);
 
+ComplexType.prototype.character = Character.COMPLEX;
+
 ComplexType.prototype.toString = function () {
   return 'complex';
+};
+
+ComplexType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.COMPLEX === type.character;
 };
 
 ComplexType.DEFAULT = new ComplexType();
@@ -231,8 +254,16 @@ function RealType() {
 exports.RealType = RealType;
 extend(ComplexType, RealType);
 
+RealType.prototype.character = Character.REAL;
+
 RealType.prototype.toString = function () {
   return 'real';
+};
+
+RealType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.COMPLEX === type.character ||
+    Character.REAL === type.character;
 };
 
 RealType.DEFAULT = new RealType();
@@ -245,8 +276,17 @@ function IntegerType() {
 exports.IntegerType = IntegerType;
 extend(RealType, IntegerType);
 
+IntegerType.prototype.character = Character.INTEGER;
+
 IntegerType.prototype.toString = function () {
   return 'integer';
+};
+
+IntegerType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.COMPLEX === type.character ||
+    Character.REAL === type.character ||
+    Character.INTEGER === type.character;
 };
 
 IntegerType.DEFAULT = new IntegerType();
@@ -259,8 +299,18 @@ function NaturalType() {
 exports.NaturalType = NaturalType;
 extend(IntegerType, NaturalType);
 
+NaturalType.prototype.character = Character.NATURAL;
+
 NaturalType.prototype.toString = function () {
   return 'natural';
+};
+
+NaturalType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.COMPLEX === type.character ||
+    Character.REAL === type.character ||
+    Character.INTEGER === type.character ||
+    Character.NATURAL === type.character;
 };
 
 NaturalType.DEFAULT = new NaturalType();
@@ -273,8 +323,15 @@ function BooleanType() {
 exports.BooleanType = BooleanType;
 extend(UndefinedType, BooleanType);
 
+BooleanType.prototype.character = Character.BOOLEAN;
+
 BooleanType.prototype.toString = function () {
   return 'boolean';
+};
+
+BooleanType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.BOOLEAN === type.character;
 };
 
 BooleanType.DEFAULT = new BooleanType();
@@ -300,8 +357,15 @@ function StringType(selfReference) {
 exports.StringType = StringType;
 extend(IndexedType, StringType);
 
+StringType.prototype.character = Character.STRING;
+
 StringType.prototype.toString = function () {
   return 'string';
+};
+
+StringType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.STRING === type.character;
 };
 
 StringType.DEFAULT = new StringType(true);
@@ -314,6 +378,8 @@ function ListType(inner) {
 exports.ListType = ListType;
 extend(IndexedType, ListType);
 
+ListType.prototype.character = Character.LIST;
+
 ListType.prototype.toString = function () {
   return '(' + this.inner.toString() + ')*';
 };
@@ -324,6 +390,11 @@ ListType.prototype.setContext = function (context) {
 
 ListType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))(this.inner);
+};
+
+ListType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.LIST === type.character;
 };
 
 ListType.prototype.isSubTypeOf = function (type) {
@@ -345,6 +416,8 @@ function LambdaType(left, right) {
 exports.LambdaType = LambdaType;
 extend(UndefinedType, LambdaType);
 
+LambdaType.prototype.character = Character.LAMBDA;
+
 LambdaType.prototype.toString = function () {
   return '(' + this.left.toString() + ') => (' + this.right.toString() + ')';
 };
@@ -355,6 +428,11 @@ LambdaType.prototype.setContext = function (context) {
 
 LambdaType.prototype.extend = function (name, type) {
   return new (this._extend(name, type))(this.left, this.right);
+};
+
+LambdaType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+    Character.LAMBDA === type.character;
 };
 
 LambdaType.prototype.isSubTypeOf = function () {
