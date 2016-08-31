@@ -3,7 +3,7 @@ ListType.prototype.context = ListType.prototype.context.addAll({
 });
 
 ListValue.prototype.context = ListValue.prototype.context.addAll({
-  length: Closure.fromFunction(function () {
+  length: Closure.fromMethod(function () {
     return this.length;
   }),
 });

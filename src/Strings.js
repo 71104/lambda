@@ -6,28 +6,32 @@ StringType.prototype.context = StringType.prototype.context.addAll({
   trim: new LambdaType(StringType.DEFAULT, StringType.DEFAULT),
   trimLeft: new LambdaType(StringType.DEFAULT, StringType.DEFAULT),
   trimRight: new LambdaType(StringType.DEFAULT, StringType.DEFAULT),
+  reverse: new LambdaType(StringType.DEFAULT, StringType.DEFAULT),
 });
 
 StringValue.prototype.context = StringValue.prototype.context.addAll({
-  length: Closure.fromFunction(function () {
+  length: Closure.fromMethod(function () {
     return this.length;
   }),
-  str: Closure.fromFunction(function () {
+  str: Closure.fromMethod(function () {
     return this.toString();
   }),
-  startsWith: Closure.fromFunction(function (string) {
+  startsWith: Closure.fromMethod(function (string) {
     return this.startsWith(string);
   }),
-  endsWith: Closure.fromFunction(function (string) {
+  endsWith: Closure.fromMethod(function (string) {
     return this.endsWith(string);
   }),
-  trim: Closure.fromFunction(function () {
+  trim: Closure.fromMethod(function () {
     return this.trim();
   }),
-  trimLeft: Closure.fromFunction(function () {
+  trimLeft: Closure.fromMethod(function () {
     return this.trimLeft();
   }),
-  trimRight: Closure.fromFunction(function () {
+  trimRight: Closure.fromMethod(function () {
     return this.trimRight();
+  }),
+  reverse: Closure.fromMethod(function () {
+    return this.split('').reverse().join('');
   }),
 });

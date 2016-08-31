@@ -6,16 +6,16 @@ ComplexType.prototype.context = ComplexType.prototype.context.addAll({
 });
 
 ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
-  str: Closure.fromFunction(function () {
+  str: Closure.fromMethod(function () {
     return this.toString();
   }),
-  real: Closure.fromFunction(function () {
+  real: Closure.fromMethod(function () {
     return this.r;
   }),
-  imaginary: Closure.fromFunction(function () {
+  imaginary: Closure.fromMethod(function () {
     return this.i;
   }),
-  abs: Closure.fromFunction(function () {
+  abs: Closure.fromMethod(function () {
     return Math.sqrt(this.r * this.r + this.i * this.i);
   }),
 });
@@ -49,16 +49,16 @@ RealType.prototype.context = RealType.prototype.context.addAll({
 });
 
 function _makeMathFunction(name) {
-  return Closure.fromFunction(function () {
-    return Math[name](this);
+  return Closure.fromFunction(function (x) {
+    return Math[name](x);
   });
 }
 
 RealValue.prototype.context = RealValue.prototype.context.addAll({
-  real: Closure.fromFunction(function () {
-    return this;
+  real: Closure.fromFunction(function (x) {
+    return x;
   }),
-  imaginary: Closure.fromFunction(function () {
+  imaginary: Closure.fromMethod(function () {
     return 0;
   }),
   abs: _makeMathFunction('abs'),
@@ -99,7 +99,7 @@ BooleanType.prototype.context = BooleanType.prototype.context.addAll({
 });
 
 BooleanValue.prototype.context = BooleanValue.prototype.context.addAll({
-  str: Closure.fromFunction(function () {
+  str: Closure.fromMethod(function () {
     return this.toString();
   }),
 });
