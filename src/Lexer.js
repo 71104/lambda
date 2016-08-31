@@ -113,6 +113,18 @@ function Lexer(input) {
         .replace(/\\t/g, '\t')
         .replace(/\\v/g, '\v');
       return token = 'string';
+    } else if (match(/^\'([^'\\]|\\\\|\\['bfnrtv])*\'/)) {
+      label = label
+        .replace(/^\'|\'$/g, '')
+        .replace(/\\\\/g, '\\')
+        .replace(/\\\'/g, '\'')
+        .replace(/\\b/g, '\b')
+        .replace(/\\f/g, '\f')
+        .replace(/\\n/g, '\n')
+        .replace(/\\r/g, '\r')
+        .replace(/\\t/g, '\t')
+        .replace(/\\v/g, '\v');
+      return token = 'string';
     } else if (match(/^(<<|>>|\!\=|<\=|>\=|\*\*)/)) {
       return token = 'symbol';
     } else if (match(/^(<|>|\+|\-|\/|\%)/)) {
