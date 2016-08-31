@@ -302,6 +302,9 @@ Parser.prototype.parseClass4 = function (terminators) {
   } else {
     var right = this.parseClass3(terminators.union('power'));
     if (terminators.contains(this.lexer.token())) {
+      // TODO - What if "right" has a free variable called "0" (e.g. native
+      // nodes)? It's better to have a dedicated AST node for partially applied
+      // operators.
       var body = new ApplicationNode(new ApplicationNode(new VariableNode('**'), new VariableNode('0')), right);
       return new LambdaNode('0', null, body);
     } else if ('power' !== this.lexer.token()) {
