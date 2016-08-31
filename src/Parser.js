@@ -141,10 +141,9 @@ Parser.prototype.parseTypeClass1 = function () {
   var type = this.parseTypeClass0();
   while (true) {
     var token = this.lexer.token();
-    var label = this.lexer.label();
     if ('asterisk' === token) {
       type = new ListType(type);
-    } else if ('symbol' === token && '**' === label) {
+    } else if ('power' === token) {
       type = new ListType(new ListType(type));
     } else {
       return type;
