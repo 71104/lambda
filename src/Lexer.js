@@ -125,8 +125,10 @@ function Lexer(input) {
         .replace(/\\t/g, '\t')
         .replace(/\\v/g, '\v');
       return token = 'string';
-    } else if (match(/^(<<|>>|\!\=|<\=|>\=|\*\*)/)) {
+    } else if (match(/^(<<|>>|\!\=|<\=|>\=)/)) {
       return token = 'symbol';
+    } else if (match(/^\*\*/)) {
+      return token = 'power';
     } else if (match(/^(<|>|\+|\-|\/|\%)/)) {
       return token = 'symbol';
     } else if (match(/^\*/)) {
