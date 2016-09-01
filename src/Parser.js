@@ -301,19 +301,12 @@ Parser.prototype.parsePrefixPower = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode('**');
   } else {
-    var right = this.parseClass3(terminators.union('power'));
-    if (terminators.contains(this.lexer.token())) {
-      // TODO - What if "right" has a free variable called "0" (e.g. native
-      // nodes)? It's better to have a dedicated AST node for partially applied
-      // operators.
-      var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
-      return new LambdaNode('0', null, new ApplicationNode(partial, right));
-    } else if ('power' !== this.lexer.token()) {
-      var left = this.parseClass4(terminators);
-      return new ApplicationNode(new ApplicationNode(new VariableNode('**'), left), right);
-    } else {
-      throw new LambdaSyntaxError();
-    }
+    var right = this.parseClass4(terminators);
+    // TODO - What if "right" has a free variable called "0" (e.g. native
+    // nodes)? It's better to have a dedicated AST node for partially applied
+    // operators.
+    var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
+    return new LambdaNode('0', null, new ApplicationNode(partial, right));
   }
 };
 
