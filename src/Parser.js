@@ -283,20 +283,22 @@ Parser.prototype.parseClass3 = function (terminators) {
   return node;
 };
 
-Parser.prototype.parseClass4 = function (terminators) {
+Parser.prototype.parseInfixPower = function (terminators) {
+  var left = this.parseClass3(terminators.union('power'));
   if ('power' !== this.lexer.token()) {
-    var left = this.parseClass3(terminators.union('power'));
-    if ('power' !== this.lexer.token()) {
-      return left;
+    return left;
+  } else {
+    var partial = new ApplicationNode(new VariableNode('**'), left);
+    if (terminators.contains(this.lexer.next())) {
+      return partial;
     } else {
-      var partial = new ApplicationNode(new VariableNode('**'), left);
-      if (terminators.contains(this.lexer.next())) {
-        return partial;
-      } else {
-        return new ApplicationNode(partial, this.parseClass4(terminators));
-      }
+      return new ApplicationNode(partial, this.parseClass4(terminators));
     }
-  } else if (terminators.contains(this.lexer.next())) {
+  }
+};
+
+Parser.prototype.parsePrefixPower = function (terminators) {
+  if (terminators.contains(this.lexer.next())) {
     return new VariableNode('**');
   } else {
     var right = this.parseClass3(terminators.union('power'));
@@ -304,14 +306,22 @@ Parser.prototype.parseClass4 = function (terminators) {
       // TODO - What if "right" has a free variable called "0" (e.g. native
       // nodes)? It's better to have a dedicated AST node for partially applied
       // operators.
-      var body = new ApplicationNode(new ApplicationNode(new VariableNode('**'), new VariableNode('0')), right);
-      return new LambdaNode('0', null, body);
+      var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else if ('power' !== this.lexer.token()) {
-      // TODO
-      throw new LambdaInternalError();
+      var left = this.parseClass4(terminators);
+      return new ApplicationNode(new ApplicationNode(new VariableNode('**'), left), right);
     } else {
       throw new LambdaSyntaxError();
     }
+  }
+};
+
+Parser.prototype.parseClass4 = function (terminators) {
+  if ('power' !== this.lexer.token()) {
+    return this.parseInfixPower(terminators);
+  } else {
+    return this.parsePrefixPower(terminators);
   }
 };
 

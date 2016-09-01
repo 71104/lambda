@@ -2,6 +2,10 @@ function AbstractNode() {}
 
 exports.AbstractNode = AbstractNode;
 
+AbstractNode.prototype.is = function (Class) {
+  return this instanceof Class;
+};
+
 
 function LiteralNode(value, type) {
   AbstractNode.call(this);
