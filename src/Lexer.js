@@ -129,10 +129,14 @@ function Lexer(input) {
       return token = 'symbol';
     } else if (match(/^\*\*/)) {
       return token = 'power';
-    } else if (match(/^(<|>|\+|\-|\/|\%)/)) {
+    } else if (match(/^(<|>|\+|\-)/)) {
       return token = 'symbol';
     } else if (match(/^\*/)) {
       return token = 'asterisk';
+    } else if (match(/^\//)) {
+      return token = 'divide';
+    } else if (match(/^\%/)) {
+      return token = 'modulus';
     } else if (match(/^\=/)) {
       return token = 'equal';
     } else if (/^$/.test(input)) {
