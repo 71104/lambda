@@ -171,13 +171,15 @@ function Lexer(input) {
     return label;
   };
 
-  this.expect = function (expectedToken) {
-    if (expectedToken !== token) {
-      throw new LambdaSyntaxError();
+  this.expect = function () {
+    for (var i = 0; i < arguments.length; i++) {
+      if (arguments[i] === token) {
+        var currentLabel = label;
+        next();
+        return currentLabel;
+      }
     }
-    var currentLabel = label;
-    next();
-    return currentLabel;
+    throw new LambdaSyntaxError();
   };
 }
 
