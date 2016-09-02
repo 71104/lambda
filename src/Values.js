@@ -307,6 +307,18 @@ Closure.prototype.bind = function (value) {
   return this.lambda.body.evaluate(this.capture.add(this.lambda.name, value));
 };
 
+Closure.prototype.apply = function () {
+  var value = this;
+  for (var i = 0; i < arguments.length; i++) {
+    if (value.is(Closure)) {
+      value = value.bind(arguments[i]);
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }
+  return value;
+};
+
 Closure.prototype.marshal = function () {
   var node = this.lambda;
   var context = this.capture;
