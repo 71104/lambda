@@ -129,7 +129,7 @@ function Lexer(input) {
       return token = 'symbol';
     } else if (match(/^\*\*/)) {
       return token = 'power';
-    } else if (match(/^(<|>|\+|\-)/)) {
+    } else if (match(/^(<|>)/)) {
       return token = 'symbol';
     } else if (match(/^\*/)) {
       return token = 'asterisk';
@@ -137,6 +137,10 @@ function Lexer(input) {
       return token = 'divide';
     } else if (match(/^\%/)) {
       return token = 'modulus';
+    } else if (match(/^\+/)) {
+      return token = 'plus';
+    } else if (match(/^\-/)) {
+      return token = 'minus';
     } else if (match(/^\=/)) {
       return token = 'equal';
     } else if (/^$/.test(input)) {

@@ -58,14 +58,14 @@ Parser.prototype.parseClass0 = function () {
     return ErrorNode.INSTANCE;
   case 'left':
     this.lexer.next();
-    var node = this.parseClass5(['right']);
+    var node = this.parseClass6(['right']);
     this.lexer.next();
     return node;
   case 'left-curly':
     this.lexer.next();
     var expressions = [];
     while (this.lexer.token() !== 'right-curly') {
-      expressions.push(this.parseClass5(['comma', 'right-curly']));
+      expressions.push(this.parseClass6(['comma', 'right-curly']));
       if ('comma' === this.lexer.token()) {
         this.lexer.next();
       }
@@ -89,7 +89,7 @@ Parser.prototype.parseSubscriptOrFieldAccess = function (node) {
       break;
     case 'left-square':
       this.lexer.next();
-      var index = this.parseClass5(['right-square']);
+      var index = this.parseClass6(['right-square']);
       this.lexer.next();
       node = new SubscriptNode(node, index);
       break;
@@ -177,7 +177,7 @@ Parser.prototype.parseLambdaPartial = function (terminators) {
     return new LambdaNode(name, type, this.parseLambdaPartial(terminators));
   case 'arrow':
     this.lexer.next();
-    return new LambdaNode(name, type, this.parseClass5(terminators));
+    return new LambdaNode(name, type, this.parseClass6(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -199,14 +199,14 @@ Parser.prototype.parseLetPartial = function (terminators) {
     }
   }
   this.lexer.expect('equal');
-  var expression = this.parseClass5(['comma', 'keyword:in']);
+  var expression = this.parseClass6(['comma', 'keyword:in']);
   switch (this.lexer.token()) {
   case 'comma':
     this.lexer.next();
     return new LetNode(names, expression, this.parseLetPartial(terminators));
   case 'keyword:in':
     this.lexer.next();
-    return new LetNode(names, expression, this.parseClass5(terminators));
+    return new LetNode(names, expression, this.parseClass6(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -219,35 +219,35 @@ Parser.prototype.parseLet = function (terminators) {
 
 Parser.prototype.parseIf = function (terminators) {
   this.lexer.expect('keyword:if');
-  var condition = this.parseClass5(['keyword:then']);
+  var condition = this.parseClass6(['keyword:then']);
   this.lexer.next();
-  var thenExpression = this.parseClass5(['keyword:else']);
+  var thenExpression = this.parseClass6(['keyword:else']);
   this.lexer.next();
-  return new IfNode(condition, thenExpression, this.parseClass5(terminators));
+  return new IfNode(condition, thenExpression, this.parseClass6(terminators));
 };
 
 Parser.prototype.parseThrow = function (terminators) {
   this.lexer.expect('keyword:throw');
-  return new ThrowNode(this.parseClass5(terminators));
+  return new ThrowNode(this.parseClass6(terminators));
 };
 
 Parser.prototype.parseTry = function (terminators) {
   this.lexer.expect('keyword:try');
-  var tryExpression = this.parseClass5(['keyword:catch', 'keyword:finally']);
+  var tryExpression = this.parseClass6(['keyword:catch', 'keyword:finally']);
   switch (this.lexer.token()) {
   case 'keyword:catch':
     this.lexer.next();
-    var catchExpression = this.parseClass5(terminators.union('keyword:finally'));
+    var catchExpression = this.parseClass6(terminators.union('keyword:finally'));
     if ('keyword:finally' === this.lexer.token()) {
       this.lexer.next();
-      return new TryCatchFinallyNode(tryExpression, catchExpression, this.parseClass5(terminators));
+      return new TryCatchFinallyNode(tryExpression, catchExpression, this.parseClass6(terminators));
     } else if (terminators.contains(this.lexer.token())) {
       return new TryCatchNode(tryExpression, catchExpression);
     }
     throw new LambdaSyntaxError();
   case 'keyword:finally':
     this.lexer.next();
-    return new TryFinallyNode(tryExpression, this.parseClass5(terminators));
+    return new TryFinallyNode(tryExpression, this.parseClass6(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -297,9 +297,6 @@ Parser.prototype.parsePrefixPower = function (terminators) {
     return new VariableNode('**');
   } else {
     var right = this.parseClass4(terminators);
-    // TODO - What if "right" has a free variable called "0" (e.g. native
-    // nodes)? It's better to have a dedicated AST node for partially applied
-    // operators.
     var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
     return new LambdaNode('0', null, new ApplicationNode(partial, right));
   }
@@ -332,9 +329,6 @@ Parser.prototype.parsePrefixProduct = function (terminators) {
     return new VariableNode(label);
   } else {
     var right = this.parseClass5(terminators);
-    // TODO - What if "right" has a free variable called "0" (e.g. native
-    // nodes)? It's better to have a dedicated AST node for partially applied
-    // operators.
     var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
     return new LambdaNode('0', null, new ApplicationNode(partial, right));
   }
@@ -351,6 +345,40 @@ Parser.prototype.parseClass5 = function (terminators) {
   }
 };
 
+Parser.prototype.parseInfixSum = function (terminators) {
+  var node = this.parseClass5(terminators.union('plus', 'minus'));
+  while (!terminators.contains(this.lexer.token())) {
+    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('plus', 'minus')), node);
+    if (terminators.contains(this.lexer.token())) {
+      return partial;
+    } else {
+      node = new ApplicationNode(partial, this.parseClass5(terminators.union('plus', 'minus')));
+    }
+  }
+  return node;
+};
+
+Parser.prototype.parsePrefixSum = function (terminators) {
+  var label = this.lexer.label();
+  if (terminators.contains(this.lexer.next())) {
+    return new VariableNode(label);
+  } else {
+    var right = this.parseClass6(terminators);
+    var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+    return new LambdaNode('0', null, new ApplicationNode(partial, right));
+  }
+};
+
+Parser.prototype.parseClass6 = function (terminators) {
+  switch (this.lexer.token()) {
+  case 'plus':
+  case 'minus':
+    return this.parsePrefixSum(terminators);
+  default:
+    return this.parseInfixSum(terminators);
+  }
+};
+
 Parser.prototype.parse = function () {
-  return this.parseClass5(['end']);
+  return this.parseClass6(['end']);
 };
