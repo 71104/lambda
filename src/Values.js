@@ -20,7 +20,7 @@ AbstractValue.prototype._extend = function (name, value) {
   return this._setContext(this.context.add(name, value));
 };
 
-AbstractValue.prototype.bindThis = function () {
+AbstractValue.prototype.bind = function () {
   return this;
 };
 
@@ -303,7 +303,7 @@ Closure.prototype.getLength = function () {
   return length;
 };
 
-Closure.prototype.bindThis = function (value) {
+Closure.prototype.bind = function (value) {
   return this.lambda.body.evaluate(this.capture.add(this.lambda.name, value));
 };
 

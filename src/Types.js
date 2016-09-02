@@ -6,7 +6,7 @@ AbstractType.prototype.is = function (Class) {
   return this instanceof Class;
 };
 
-AbstractType.prototype.bindThis = function () {
+AbstractType.prototype.bind = function () {
   return this;
 };
 
@@ -32,7 +32,7 @@ ForEachType.prototype.instance = function (name, type) {
   }
 };
 
-ForEachType.prototype.bindThis = function (type) {
+ForEachType.prototype.bind = function (type) {
   var inner = this.inner.instance(this.name, type);
   if (type.isSubTypeOf(inner.left)) {
     return inner.right;
@@ -444,7 +444,7 @@ LambdaType.prototype.instance = function (name, type) {
   return new (this._setContext(this.context))(this.left.instance(name, type), this.right.instance(name, type));
 };
 
-LambdaType.prototype.bindThis = function (type) {
+LambdaType.prototype.bind = function (type) {
   if (this.left.is(VariableType)) {
     return this.right.instance(this.left.name, type);
   } else if (type.isSubTypeOf(this.left)) {

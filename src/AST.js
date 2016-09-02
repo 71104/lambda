@@ -132,12 +132,12 @@ FieldAccessNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
   if (left.is(UnknownType)) {
     if (left.context.has(this.name)) {
-      return left.context.top(this.name).bindThis(left);
+      return left.context.top(this.name).bind(left);
     } else {
       return UnknownType.DEFAULT;
     }
   } else if (left.context.has(this.name)) {
-    return left.context.top(this.name).bindThis(left);
+    return left.context.top(this.name).bind(left);
   } else {
     throw new LambdaTypeError();
   }
@@ -146,7 +146,7 @@ FieldAccessNode.prototype.getType = function (context) {
 FieldAccessNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   if (left.context.has(this.name)) {
-    return left.context.top(this.name).bindThis(left);
+    return left.context.top(this.name).bind(left);
   } else {
     throw new LambdaRuntimeError();
   }
@@ -255,7 +255,7 @@ ApplicationNode.prototype.evaluate = function (context) {
   var left = this.left.evaluate(context);
   var right = this.right.evaluate(context);
   if (left.is(Closure)) {
-    return left.lambda.body.evaluate(left.capture.add(left.lambda.name, right));
+    return left.bind(right);
   } else {
     throw new LambdaRuntimeError();
   }
