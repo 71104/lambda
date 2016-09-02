@@ -1,23 +1,8 @@
 function DefaultContext() {
   var hash = Object.create(null);
 
-  hash['**'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(Math.pow(x.value, y.value));
-  });
-  hash['*'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(x.value * y.value);
-  });
-  hash['/'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(x.value / y.value);
-  });
-  hash['%'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(x.value % y.value);
-  });
-  hash['+'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(x.value + y.value);
-  });
-  hash['-'] = Closure.fromFunction(function (x, y) {
-    return new RealValue(x.value - y.value);
+  ['+', '-', '*', '/', '%', '**'].forEach(function (name) {
+    hash[name] = Operators.make(name);
   });
 
   Context.call(this, hash);
