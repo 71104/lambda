@@ -570,3 +570,31 @@ NativeNode.prototype.evaluate = function (context) {
     }
   }.call(this));
 };
+
+
+function SemiNativeNode(nativeFunction, argumentNames) {
+  AbstractNode.call(this);
+  this.nativeFunction = nativeFunction;
+  this.argumentNames = argumentNames;
+}
+
+exports.SemiNativeNode = SemiNativeNode;
+extend(AbstractNode, SemiNativeNode);
+
+SemiNativeNode.prototype.getFreeVariables = function () {
+  return this.argumentNames;
+};
+
+SemiNativeNode.prototype.getType = function () {
+  return UnknownType.DEFAULT;
+};
+
+SemiNativeNode.prototype.evaluate = function (context) {
+  return this.nativeFunction.apply(null, this.argumentNames.map(function (name) {
+    if (context.has(name)) {
+      return context.top(name);
+    } else {
+      throw new LambdaInternalError();
+    }
+  }));
+};
