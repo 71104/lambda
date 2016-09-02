@@ -349,24 +349,16 @@ Closure.prototype.marshal = function () {
   });
 };
 
-Closure._fromFunction = function (nativeFunction, hasThis) {
+Closure.fromFunction = function (nativeFunction) {
   return new Closure((function makeLambda(index, names) {
-    if (index < nativeFunction.length + !!hasThis) {
+    if (index < nativeFunction.length) {
       var name = '' + index;
       names.push(name);
       return new LambdaNode(name, UndefinedType.DEFAULT, makeLambda(index + 1, names));
     } else {
-      return new NativeNode(nativeFunction, names, hasThis);
+      return new SemiNativeNode(nativeFunction, names);
     }
   }(0, [])), Context.EMPTY);
-};
-
-Closure.fromFunction = function (nativeFunction) {
-  return Closure._fromFunction(nativeFunction, false);
-};
-
-Closure.fromMethod = function (nativeFunction) {
-  return Closure._fromFunction(nativeFunction, true);
 };
 
 Closure.unmarshal = function (value) {
@@ -375,7 +367,7 @@ Closure.unmarshal = function (value) {
         new LambdaNode('arguments', new ListType(UndefinedType.DEFAULT),
           new NativeNode(function (parameters) {
             return value.apply(this, parameters);
-          }, ['this', 'arguments'], true))), Context.EMPTY);
+          }, ['this', 'arguments']))), Context.EMPTY);
 };
 
 

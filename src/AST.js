@@ -528,11 +528,10 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 };
 
 
-function NativeNode(nativeFunction, argumentNames, hasThis) {
+function NativeNode(nativeFunction, argumentNames) {
   AbstractNode.call(this);
   this.nativeFunction = nativeFunction;
   this.argumentNames = argumentNames;
-  this.hasThis = hasThis;
 }
 
 exports.NativeNode = NativeNode;
@@ -554,10 +553,7 @@ NativeNode.prototype.evaluate = function (context) {
       throw new LambdaInternalError();
     }
   });
-  var thisValue = null;
-  if (this.hasThis) {
-    thisValue = argumentValues.shift();
-  }
+  var thisValue = argumentValues.shift();
   return AbstractValue.unmarshal(function () {
     try {
       return this.nativeFunction.apply(thisValue, argumentValues);

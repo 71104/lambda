@@ -10,28 +10,28 @@ StringType.prototype.context = StringType.prototype.context.addAll({
 });
 
 StringValue.prototype.context = StringValue.prototype.context.addAll({
-  length: Closure.fromMethod(function () {
-    return this.length;
+  length: Closure.fromFunction(function (value) {
+    return new NaturalValue(value.value.length);
   }),
-  str: Closure.fromMethod(function () {
-    return this.toString();
+  str: Closure.fromFunction(function (value) {
+    return value;
   }),
-  startsWith: Closure.fromMethod(function (string) {
-    return this.startsWith(string);
+  startsWith: Closure.fromFunction(function (value, string) {
+    return new StringValue(value.value.startsWith(string.value));
   }),
-  endsWith: Closure.fromMethod(function (string) {
-    return this.endsWith(string);
+  endsWith: Closure.fromFunction(function (value, string) {
+    return new StringValue(value.value.endsWith(string.value));
   }),
-  trim: Closure.fromMethod(function () {
-    return this.trim();
+  trim: Closure.fromFunction(function (value) {
+    return new StringValue(value.value.trim());
   }),
-  trimLeft: Closure.fromMethod(function () {
-    return this.trimLeft();
+  trimLeft: Closure.fromFunction(function (value) {
+    return new StringValue(value.value.trimLeft());
   }),
-  trimRight: Closure.fromMethod(function () {
-    return this.trimRight();
+  trimRight: Closure.fromFunction(function (value) {
+    return new StringValue(value.value.trimRight());
   }),
-  reverse: Closure.fromMethod(function () {
-    return this.split('').reverse().join('');
+  reverse: Closure.fromFunction(function (value) {
+    return new StringValue(value.value.split('').reverse().join(''));
   }),
 });

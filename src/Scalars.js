@@ -6,17 +6,17 @@ ComplexType.prototype.context = ComplexType.prototype.context.addAll({
 });
 
 ComplexValue.prototype.context = ComplexValue.prototype.context.addAll({
-  str: Closure.fromMethod(function () {
-    return this.toString();
+  str: Closure.fromFunction(function (value) {
+    return new StringValue(value.toString());
   }),
-  real: Closure.fromMethod(function () {
-    return this.r;
+  real: Closure.fromFunction(function (value) {
+    return new RealValue(value.real);
   }),
-  imaginary: Closure.fromMethod(function () {
-    return this.i;
+  imaginary: Closure.fromFunction(function (value) {
+    return new RealValue(value.imaginary);
   }),
-  abs: Closure.fromMethod(function () {
-    return Math.sqrt(this.r * this.r + this.i * this.i);
+  abs: Closure.fromFunction(function (value) {
+    return new RealValue(Math.sqrt(value.real * value.real + value.imaginary * value.imaginary));
   }),
 });
 
@@ -48,49 +48,59 @@ RealType.prototype.context = RealType.prototype.context.addAll({
   atanh: RealType.DEFAULT,
 });
 
-function _makeMathFunction(name) {
-  return Closure.fromFunction(function (x) {
-    return Math[name](x);
+function _makeRealMathFunction(name) {
+  return Closure.fromFunction(function (value) {
+    return new RealValue(Math[name](value.value));
+  });
+}
+
+function _makeIntegerMathFunction(name) {
+  return Closure.fromFunction(function (value) {
+    return new IntegerValue(Math[name](value.value));
+  });
+}
+
+function _makeNaturalMathFunction(name) {
+  return Closure.fromFunction(function (value) {
+    return new NaturalValue(Math[name](value.value));
   });
 }
 
 RealValue.prototype.context = RealValue.prototype.context.addAll({
-  real: Closure.fromFunction(function (x) {
-    return x;
-  }),
-  imaginary: Closure.fromMethod(function () {
-    return 0;
-  }),
-  abs: _makeMathFunction('abs'),
-  ceil: _makeMathFunction('ceil'),
-  floor: _makeMathFunction('floor'),
-  round: _makeMathFunction('round'),
-  trunc: _makeMathFunction('trunc'),
-  sign: _makeMathFunction('sign'),
-  sqrt: _makeMathFunction('sqrt'),
-  cbrt: _makeMathFunction('cbrt'),
-  exp: _makeMathFunction('exp'),
-  expm1: _makeMathFunction('expm1'),
-  log: _makeMathFunction('log'),
-  log10: _makeMathFunction('log10'),
-  log2: _makeMathFunction('log2'),
-  sin: _makeMathFunction('sin'),
-  cos: _makeMathFunction('cos'),
-  tan: _makeMathFunction('tan'),
-  asin: _makeMathFunction('asin'),
-  acos: _makeMathFunction('acos'),
-  atan: _makeMathFunction('atan'),
-  sinh: _makeMathFunction('sinh'),
-  cosh: _makeMathFunction('cosh'),
-  tanh: _makeMathFunction('tanh'),
-  asinh: _makeMathFunction('asinh'),
-  acosh: _makeMathFunction('acosh'),
-  atanh: _makeMathFunction('atanh'),
+  abs: _makeRealMathFunction('abs'),
+  ceil: _makeIntegerMathFunction('ceil'),
+  floor: _makeIntegerMathFunction('floor'),
+  round: _makeIntegerMathFunction('round'),
+  trunc: _makeIntegerMathFunction('trunc'),
+  sign: _makeIntegerMathFunction('sign'),
+  sqrt: _makeRealMathFunction('sqrt'),
+  cbrt: _makeRealMathFunction('cbrt'),
+  exp: _makeRealMathFunction('exp'),
+  expm1: _makeRealMathFunction('expm1'),
+  log: _makeRealMathFunction('log'),
+  log10: _makeRealMathFunction('log10'),
+  log2: _makeRealMathFunction('log2'),
+  sin: _makeRealMathFunction('sin'),
+  cos: _makeRealMathFunction('cos'),
+  tan: _makeRealMathFunction('tan'),
+  asin: _makeRealMathFunction('asin'),
+  acos: _makeRealMathFunction('acos'),
+  atan: _makeRealMathFunction('atan'),
+  sinh: _makeRealMathFunction('sinh'),
+  cosh: _makeRealMathFunction('cosh'),
+  tanh: _makeRealMathFunction('tanh'),
+  asinh: _makeRealMathFunction('asinh'),
+  acosh: _makeRealMathFunction('acosh'),
+  atanh: _makeRealMathFunction('atanh'),
 });
 
 
 IntegerType.prototype.context = IntegerType.prototype.context.addAll({
   abs: NaturalType.DEFAULT,
+});
+
+IntegerValue.prototype.context = IntegerType.prototype.context.addAll({
+  abs: _makeNaturalMathFunction('abs'),
 });
 
 
@@ -99,7 +109,7 @@ BooleanType.prototype.context = BooleanType.prototype.context.addAll({
 });
 
 BooleanValue.prototype.context = BooleanValue.prototype.context.addAll({
-  str: Closure.fromMethod(function () {
-    return this.toString();
+  str: Closure.fromFunction(function (value) {
+    return new StringValue(value.toString());
   }),
 });
