@@ -11,37 +11,6 @@ AbstractType.prototype.bind = function () {
 };
 
 
-function ForEachType(name, inner) {
-  AbstractType.call(this);
-  this.name = name;
-  this.inner = inner;
-}
-
-exports.ForEachType = ForEachType;
-extend(AbstractType, ForEachType);
-
-ForEachType.prototype.toString = function () {
-  return this.inner.toString();
-};
-
-ForEachType.prototype.instance = function (name, type) {
-  if (this.name !== name) {
-    return new ForEachType(this.name, this.inner.instance(name, type));
-  } else {
-    return this;
-  }
-};
-
-ForEachType.prototype.bind = function (type) {
-  var inner = this.inner.instance(this.name, type);
-  if (type.isSubTypeOf(inner.left)) {
-    return inner.right;
-  } else {
-    throw new LambdaTypeError();
-  }
-};
-
-
 function PrototypedType() {
   AbstractType.call(this);
 }
@@ -435,7 +404,7 @@ LambdaType.prototype.isSubCharacterOf = function (type) {
     Character.LAMBDA === type.character;
 };
 
-LambdaType.prototype.isSubTypeOf = function () {
+LambdaType.prototype.isSubTypeOf = function (type) {
   return UndefinedType.prototype.isSubTypeOf.call(this, type) && (!type.is(LambdaType) ||
     type.left.isSubTypeOf(this.left) && this.right.isSubTypeOf(type.right));
 };

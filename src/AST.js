@@ -210,12 +210,11 @@ LambdaNode.prototype.getFreeVariables = function () {
 };
 
 LambdaNode.prototype.getType = function (context) {
-  if (this.type) {
-    return new LambdaType(this.type, this.body.getType(context.add(this.name, this.type)));
-  } else {
-    var left = new VariableType(this.name);
-    return new ForEachType(this.name, new LambdaType(left, this.body.getType(context.add(this.name, left))));
+  var left = this.type;
+  if (!left) {
+    left = new VariableType(this.name);
   }
+  return new LambdaType(left, this.body.getType(context.add(this.name, left)));
 };
 
 LambdaNode.prototype.evaluate = function (context) {
@@ -239,13 +238,8 @@ ApplicationNode.prototype.getFreeVariables = function () {
 ApplicationNode.prototype.getType = function (context) {
   var left = this.left.getType(context);
   var right = this.right.getType(context);
-  if (left.is(ForEachType)) {
-    left = left.inner.instance(left.name, right);
-  }
-  if (left.is(LambdaType) && right.isSubTypeOf(left.left)) {
-    return left.right;
-  } else if (left.is(UnknownType)) {
-    return UnknownType.DEFAULT;
+  if (left.is(LambdaType) || left.is(UnknownType)) {
+    return left.bind(right);
   } else {
     throw new LambdaTypeError();
   }
@@ -327,13 +321,11 @@ FixNode.prototype.getFreeVariables = function () {
   return [];
 };
 
-FixNode.TYPE = new ForEachType('T', new LambdaType(
-  new LambdaType(
-    new VariableType('T'),
-    new VariableType('T')
-  ),
-  new VariableType('T')
-));
+FixNode.TYPE = new LambdaType(
+    new LambdaType(
+      new VariableType('T'),
+      new VariableType('T')),
+    new VariableType('T'));
 
 FixNode.prototype.getType = function () {
   return FixNode.TYPE;

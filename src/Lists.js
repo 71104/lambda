@@ -1,46 +1,41 @@
 ListType.prototype.context = ListType.prototype.context.addAll({
   length: NaturalType.DEFAULT,
 
-  reverse: new ForEachType('T',
+  reverse: new LambdaType(
+    new ListType(
+      new VariableType('T')),
+    new ListType(
+      new VariableType('T'))),
+
+  sort: new LambdaType(
+    new ListType(
+      new VariableType('T')),
     new LambdaType(
-      new ListType(
-        new VariableType('T')),
+      new LambdaType(
+        new VariableType('T'),
+        new LambdaType(
+          new VariableType('T'), BooleanType.DEFAULT)),
       new ListType(
         new VariableType('T')))),
 
-  sort: new ForEachType('T',
+  map: new LambdaType(
+    new ListType(
+      new VariableType('A')),
     new LambdaType(
+      new LambdaType(
+        new VariableType('A'),
+        new VariableType('B')),
+      new ListType(
+        new VariableType('B')))),
+
+  filter: new LambdaType(
       new ListType(
         new VariableType('T')),
       new LambdaType(
         new LambdaType(
-          new VariableType('T'),
-          new LambdaType(
-            new VariableType('T'), BooleanType.DEFAULT)),
+          new VariableType('T'), BooleanType.DEFAULT),
         new ListType(
-          new VariableType('T'))))),
-
-  map: new ForEachType('A',
-      new ForEachType('B',
-        new LambdaType(
-          new ListType(
-            new VariableType('A')),
-          new LambdaType(
-            new LambdaType(
-              new VariableType('A'),
-              new VariableType('B')),
-            new ListType(
-              new VariableType('B')))))),
-
-  filter: new ForEachType('T',
-      new LambdaType(
-        new ListType(
-          new VariableType('T')),
-        new LambdaType(
-          new LambdaType(
-            new VariableType('T'), BooleanType.DEFAULT),
-          new ListType(
-            new VariableType('T'))))),
+          new VariableType('T')))),
 
 });
 
