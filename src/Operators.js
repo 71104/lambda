@@ -175,4 +175,144 @@ Operators._define('-', Character.NATURAL, Character.NATURAL, Character.NATURAL, 
 });
 
 
+Operators._define('*', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(
+    x.real * y.real - x.imaginary * y.imaginary,
+    x.real * y.imaginary + y.real * x.imaginary);
+});
+
+Operators._define('*', Character.COMPLEX, Character.REAL, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real * y.value, x.imaginary * y.value);
+});
+
+Operators._define('*', Character.COMPLEX, Character.INTEGER, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real * y.value, x.imaginary * y.value);
+});
+
+Operators._define('*', Character.COMPLEX, Character.NATURAL, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real * y.value, x.imaginary * y.value);
+});
+
+Operators._define('*', Character.REAL, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.value * y.real, x.value * y.imaginary);
+});
+
+Operators._define('*', Character.REAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value * y.value);
+});
+
+Operators._define('*', Character.REAL, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(x.value * y.value);
+});
+
+Operators._define('*', Character.REAL, Character.NATURAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value * y.value);
+});
+
+Operators._define('*', Character.INTEGER, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.value * y.real, x.value * y.imaginary);
+});
+
+Operators._define('*', Character.INTEGER, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value * y.value);
+});
+
+Operators._define('*', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value * y.value);
+});
+
+Operators._define('*', Character.INTEGER, Character.NATURAL, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value * y.value);
+});
+
+Operators._define('*', Character.NATURAL, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.value * y.real, x.value * y.imaginary);
+});
+
+Operators._define('*', Character.NATURAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value * y.value);
+});
+
+Operators._define('*', Character.NATURAL, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value * y.value);
+});
+
+Operators._define('*', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
+  return new NaturalValue(x.value * y.value);
+});
+
+
+Operators._define('/', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(
+    (x.real * y.real + x.imaginary * y.imaginary) / (y.real * y.real + y.imaginary * y.imaginary),
+    (x.imaginary * y.real - x.real * y.imaginary) / (y.real * y.real + y.imaginary * y.imaginary));
+});
+
+Operators._define('/', Character.COMPLEX, Character.REAL, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real / y.value, x.imaginary / y.value);
+});
+
+Operators._define('/', Character.COMPLEX, Character.INTEGER, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real / y.value, x.imaginary / y.value);
+});
+
+Operators._define('/', Character.COMPLEX, Character.NATURAL, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(x.real / y.value, x.imaginary / y.value);
+});
+
+Operators._define('/', Character.REAL, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(
+    x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
+    -x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary));
+});
+
+Operators._define('/', Character.REAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.REAL, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.REAL, Character.NATURAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.INTEGER, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(
+    x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
+    -x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary));
+});
+
+Operators._define('/', Character.INTEGER, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.INTEGER, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.INTEGER, Character.NATURAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.NATURAL, Character.COMPLEX, Character.COMPLEX, function (x, y) {
+  return new ComplexValue(
+    x.value * y.real / (y.real * y.real + y.imaginary * y.imaginary),
+    -x.value * y.imaginary / (y.real * y.real + y.imaginary * y.imaginary));
+});
+
+Operators._define('/', Character.NATURAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.NATURAL, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+Operators._define('/', Character.NATURAL, Character.NATURAL, Character.REAL, function (x, y) {
+  return new RealValue(x.value / y.value);
+});
+
+
 // TODO other operators
