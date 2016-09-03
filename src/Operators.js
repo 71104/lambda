@@ -352,4 +352,38 @@ Operators._define('%', Character.NATURAL, Character.NATURAL, Character.NATURAL, 
 });
 
 
-// TODO other operators
+Operators._define('**', Character.REAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.REAL, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.REAL, Character.NATURAL, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.INTEGER, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.INTEGER, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.INTEGER, Character.NATURAL, Character.INTEGER, function (x, y) {
+  return new IntegerValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.NATURAL, Character.REAL, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.NATURAL, Character.INTEGER, Character.REAL, function (x, y) {
+  return new RealValue(Math.pow(x.value, y.value));
+});
+
+Operators._define('**', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
+  return new NaturalValue(Math.pow(x.value, y.value));
+});
