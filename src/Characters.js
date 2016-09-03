@@ -16,3 +16,22 @@ var Character = {
 };
 
 exports.Character = Character;
+
+
+// eslint-disable-next-line no-unused-vars
+function characterToString(character) {
+  return [
+    'undefined',
+    'complex',
+    'real',
+    'integer',
+    'natural',
+    'boolean',
+    'string',
+    'list',
+    'lambda',
+    'unknown',
+    'JavaScript.UNDEFINED',
+    'JavaScript.NULL',
+  ][character];
+}
