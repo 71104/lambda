@@ -1,18 +1,11 @@
-function DefaultContext() {
-  var hash = Object.create(null);
+exports.DefaultContext = DefaultContext = {};
 
-  ['+', '-', '*', '/', '%', '**'].forEach(function (name) {
-    hash[name] = Operators.make(name);
-  });
+DefaultContext.TYPES = Context.EMPTY.addAll({
+  'typeof': new LambdaType(new VariableType('T'), StringType.DEFAULT),
+});
 
-  hash.typeof = Closure.fromFunction(function (value) {
+DefaultContext.VALUES = Context.EMPTY.addAll({
+  'typeof': Closure.fromFunction(function (value) {
     return new StringValue(characterToString(value.character));
-  });
-
-  Context.call(this, hash);
-}
-
-exports.DefaultContext = DefaultContext;
-extend(Context, DefaultContext);
-
-DefaultContext.INSTANCE = new DefaultContext();
+  }),
+});

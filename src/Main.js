@@ -21,8 +21,8 @@ var lambda = (function () {
   } else {
     return function (input) {
       var ast = (new Lambda.Parser(input)).parse();
-      var type = ast.getType(Lambda.Context.EMPTY);
-      var value = ast.evaluate(Lambda.DefaultContext.INSTANCE);
+      var type = ast.getType(Lambda.DefaultContext.TYPES);
+      var value = ast.evaluate(Lambda.DefaultContext.VALUES);
       return value.toString() + ': ' + type.toString();
       // return value.toString();
     };
