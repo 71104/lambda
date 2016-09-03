@@ -99,7 +99,7 @@ IntegerType.prototype.context = IntegerType.prototype.context.addAll({
   abs: NaturalType.DEFAULT,
 });
 
-IntegerValue.prototype.context = IntegerType.prototype.context.addAll({
+IntegerValue.prototype.context = IntegerValue.prototype.context.addAll({
   abs: _makeNaturalMathFunction('abs'),
 });
 
