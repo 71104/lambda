@@ -16,4 +16,10 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
       throw new LambdaRuntimeError();
     }
   }),
+  '+': Operators.make('+'),
+  '-': Operators.make('-'),
+  '*': Operators.make('*'),
+  '/': Operators.make('/'),
+  '%': Operators.make('%'),
+  '**': Operators.make('**'),
 });
