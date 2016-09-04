@@ -399,8 +399,44 @@ Parser.prototype.parseClass7 = function (terminators) {
   }
 };
 
+Parser.prototype.parseInfixAnd = function (terminators) {
+  var node = this.parseClass7(terminators.union('keyword:and'));
+  while (!terminators.contains(this.lexer.token())) {
+    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('keyword:and')), node);
+    if (terminators.contains(this.lexer.token())) {
+      return partial;
+    } else {
+      node = new ApplicationNode(partial, this.parseClass7(terminators.union('keyword:and')));
+    }
+  }
+  return node;
+};
+
+Parser.prototype.parsePrefixAnd = function (terminators) {
+  var label = this.lexer.label();
+  if (terminators.contains(this.lexer.next())) {
+    return new VariableNode(label);
+  } else {
+    var right = this.parseClass7(terminators.union('keyword:and'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
+  }
+};
+
+Parser.prototype.parseClass8 = function (terminators) {
+  if ('keyword:and' !== this.lexer.token()) {
+    return this.parseInfixAnd(terminators.difference('keyword:and'));
+  } else {
+    return this.parsePrefixAnd(terminators.difference('keyword:and'));
+  }
+};
+
 Parser.prototype.parseRoot = function (terminators) {
-  return this.parseClass7(terminators);
+  return this.parseClass8(terminators);
 };
 
 Parser.prototype.parse = function () {
