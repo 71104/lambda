@@ -58,14 +58,14 @@ Parser.prototype.parseClass0 = function () {
     return ErrorNode.INSTANCE;
   case 'left':
     this.lexer.next();
-    var node = this.parseClass6(['right']);
+    var node = this.parseRoot(['right']);
     this.lexer.next();
     return node;
   case 'left-curly':
     this.lexer.next();
     var expressions = [];
     while (this.lexer.token() !== 'right-curly') {
-      expressions.push(this.parseClass6(['comma', 'right-curly']));
+      expressions.push(this.parseRoot(['comma', 'right-curly']));
       if ('comma' === this.lexer.token()) {
         this.lexer.next();
       }
@@ -89,7 +89,7 @@ Parser.prototype.parseSubscriptOrFieldAccess = function (node) {
       break;
     case 'left-square':
       this.lexer.next();
-      var index = this.parseClass6(['right-square']);
+      var index = this.parseRoot(['right-square']);
       this.lexer.next();
       node = new SubscriptNode(node, index);
       break;
@@ -177,7 +177,7 @@ Parser.prototype.parseLambdaPartial = function (terminators) {
     return new LambdaNode(name, type, this.parseLambdaPartial(terminators));
   case 'arrow':
     this.lexer.next();
-    return new LambdaNode(name, type, this.parseClass6(terminators));
+    return new LambdaNode(name, type, this.parseRoot(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -199,14 +199,14 @@ Parser.prototype.parseLetPartial = function (terminators) {
     }
   }
   this.lexer.expect('equal');
-  var expression = this.parseClass6(['comma', 'keyword:in']);
+  var expression = this.parseRoot(['comma', 'keyword:in']);
   switch (this.lexer.token()) {
   case 'comma':
     this.lexer.next();
     return new LetNode(names, expression, this.parseLetPartial(terminators));
   case 'keyword:in':
     this.lexer.next();
-    return new LetNode(names, expression, this.parseClass6(terminators));
+    return new LetNode(names, expression, this.parseRoot(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -219,35 +219,35 @@ Parser.prototype.parseLet = function (terminators) {
 
 Parser.prototype.parseIf = function (terminators) {
   this.lexer.expect('keyword:if');
-  var condition = this.parseClass6(['keyword:then']);
+  var condition = this.parseRoot(['keyword:then']);
   this.lexer.next();
-  var thenExpression = this.parseClass6(['keyword:else']);
+  var thenExpression = this.parseRoot(['keyword:else']);
   this.lexer.next();
-  return new IfNode(condition, thenExpression, this.parseClass6(terminators));
+  return new IfNode(condition, thenExpression, this.parseRoot(terminators));
 };
 
 Parser.prototype.parseThrow = function (terminators) {
   this.lexer.expect('keyword:throw');
-  return new ThrowNode(this.parseClass6(terminators));
+  return new ThrowNode(this.parseRoot(terminators));
 };
 
 Parser.prototype.parseTry = function (terminators) {
   this.lexer.expect('keyword:try');
-  var tryExpression = this.parseClass6(['keyword:catch', 'keyword:finally']);
+  var tryExpression = this.parseRoot(['keyword:catch', 'keyword:finally']);
   switch (this.lexer.token()) {
   case 'keyword:catch':
     this.lexer.next();
-    var catchExpression = this.parseClass6(terminators.union('keyword:finally'));
+    var catchExpression = this.parseRoot(terminators.union('keyword:finally'));
     if ('keyword:finally' === this.lexer.token()) {
       this.lexer.next();
-      return new TryCatchFinallyNode(tryExpression, catchExpression, this.parseClass6(terminators));
+      return new TryCatchFinallyNode(tryExpression, catchExpression, this.parseRoot(terminators));
     } else if (terminators.contains(this.lexer.token())) {
       return new TryCatchNode(tryExpression, catchExpression);
     }
     throw new LambdaSyntaxError();
   case 'keyword:finally':
     this.lexer.next();
-    return new TryFinallyNode(tryExpression, this.parseClass6(terminators));
+    return new TryFinallyNode(tryExpression, this.parseRoot(terminators));
   default:
     throw new LambdaSyntaxError();
   }
@@ -379,6 +379,10 @@ Parser.prototype.parseClass6 = function (terminators) {
   }
 };
 
+Parser.prototype.parseRoot = function (terminators) {
+  return this.parseClass6(terminators);
+};
+
 Parser.prototype.parse = function () {
-  return this.parseClass6(['end']);
+  return this.parseRoot(['end']);
 };
