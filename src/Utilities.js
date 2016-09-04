@@ -22,6 +22,13 @@ Array.prototype.union = function () {
   return this.concat.apply(this, arguments).unique();
 };
 
+Array.prototype.difference = function () {
+  var other = Array.prototype.concat.apply([], arguments).unique();
+  return this.filter(function (element) {
+    return !other.contains(element);
+  });
+};
+
 Array.prototype.intersection = function () {
   var arrays = [].slice(arguments);
   return this.filter(function (value) {

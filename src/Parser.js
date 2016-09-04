@@ -304,9 +304,9 @@ Parser.prototype.parsePrefixPower = function (terminators) {
 
 Parser.prototype.parseClass4 = function (terminators) {
   if ('power' !== this.lexer.token()) {
-    return this.parseInfixPower(terminators);
+    return this.parseInfixPower(terminators.difference('power'));
   } else {
-    return this.parsePrefixPower(terminators);
+    return this.parsePrefixPower(terminators.difference('power'));
   }
 };
 
@@ -339,9 +339,9 @@ Parser.prototype.parseClass5 = function (terminators) {
   case 'asterisk':
   case 'divide':
   case 'modulus':
-    return this.parsePrefixProduct(terminators);
+    return this.parsePrefixProduct(terminators.difference('asterisk', 'divide', 'modulus'));
   default:
-    return this.parseInfixProduct(terminators);
+    return this.parseInfixProduct(terminators.difference('asterisk', 'divide', 'modulus'));
   }
 };
 
@@ -373,9 +373,9 @@ Parser.prototype.parseClass6 = function (terminators) {
   switch (this.lexer.token()) {
   case 'plus':
   case 'minus':
-    return this.parsePrefixSum(terminators);
+    return this.parsePrefixSum(terminators.difference('plus', 'minus'));
   default:
-    return this.parseInfixSum(terminators);
+    return this.parseInfixSum(terminators.difference('plus', 'minus'));
   }
 };
 
