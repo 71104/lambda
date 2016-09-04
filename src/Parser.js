@@ -47,7 +47,6 @@ Parser.prototype.parseClass0 = function () {
     return this.parseString();
   case 'identifier':
   case 'keyword:typeof':
-  case 'keyword:not':
   case 'symbol':
     return this.parseVariable();
   case 'keyword:fix':
@@ -391,8 +390,17 @@ Parser.prototype.parseClass6 = function (terminators) {
   }
 };
 
+Parser.prototype.parseClass7 = function (terminators) {
+  if ('keyword:not' !== this.lexer.token()) {
+    return this.parseClass6(terminators);
+  } else {
+    this.lexer.next();
+    return new ApplicationNode(new VariableNode('not'), this.parseClass7(terminators));
+  }
+};
+
 Parser.prototype.parseRoot = function (terminators) {
-  return this.parseClass6(terminators);
+  return this.parseClass7(terminators);
 };
 
 Parser.prototype.parse = function () {
