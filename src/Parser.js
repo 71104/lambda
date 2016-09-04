@@ -296,9 +296,13 @@ Parser.prototype.parsePrefixPower = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode('**');
   } else {
-    var right = this.parseClass4(terminators);
-    var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
-    return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    var right = this.parseClass3(terminators.union('power'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
   }
 };
 
@@ -328,9 +332,13 @@ Parser.prototype.parsePrefixProduct = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass5(terminators);
-    var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
-    return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    var right = this.parseClass4(terminators.union('asterisk', 'divide', 'modulus'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
   }
 };
 
@@ -363,9 +371,13 @@ Parser.prototype.parsePrefixSum = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass6(terminators);
-    var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
-    return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    var right = this.parseClass5(terminators.union('plus', 'minus'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
   }
 };
 
