@@ -435,8 +435,46 @@ Parser.prototype.parseClass8 = function (terminators) {
   }
 };
 
+Parser.prototype.parseInfixOr = function (terminators) {
+  var node = this.parseClass8(terminators.union('keyword:or', 'keyword:xor'));
+  while (!terminators.contains(this.lexer.token())) {
+    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('keyword:or', 'keyword:xor')), node);
+    if (terminators.contains(this.lexer.token())) {
+      return partial;
+    } else {
+      node = new ApplicationNode(partial, this.parseClass8(terminators.union('keyword:or', 'keyword:xor')));
+    }
+  }
+  return node;
+};
+
+Parser.prototype.parsePrefixOr = function (terminators) {
+  var label = this.lexer.label();
+  if (terminators.contains(this.lexer.next())) {
+    return new VariableNode(label);
+  } else {
+    var right = this.parseClass8(terminators.union('keyword:or', 'keyword:xor'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
+  }
+};
+
+Parser.prototype.parseClass9 = function (terminators) {
+  switch (this.lexer.token()) {
+  case 'keyword:or':
+  case 'keyword:xor':
+    return this.parsePrefixOr(terminators.difference('keyword:or', 'keyword:xor'));
+  default:
+    return this.parseInfixOr(terminators.difference('keyword:or', 'keyword:xor'));
+  }
+};
+
 Parser.prototype.parseRoot = function (terminators) {
-  return this.parseClass8(terminators);
+  return this.parseClass9(terminators);
 };
 
 Parser.prototype.parse = function () {

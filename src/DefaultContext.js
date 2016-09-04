@@ -5,6 +5,7 @@ DefaultContext.TYPES = Context.EMPTY.addAll({
   'not': new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT),
   'and': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'or': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
+  'xor': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
 });
 
 DefaultContext.VALUES = Context.EMPTY.addAll({
@@ -34,6 +35,13 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
   'or': Closure.fromFunction(function (x, y) {
     if (x.is(BooleanValue) && y.is(BooleanValue)) {
       return new BooleanValue(x.value || y.value);
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  'xor': Closure.fromFunction(function (x, y) {
+    if (x.is(BooleanValue) && y.is(BooleanValue)) {
+      return new BooleanValue(x.value != y.value);
     } else {
       throw new LambdaRuntimeError();
     }
