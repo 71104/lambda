@@ -108,7 +108,7 @@ Parser.prototype.parseTypeClass0 = function () {
   switch (token) {
   case 'keyword:undefined':
     return UndefinedType.DEFAULT;
-  case 'keyword:bool':
+  case 'keyword:boolean':
     return BooleanType.DEFAULT;
   case 'keyword:complex':
     return ComplexType.DEFAULT;
