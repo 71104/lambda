@@ -173,7 +173,7 @@ SubscriptNode.prototype.getType = function (context) {
     if (expression.is(IndexedType)) {
       return expression.inner;
     } else if (expression.is(UnknownType)) {
-      return UnknownType.INSTANCE;
+      return UnknownType.DEFAULT;
     } else {
       throw new LambdaTypeError();
     }

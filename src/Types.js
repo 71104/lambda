@@ -422,3 +422,43 @@ LambdaType.prototype.bind = function (type) {
     throw new LambdaTypeError();
   }
 };
+
+
+function JSUndefinedType() {
+  UndefinedType.call(this);
+}
+
+exports.JSUndefinedType = JSUndefinedType;
+extend(UndefinedType, JSUndefinedType);
+
+JSUndefinedType.prototype.character = Character.JS.UNDEFINED;
+
+JSUndefinedType.prototype.toString = function () {
+  return 'JavaScript.UNDEFINED';
+};
+
+JSUndefinedType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character;
+};
+
+JSUndefinedType.DEFAULT = new JSUndefinedType();
+
+
+function JSNullType() {
+  UndefinedType.call(this);
+}
+
+exports.JSNullType = JSNullType;
+extend(UndefinedType, JSNullType);
+
+JSNullType.prototype.character = Character.JS.NULL;
+
+JSNullType.prototype.toString = function () {
+  return 'JavaScript.NULL';
+};
+
+JSNullType.prototype.isSubCharacterOf = function (type) {
+  return Character.NULL === type.character;
+};
+
+JSNullType.DEFAULT = new JSNullType();

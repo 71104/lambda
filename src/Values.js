@@ -390,7 +390,7 @@ JSUndefinedValue.prototype.extend = function (name, value) {
 
 JSUndefinedValue.prototype.marshal = function () {};
 
-JSUndefinedValue.INSTANCE = new JSUndefinedValue();
+JSUndefinedValue.DEFAULT = new JSUndefinedValue();
 
 
 function JSNullValue() {
@@ -414,13 +414,13 @@ JSNullValue.prototype.marshal = function () {
   return null;
 };
 
-JSNullValue.INSTANCE = new JSNullValue();
+JSNullValue.DEFAULT = new JSNullValue();
 
 
 AbstractValue.unmarshal = function (value) {
   switch (typeof value) {
   case 'undefined':
-    return JSUndefinedValue.INSTANCE;
+    return JSUndefinedValue.DEFAULT;
   case 'boolean':
     return new BooleanValue(value);
   case 'number':
@@ -437,7 +437,7 @@ AbstractValue.unmarshal = function (value) {
     return Closure.unmarshal(value);
   case 'object':
     if (null === value) {
-      return JSNullValue.INSTANCE;
+      return JSNullValue.DEFAULT;
     } else if (value instanceof Boolean || value instanceof Number || value instanceof String) {
       return AbstractValue.unmarshal(value.valueOf());
     } else if (Array.isArray(value)) {
