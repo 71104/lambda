@@ -484,7 +484,7 @@ TryFinallyNode.prototype.evaluate = function (context) {
 
 
 function TryCatchFinallyNode(tryExpression, catchExpression, finallyExpression) {
-  AbstractValue.call(this);
+  AbstractNode.call(this);
   this.tryExpression = tryExpression;
   this.catchExpression = catchExpression;
   this.finallyExpression = finallyExpression;
@@ -516,6 +516,40 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
     }
   } finally {
     this.finallyExpression.evaluate(context);
+  }
+};
+
+
+function ChainedComparisonNode(left, right) {
+  AbstractNode.call(this);
+  this.left = left;
+  this.right = right;
+}
+
+exports.ChainedComparisonNode = ChainedComparisonNode;
+extend(AbstractNode, ChainedComparisonNode);
+
+ChainedComparisonNode.prototype.getFreeVariables = function () {
+  return left.getFreeVariables().union(right.getFreeVariables());
+};
+
+ChainedComparisonNode.prototype.getType = function (context) {
+  var left = this.left.getType(context);
+  var right = this.right.getType(context);
+  if (left.isSubTypeOf(BooleanType.DEFAULT) && right.isSubTypeOf(BooleanType.DEFAULT)) {
+    return BooleanType.DEFAULT;
+  } else {
+    throw new LambdaTypeError();
+  }
+};
+
+ChainedComparisonNode.prototype.evaluate = function (context) {
+  var left = this.left.evaluate(context);
+  var right = this.right.evaluate(context);
+  if (left.is(BooleanValue) && right.is(BooleanValue)) {
+    return new BooleanValue(left.value && right.value);
+  } else {
+    throw new LambdaRuntimeError();
   }
 };
 
