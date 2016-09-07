@@ -1,9 +1,9 @@
 let Hanoi = fix fn Hanoi, n: integer, a, b, c ->
-  if < n 2
-  then console.log ({a, c}.join " to ")
+  if n < 2
+  then console.log {{a, c}.join ' to '}
   else seq
-    (Hanoi (- n 1) a c b)
+    (Hanoi (n - 1) a c b)
     (Hanoi 1 a b c)
-    (Hanoi (- n 1) b a c) in
+    (Hanoi (n - 1) b a c) in
 
-Hanoi 7 "a" "b" "c"
+Hanoi 7 'a' 'b' 'c'

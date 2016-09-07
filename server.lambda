@@ -1,6 +1,6 @@
-let http = process.mainModule.require "http" in
+let http = process.mainModule.require {'http'} in
 
-let server = http.createServer fn request, response ->
-  response.end.apply {"Oh hai!"} in
+let server = http.createServer {fn request, response ->
+  response.end {'Oh hai!'}} in
 
-server.listen 8080
+server.listen {8080}

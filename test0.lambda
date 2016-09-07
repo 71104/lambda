@@ -1,17 +1,17 @@
 let range = fix fn f, a, b ->
-  if > a b
+  if a > b
   then {}
-  else (f a (- b 1)).append (b) in
+  else (f a (b - 1)).append b in
 
 let fibonacci = fix fn f, n ->
-  if or (= n 1) (= n 2)
+  if n = 1 or n = 2
   then 1
-  else + (f (- n 1)) (f (- n 2)) in
+  else (f (n - 1)) + (f (n - 2)) in
 
 let square = fn n ->
-  ** n 2 in
+  n ** 2 in
 
 seq
-  (console.log ((range 1 5).map square))
-  (console.log ((range 1 5).map fibonacci))
-  (console.log "Ammazza, oh, cheffico!")
+  (console.log {(range 1 5).map square})
+  (console.log {(range 1 5).map fibonacci})
+  (console.log {'Ammazza, oh, cheffico!'})

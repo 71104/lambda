@@ -1,6 +1,6 @@
 let main = fix fn f, x -> f in
 
 main
-    (console.log "hello 1")
-    (console.log "hello 2")
-    (console.log "hello 3")
+    (console.log {'hello 1'})
+    (console.log {'hello 2'})
+    (console.log {'hello 3'})

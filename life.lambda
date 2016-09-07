@@ -1,44 +1,44 @@
 let in_range = fn v, a, b ->
-    and (>= v a) (<= v b)
+    v >= a and v <= b
 in
 
 let min = fn a, b ->
-    if < a b
+    if a < b
     then a
     else b
 in
 
 let max = fn a, b ->
-    if > a b
+    if a > b
     then a
     else b
 in
 
 let range = fix fn f, a, b ->
-    if > a b
+    if a > b
     then {}
-    else {a}.concat (f (+ a 1) b)
+    else {a}.concat (f (a + 1) b)
 in
 
 let sum = fn l ->
-    l.reduce 0 +
+    l.reduce 0 (+)
 in
 
 let grid.slice_row = fn grid, g, i, j ->
-    if in_range i 0 (- g.length 1)
-    then g[i].slice (max (- j 1) 0) (min (+ j 2) (- g[i].length 1))
+    if in_range i 0 (g.length - 1)
+    then g[i].slice (max (j - 1) 0) (min (j + 2) (g[i].length - 1))
     else {}
 in
 
 let grid.neighbors = fn grid, g, i, j ->
-    sum {sum (grid.slice_row g (- i 1) j),
+    sum {sum (grid.slice_row g (i - 1) j),
          sum (grid.slice_row g i j),
-         sum (grid.slice_row g (+ i 1) j),
-         - 0 g[i][j]}
+         sum (grid.slice_row g (i + 1) j),
+         0 - g[i][j]}
 in
 
 let grid.next_state_from = fn grid, a, n ->
-    if or (= n 3) (and (= a 1) (= n 2))
+    if n = 3 or a = 1 and n = 2
     then 1
     else 0
 in
@@ -48,14 +48,14 @@ let grid.next_state = fn grid, g, i, j ->
 in
 
 let grid.step_column = fn grid -> fix fn f, g, i, j ->
-    if in_range j 0 (- g[i].length 1)
-    then {grid.next_state g i j}.concat (f g i (+ j 1))
+    if in_range j 0 (g[i].length - 1)
+    then {grid.next_state g i j}.concat (f g i (j + 1))
     else {}
 in
 
 let grid.step_row = fn grid -> fix fn f, g, i ->
-    if in_range i 0 (- g.length 1)
-    then {grid.step_column g i 0}.concat (f g (+ i 1))
+    if in_range i 0 (g.length - 1)
+    then {grid.step_column g i 0}.concat (f g (i + 1))
     else {}
 in
 
@@ -64,14 +64,14 @@ let grid.step = fn grid, g ->
 in
 
 let grid.advance_n_steps = fn grid -> fix fn f, g, n ->
-    if > n 0
-    then f (grid.step g) (- n 1)
+    if n > 0
+    then f (grid.step g) (n - 1)
     else g
 in
 
 let grid.print = fn grid, g ->
     g.each fn r ->
-        console.log (r.reduce "" (fn v, a -> + a (if = v 1 then "*" else " ")))
+        console.log {r.reduce '' (fn v, a -> a + if v = 1 then '*' else ' ')}
 in
 
 let m = {{0, 1, 0, 0, 0, 0, 0},
@@ -85,7 +85,7 @@ in
 
 (range 0 10).each fn n ->
     seq
-        (console.log (+ "Round #" n.str))
-        (console.log "")
+        (console.log {'Round #' + n.str})
+        (console.log {''})
         (grid.print (grid.advance_n_steps m n))
-        (console.log "")
+        (console.log {''})

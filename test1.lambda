@@ -1,23 +1,23 @@
 let fizz = fn n ->
-  = 0 (% n 3)
+  0 = n % 3
 in
 
 let buzz = fn n ->
-  = 0 (% n 5)
+  0 = n % 5
 in
 
 let fizzbuzz = fn n ->
-  and (fizz n) (buzz n)
+  fizz n and buzz n
 in
 
 let range = fix fn f, a, b ->
-  if > a b
+  if a > b
   then {}
-  else (f a (- b 1)).append b
+  else (f a (b - 1)).append b
 in
 
 (range 1 100).map fn n ->
-  if fizzbuzz n then "FizzBuzz"
-  else if fizz n then "Fizz"
-  else if buzz n then "Buzz"
+  if fizzbuzz n then 'FizzBuzz'
+  else if fizz n then 'Fizz'
+  else if buzz n then 'Buzz'
   else n
