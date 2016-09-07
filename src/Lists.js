@@ -53,6 +53,15 @@ ListType.prototype.context = ListType.prototype.context.addAll({
               new VariableType('T'), BooleanType.DEFAULT),
           BooleanType.DEFAULT)),
 
+  filter: new LambdaType(
+      new ListType(
+        new VariableType('T')),
+      new LambdaType(
+        new LambdaType(
+          new VariableType('T'), BooleanType.DEFAULT),
+        new ListType(
+          new VariableType('T')))),
+
   map: new LambdaType(
     new ListType(
       new VariableType('A')),
@@ -63,14 +72,18 @@ ListType.prototype.context = ListType.prototype.context.addAll({
       new ListType(
         new VariableType('B')))),
 
-  filter: new LambdaType(
+  reduce: new LambdaType(
       new ListType(
-        new VariableType('T')),
+        new VariableType('A')),
       new LambdaType(
+        new VariableType('B'),
         new LambdaType(
-          new VariableType('T'), BooleanType.DEFAULT),
-        new ListType(
-          new VariableType('T')))),
+          new LambdaType(
+            new LambdaType(
+              new VariableType('B'),
+              new VariableType('A')),
+            new VariableType('B')),
+          new VariableType('B')))),
 
 });
 
@@ -156,15 +169,6 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
       throw new LambdaRuntimeError();
     }
   }),
-  map: Closure.fromFunction(function (list, callback) {
-    if (callback.is(Closure)) {
-      return new ListValue(list.values.map(function (element) {
-        return callback.apply(element);
-      }));
-    } else {
-      throw new LambdaRuntimeError();
-    }
-  }),
   filter: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
       return new ListValue(list.values.filter(function (element) {
@@ -175,6 +179,29 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
           throw new LambdaRuntimeError();
         }
       }));
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  map: Closure.fromFunction(function (list, callback) {
+    if (callback.is(Closure)) {
+      return new ListValue(list.values.map(function (element) {
+        return callback.apply(element);
+      }));
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  reduce: Closure.fromFunction(function (list, initialValue, callback) {
+    if (callback.is(Closure)) {
+      return list.values.reduce(function (previousValue, currentValue) {
+        var partial = callback.apply(previousValue);
+        if (partial.is(Closure)) {
+          return partial.apply(currentValue);
+        } else {
+          throw new LambdaRuntimeError();
+        }
+      }, initialValue);
     } else {
       throw new LambdaRuntimeError();
     }
