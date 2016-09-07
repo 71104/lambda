@@ -47,7 +47,6 @@ Parser.prototype.parseClass0 = function () {
     return this.parseString();
   case 'identifier':
   case 'keyword:typeof':
-  case 'symbol':
     return this.parseVariable();
   case 'keyword:fix':
     this.lexer.next();
@@ -389,15 +388,15 @@ Parser.prototype.parseClass6 = function (terminators) {
 };
 
 Parser.prototype.parseInfixComparison = function (terminators) {
-  var node = this.parseClass6(terminators.union('equal', 'not-equal'));
+  var node = this.parseClass6(terminators.union('equal', 'comparison'));
   if (terminators.contains(this.lexer.token())) {
     return node;
   } else {
     var expressions = [node];
     var operators = [];
     while (!terminators.contains(this.lexer.token())) {
-      operators.push(new VariableNode(this.lexer.expect('equal', 'not-equal')));
-      expressions.push(this.parseClass6(terminators.union('equal', 'not-equal')));
+      operators.push(new VariableNode(this.lexer.expect('equal', 'comparison')));
+      expressions.push(this.parseClass6(terminators.union('equal', 'comparison')));
     }
     return new ChainedComparisonNode(expressions, operators);
   }
@@ -411,10 +410,10 @@ Parser.prototype.parsePrefixComparison = function () {
 Parser.prototype.parseClass7 = function (terminators) {
   switch (this.lexer.token()) {
   case 'equal':
-  case 'not-equal':
-    return this.parsePrefixComparison(terminators.difference('equal', 'not-equal'));
+  case 'comparison':
+    return this.parsePrefixComparison(terminators.difference('equal', 'comparison'));
   default:
-    return this.parseInfixComparison(terminators.difference('equal', 'not-equal'));
+    return this.parseInfixComparison(terminators.difference('equal', 'comparison'));
   }
 };
 

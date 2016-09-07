@@ -125,12 +125,14 @@ function Lexer(input) {
         .replace(/\\t/g, '\t')
         .replace(/\\v/g, '\v');
       return token = 'string';
-    } else if (match(/^(<<|>>|<\=|>\=)/)) {
+    } else if (match(/^(<<|>>)/)) {
       return token = 'symbol';
+    } else if (match(/^(\!\=|<\=|>\=)/)) {
+      return token = 'comparison';
     } else if (match(/^\*\*/)) {
       return token = 'power';
     } else if (match(/^(<|>)/)) {
-      return token = 'symbol';
+      return token = 'comparison';
     } else if (match(/^\*/)) {
       return token = 'asterisk';
     } else if (match(/^\//)) {
@@ -141,8 +143,6 @@ function Lexer(input) {
       return token = 'sum';
     } else if (match(/^\=/)) {
       return token = 'equal';
-    } else if (match(/^\!\=/)) {
-      return token = 'not-equal';
     } else if (/^$/.test(input)) {
       label = null;
       return token = 'end';
