@@ -85,6 +85,10 @@ ListType.prototype.context = ListType.prototype.context.addAll({
             new VariableType('B')),
           new VariableType('B')))),
 
+  join: new LambdaType(
+      new ListType(StringType.DEFAULT),
+      new LambdaType(StringType.DEFAULT, StringType.DEFAULT)),
+
 });
 
 
@@ -202,6 +206,19 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
           throw new LambdaRuntimeError();
         }
       }, initialValue);
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  join: Closure.fromFunction(function (list, glue) {
+    if (glue.is(StringValue)) {
+      return new StringValue(list.values.map(function (value) {
+        if (value.is(StringValue)) {
+          return value.value;
+        } else {
+          throw new LambdaRuntimeError();
+        }
+      }).join(glue.value));
     } else {
       throw new LambdaRuntimeError();
     }
