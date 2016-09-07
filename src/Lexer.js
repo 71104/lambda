@@ -137,10 +137,8 @@ function Lexer(input) {
       return token = 'divide';
     } else if (match(/^\%/)) {
       return token = 'modulus';
-    } else if (match(/^\+/)) {
-      return token = 'plus';
-    } else if (match(/^\-/)) {
-      return token = 'minus';
+    } else if (match(/^(\+|\-)/)) {
+      return token = 'sum';
     } else if (match(/^\=/)) {
       return token = 'equal';
     } else if (match(/^\!\=/)) {

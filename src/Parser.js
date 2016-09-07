@@ -353,13 +353,13 @@ Parser.prototype.parseClass5 = function (terminators) {
 };
 
 Parser.prototype.parseInfixSum = function (terminators) {
-  var node = this.parseClass5(terminators.union('plus', 'minus'));
+  var node = this.parseClass5(terminators.union('sum'));
   while (!terminators.contains(this.lexer.token())) {
-    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('plus', 'minus')), node);
+    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('sum')), node);
     if (terminators.contains(this.lexer.token())) {
       return partial;
     } else {
-      node = new ApplicationNode(partial, this.parseClass5(terminators.union('plus', 'minus')));
+      node = new ApplicationNode(partial, this.parseClass5(terminators.union('sum')));
     }
   }
   return node;
@@ -370,7 +370,7 @@ Parser.prototype.parsePrefixSum = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass5(terminators.union('plus', 'minus'));
+    var right = this.parseClass5(terminators.union('sum'));
     if (terminators.contains(this.lexer.token())) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
@@ -381,12 +381,10 @@ Parser.prototype.parsePrefixSum = function (terminators) {
 };
 
 Parser.prototype.parseClass6 = function (terminators) {
-  switch (this.lexer.token()) {
-  case 'plus':
-  case 'minus':
-    return this.parsePrefixSum(terminators.difference('plus', 'minus'));
-  default:
-    return this.parseInfixSum(terminators.difference('plus', 'minus'));
+  if ('sum' !== this.lexer.token()) {
+    return this.parseInfixSum(terminators.difference('sum'));
+  } else {
+    return this.parsePrefixSum(terminators.difference('sum'));
   }
 };
 
