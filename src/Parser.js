@@ -391,15 +391,15 @@ Parser.prototype.parseClass6 = function (terminators) {
 };
 
 Parser.prototype.parseInfixComparison = function (terminators) {
-  var node = this.parseClass6(terminators.union('equal'));
+  var node = this.parseClass6(terminators.union('equal', 'not-equal'));
   if (terminators.contains(this.lexer.token())) {
     return node;
   } else {
     var expressions = [node];
     var operators = [];
     while (!terminators.contains(this.lexer.token())) {
-      operators.push(new VariableNode(this.lexer.expect('equal')));
-      expressions.push(this.parseClass6(terminators.union('equal')));
+      operators.push(new VariableNode(this.lexer.expect('equal', 'not-equal')));
+      expressions.push(this.parseClass6(terminators.union('equal', 'not-equal')));
     }
     return new ChainedComparisonNode(expressions, operators);
   }
@@ -411,10 +411,12 @@ Parser.prototype.parsePrefixComparison = function () {
 };
 
 Parser.prototype.parseClass7 = function (terminators) {
-  if ('equal' !== this.lexer.token()) {
-    return this.parseInfixComparison(terminators.difference('equal'));
-  } else {
-    return this.parsePrefixComparison(terminators.difference('equal'));
+  switch (this.lexer.token()) {
+  case 'equal':
+  case 'not-equal':
+    return this.parsePrefixComparison(terminators.difference('equal', 'not-equal'));
+  default:
+    return this.parseInfixComparison(terminators.difference('equal', 'not-equal'));
   }
 };
 

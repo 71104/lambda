@@ -474,3 +474,90 @@ Operators._define('=', Character.LIST, Character.LIST, Character.BOOLEAN, functi
     return BooleanValue.TRUE;
   }
 });
+
+
+Operators._define('!=', Character.COMPLEX, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.real !== y.real || x.imaginary !== y.imaginary);
+});
+
+Operators._define('!=', Character.COMPLEX, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.real !== y.value || !!x.imaginary);
+});
+
+Operators._define('!=', Character.COMPLEX, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.real !== y.value || !!x.imaginary);
+});
+
+Operators._define('!=', Character.COMPLEX, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.real !== y.value || !!x.imaginary);
+});
+
+Operators._define('!=', Character.REAL, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.real || !!y.imaginary);
+});
+
+Operators._define('!=', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.REAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.REAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.INTEGER, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.real || !!y.imaginary);
+});
+
+Operators._define('!=', Character.INTEGER, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.INTEGER, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.INTEGER, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.NATURAL, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.real || !!y.imaginary);
+});
+
+Operators._define('!=', Character.NATURAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.NATURAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.NATURAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value !== y.value);
+});
+
+Operators._define('!=', Character.LIST, Character.LIST, Character.BOOLEAN, function (x, y) {
+  if (x.values.length !== y.values.length) {
+    return BooleanValue.TRUE;
+  } else {
+    for (var i = 0; i < x.values.length; i++) {
+      var operator = Operators.select('!=', x.values[i].character, y.values[i].character);
+      if (operator.handler(x.values[i], y.values[i]).value) {
+        return BooleanValue.TRUE;
+      }
+    }
+    return BooleanValue.FALSE;
+  }
+});
