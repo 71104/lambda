@@ -89,6 +89,16 @@ ListType.prototype.context = ListType.prototype.context.addAll({
       new ListType(StringType.DEFAULT),
       new LambdaType(StringType.DEFAULT, StringType.DEFAULT)),
 
+  min: new LambdaType(
+      new ListType(
+        new VariableType('T')),
+      new VariableType('T')),
+
+  max: new LambdaType(
+      new ListType(
+        new VariableType('T')),
+      new VariableType('T')),
+
 });
 
 
@@ -219,6 +229,34 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
           throw new LambdaRuntimeError();
         }
       }).join(glue.value));
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  min: Closure.fromFunction(function (list) {
+    if (list.values.length) {
+      var value = list.values[0];
+      for (var i = 1; i < list.values.length; i++) {
+        var operator = Operators.select('<', list.values[i].character, value.character);
+        if (operator.handler(list.values[i], value).value) {
+          value = list.values[i];
+        }
+      }
+      return value;
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  max: Closure.fromFunction(function (list) {
+    if (list.values.length) {
+      var value = list.values[0];
+      for (var i = 1; i < list.values.length; i++) {
+        var operator = Operators.select('>', list.values[i].character, value.character);
+        if (operator.handler(list.values[i], value).value) {
+          value = list.values[i];
+        }
+      }
+      return value;
     } else {
       throw new LambdaRuntimeError();
     }
