@@ -561,3 +561,183 @@ Operators._define('!=', Character.LIST, Character.LIST, Character.BOOLEAN, funct
     return BooleanValue.FALSE;
   }
 });
+
+
+Operators._define('<', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.REAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.REAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.INTEGER, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.INTEGER, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.INTEGER, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.NATURAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.NATURAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.NATURAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+Operators._define('<', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value < y.value);
+});
+
+
+Operators._define('>', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.REAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.REAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.INTEGER, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.INTEGER, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.INTEGER, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.NATURAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.NATURAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.NATURAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+Operators._define('>', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value > y.value);
+});
+
+
+Operators._define('<=', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.REAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.REAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.INTEGER, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.INTEGER, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.INTEGER, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.NATURAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.NATURAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.NATURAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+Operators._define('<=', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value <= y.value);
+});
+
+
+Operators._define('>=', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.REAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.REAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.INTEGER, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.INTEGER, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.INTEGER, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.NATURAL, Character.REAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.NATURAL, Character.INTEGER, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.NATURAL, Character.NATURAL, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});
+
+Operators._define('>=', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value >= y.value);
+});

@@ -24,6 +24,10 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
   '**': Operators.make('**'),
   '=': Operators.make('='),
   '!=': Operators.make('!='),
+  '<': Operators.make('<'),
+  '>': Operators.make('>'),
+  '<=': Operators.make('<='),
+  '>=': Operators.make('>='),
   'not': Closure.fromFunction(function (x) {
     if (x.is(BooleanValue)) {
       return new BooleanValue(!x.value);
