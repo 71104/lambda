@@ -520,37 +520,78 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 };
 
 
-function ChainedComparisonNode(left, right) {
+function ChainedComparisonNode(expressions, operators) {
+  if (operators.length !== expressions.length - 1) {
+    throw new LambdaInternalError();
+  }
   AbstractNode.call(this);
-  this.left = left;
-  this.right = right;
+  this.expressions = expressions;
+  this.operators = operators;
 }
 
 exports.ChainedComparisonNode = ChainedComparisonNode;
 extend(AbstractNode, ChainedComparisonNode);
 
 ChainedComparisonNode.prototype.getFreeVariables = function () {
-  return left.getFreeVariables().union(right.getFreeVariables());
+  return this.expressions.reduce(function (array, expression) {
+    return array.concat(expression.getFreeVariables());
+  }, []).union(this.operators.reduce(function (array, operator) {
+    return array.concat(operator.getFreeVariables());
+  }, []));
 };
 
 ChainedComparisonNode.prototype.getType = function (context) {
-  var left = this.left.getType(context);
-  var right = this.right.getType(context);
-  if (left.isSubTypeOf(BooleanType.DEFAULT) && right.isSubTypeOf(BooleanType.DEFAULT)) {
-    return BooleanType.DEFAULT;
-  } else {
-    throw new LambdaTypeError();
+  var expressions = this.expressions.map(function (expression) {
+    return expression.getType(context);
+  });
+  var operators = this.operators.map(function (operator) {
+    return operator.getType(context);
+  });
+  for (var i = 0; i < operators.length; i++) {
+    if (operators[i].is(LambdaType) || operators[i].is(UnknownType)) {
+      var partial = operators[i].bind(expressions[i]);
+      if (partial.is(LambdaType) || partial.is(UnknownType)) {
+        var result = partial.bind(expressions[i + 1]);
+        if (!result.isSubTypeOf(BooleanType.DEFAULT)) {
+          throw new LambdaTypeError();
+        }
+      } else {
+        throw new LambdaTypeError();
+      }
+    } else {
+      throw new LambdaTypeError();
+    }
   }
+  return BooleanType.DEFAULT;
 };
 
 ChainedComparisonNode.prototype.evaluate = function (context) {
-  var left = this.left.evaluate(context);
-  var right = this.right.evaluate(context);
-  if (left.is(BooleanValue) && right.is(BooleanValue)) {
-    return new BooleanValue(left.value && right.value);
-  } else {
-    throw new LambdaRuntimeError();
+  var expressions = this.expressions.map(function (expression) {
+    return expression.evaluate(context);
+  });
+  var operators = this.operators.map(function (operator) {
+    return operator.evaluate(context);
+  });
+  for (var i = 0; i < operators.length; i++) {
+    if (operators[i].is(Closure)) {
+      var partial = operators[i].bind(expressions[i]);
+      if (partial.is(Closure)) {
+        var result = partial.bind(expressions[i + 1]);
+        if (result.is(BooleanValue)) {
+          if (!result.value) {
+            return BooleanValue.FALSE;
+          }
+        } else {
+          throw new LambdaRuntimeError();
+        }
+      } else {
+        throw new LambdaRuntimeError();
+      }
+    } else {
+      throw new LambdaRuntimeError();
+    }
   }
+  return BooleanValue.TRUE;
 };
 
 

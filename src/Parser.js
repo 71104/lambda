@@ -390,23 +390,51 @@ Parser.prototype.parseClass6 = function (terminators) {
   }
 };
 
+Parser.prototype.parseInfixComparison = function (terminators) {
+  var node = this.parseClass6(terminators.union('equal'));
+  if (terminators.contains(this.lexer.token())) {
+    return node;
+  } else {
+    var expressions = [node];
+    var operators = [];
+    while (!terminators.contains(this.lexer.token())) {
+      operators.push(new VariableNode(this.lexer.expect('equal')));
+      expressions.push(this.parseClass6(terminators.union('equal')));
+    }
+    return new ChainedComparisonNode(expressions, operators);
+  }
+};
+
+Parser.prototype.parsePrefixComparison = function () {
+  // TODO
+  throw new LambdaInternalError();
+};
+
 Parser.prototype.parseClass7 = function (terminators) {
+  if ('equal' !== this.lexer.token()) {
+    return this.parseInfixComparison(terminators.difference('equal'));
+  } else {
+    return this.parsePrefixComparison(terminators.difference('equal'));
+  }
+};
+
+Parser.prototype.parseClass8 = function (terminators) {
   if ('keyword:not' !== this.lexer.token()) {
-    return this.parseClass6(terminators);
+    return this.parseClass7(terminators);
   } else {
     this.lexer.next();
-    return new ApplicationNode(new VariableNode('not'), this.parseClass7(terminators));
+    return new ApplicationNode(new VariableNode('not'), this.parseClass8(terminators));
   }
 };
 
 Parser.prototype.parseInfixAnd = function (terminators) {
-  var node = this.parseClass7(terminators.union('keyword:and'));
+  var node = this.parseClass8(terminators.union('keyword:and'));
   while (!terminators.contains(this.lexer.token())) {
     var partial = new ApplicationNode(new VariableNode(this.lexer.expect('keyword:and')), node);
     if (terminators.contains(this.lexer.token())) {
       return partial;
     } else {
-      node = new ApplicationNode(partial, this.parseClass7(terminators.union('keyword:and')));
+      node = new ApplicationNode(partial, this.parseClass8(terminators.union('keyword:and')));
     }
   }
   return node;
@@ -417,7 +445,7 @@ Parser.prototype.parsePrefixAnd = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass7(terminators.union('keyword:and'));
+    var right = this.parseClass8(terminators.union('keyword:and'));
     if (terminators.contains(this.lexer.token())) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
@@ -427,7 +455,7 @@ Parser.prototype.parsePrefixAnd = function (terminators) {
   }
 };
 
-Parser.prototype.parseClass8 = function (terminators) {
+Parser.prototype.parseClass9 = function (terminators) {
   if ('keyword:and' !== this.lexer.token()) {
     return this.parseInfixAnd(terminators.difference('keyword:and'));
   } else {
@@ -436,7 +464,7 @@ Parser.prototype.parseClass8 = function (terminators) {
 };
 
 Parser.prototype.parseInfixOr = function (terminators) {
-  var node = this.parseClass8(terminators.union('keyword:or', 'keyword:xor'));
+  var node = this.parseClass9(terminators.union('keyword:or', 'keyword:xor'));
   while (!terminators.contains(this.lexer.token())) {
     var partial = new ApplicationNode(new VariableNode(this.lexer.expect('keyword:or', 'keyword:xor')), node);
     if (terminators.contains(this.lexer.token())) {
@@ -453,7 +481,7 @@ Parser.prototype.parsePrefixOr = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass8(terminators.union('keyword:or', 'keyword:xor'));
+    var right = this.parseClass9(terminators.union('keyword:or', 'keyword:xor'));
     if (terminators.contains(this.lexer.token())) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
@@ -463,7 +491,7 @@ Parser.prototype.parsePrefixOr = function (terminators) {
   }
 };
 
-Parser.prototype.parseClass9 = function (terminators) {
+Parser.prototype.parseClass10 = function (terminators) {
   switch (this.lexer.token()) {
   case 'keyword:or':
   case 'keyword:xor':
@@ -474,7 +502,7 @@ Parser.prototype.parseClass9 = function (terminators) {
 };
 
 Parser.prototype.parseRoot = function (terminators) {
-  return this.parseClass9(terminators);
+  return this.parseClass10(terminators);
 };
 
 Parser.prototype.parse = function () {
