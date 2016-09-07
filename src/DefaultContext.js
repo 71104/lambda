@@ -6,6 +6,7 @@ DefaultContext.TYPES = Context.EMPTY.addAll({
   'and': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'or': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'xor': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
+  'seq': new LambdaType(UndefinedType.DEFAULT, UnknownType.DEFAULT),
   'JavaScript': UndefinedType.DEFAULT
       .extend('UNDEFINED', JSUndefinedType.DEFAULT)
       .extend('NULL', JSNullType.DEFAULT),
@@ -51,6 +52,10 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
       throw new LambdaRuntimeError();
     }
   }),
+  'seq': (new ApplicationNode(FixNode.INSTANCE,
+        new LambdaNode('f', null,
+          new LambdaNode('x', null,
+            new VariableNode('f'))))).evaluate(Context.EMPTY),
   'JavaScript': UndefinedValue.DEFAULT
       .extend('UNDEFINED', JSUndefinedValue.DEFAULT)
       .extend('NULL', JSNullValue.DEFAULT),
