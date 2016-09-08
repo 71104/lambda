@@ -234,6 +234,10 @@ StringValue.prototype.marshal = function () {
   return this.value;
 };
 
+StringValue.prototype.getLength = function () {
+  return this.value.length;
+};
+
 StringValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.value.length) {
     throw new LambdaRuntimeError();
@@ -268,11 +272,61 @@ ListValue.prototype.marshal = function () {
   });
 };
 
+ListValue.prototype.getLength = function () {
+  return this.values.length;
+};
+
 ListValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.values.length) {
     throw new LambdaRuntimeError();
   }
   return this.values[index];
+};
+
+ListValue.prototype.forceList = function () {
+  return this;
+};
+
+
+function NativeArrayValue(array) {
+  IndexedValue.call(this);
+  this.array = array;
+}
+
+exports.NativeArrayValue = NativeArrayValue;
+extend(IndexedValue, NativeArrayValue);
+
+NativeArrayValue.prototype.character = Character.LIST;
+
+NativeArrayValue.prototype.toString = function () {
+  return '{' + this.array.map(function (value) {
+    return AbstractValue.unmarshal(value).toString();
+  }).join(', ') + '}';
+};
+
+NativeArrayValue.prototype.extend = function () {
+  return new (this._extend(name, value))(this.array);
+};
+
+NativeArrayValue.prototype.marshal = function () {
+  return this.array;
+};
+
+NativeArrayValue.prototype.getLength = function () {
+  return this.array.length;
+};
+
+NativeArrayValue.prototype.lookup = function (index) {
+  if (index < 0 || index >= this.array.length) {
+    throw new LambdaRuntimeError();
+  }
+  return AbstractValue.unmarshal(this.array[index]);
+};
+
+NativeArrayValue.prototype.forceList = function () {
+  return new ListValue(this.array.map(function (value) {
+    return AbstractValue.unmarshal(value);
+  }));
 };
 
 

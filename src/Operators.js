@@ -106,7 +106,7 @@ Operators._define('+', Character.STRING, Character.STRING, Character.STRING, fun
 });
 
 Operators._define('+', Character.LIST, Character.LIST, Character.LIST, function (x, y) {
-  return new ListValue(x.values.concat(y.values));
+  return new ListValue(x.forceList().values.concat(y.forceList().values));
 });
 
 
@@ -462,12 +462,13 @@ Operators._define('=', Character.STRING, Character.STRING, Character.BOOLEAN, fu
 });
 
 Operators._define('=', Character.LIST, Character.LIST, Character.BOOLEAN, function (x, y) {
-  if (x.values.length !== y.values.length) {
+  var length = x.getLength();
+  if (length !== y.getLength()) {
     return BooleanValue.FALSE;
   } else {
-    for (var i = 0; i < x.values.length; i++) {
-      var operator = Operators.select('=', x.values[i].character, y.values[i].character);
-      if (!operator.handler(x.values[i], y.values[i]).value) {
+    for (var i = 0; i < x.length; i++) {
+      var operator = Operators.select('=', x.lookup(i).character, y.lookup(i).character);
+      if (!operator.handler(x.lookup(i), y.lookup(i)).value) {
         return BooleanValue.FALSE;
       }
     }
@@ -549,12 +550,13 @@ Operators._define('!=', Character.STRING, Character.STRING, Character.BOOLEAN, f
 });
 
 Operators._define('!=', Character.LIST, Character.LIST, Character.BOOLEAN, function (x, y) {
-  if (x.values.length !== y.values.length) {
+  var length = x.getLength();
+  if (length !== y.getLength()) {
     return BooleanValue.TRUE;
   } else {
-    for (var i = 0; i < x.values.length; i++) {
-      var operator = Operators.select('!=', x.values[i].character, y.values[i].character);
-      if (operator.handler(x.values[i], y.values[i]).value) {
+    for (var i = 0; i < length; i++) {
+      var operator = Operators.select('!=', x.lookup(i).character, y.lookup(i).character);
+      if (operator.handler(x.lookup(i), y.lookup(i)).value) {
         return BooleanValue.TRUE;
       }
     }

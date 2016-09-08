@@ -262,3 +262,6 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
     }
   }),
 });
+
+
+// TODO NativeArrayValue prototype (value only, the type is ListType)
