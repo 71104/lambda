@@ -483,7 +483,7 @@ Parser.prototype.parseInfixOr = function (terminators) {
     if (terminators.contains(this.lexer.token())) {
       return partial;
     } else {
-      node = new ApplicationNode(partial, this.parseClass8(terminators.union('keyword:or', 'keyword:xor')));
+      node = new ApplicationNode(partial, this.parseClass9(terminators.union('keyword:or', 'keyword:xor')));
     }
   }
   return node;
