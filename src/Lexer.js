@@ -147,7 +147,7 @@ function Lexer(input) {
       label = null;
       return token = 'end';
     } else {
-      throw new LambdaSyntaxError();
+      throw new LambdaSyntaxError(this.coordinates(), 'unrecognized token');
     }
   }
 
@@ -179,6 +179,17 @@ function Lexer(input) {
     return label;
   };
 
+  this.throwSyntaxError = function () {
+    if (arguments.length) {
+      throw new LambdaSyntaxError(this.coordinates(),
+          [].map.call(arguments, function (argument) {
+            return '\'' + argument + '\'';
+          }).join(', or ') + ' expected, \'' + token + '\' found');
+    } else {
+      throw new LambdaSyntaxError(this.coordinates(), 'unexpected token \'' + token + '\'');
+    }
+  };
+
   this.expect = function () {
     for (var i = 0; i < arguments.length; i++) {
       if (arguments[i] === token) {
@@ -187,7 +198,7 @@ function Lexer(input) {
         return currentLabel;
       }
     }
-    throw new LambdaSyntaxError();
+    return this.throwSyntaxError.apply(this, arguments);
   };
 }
 

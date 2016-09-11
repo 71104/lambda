@@ -71,7 +71,7 @@ Parser.prototype.parseClass0 = function () {
     this.lexer.next();
     return new ListLiteralNode(expressions);
   default:
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError();
   }
 };
 
@@ -81,7 +81,7 @@ Parser.prototype.parseSubscriptOrFieldAccess = function (node) {
     case 'point':
       var token = this.lexer.next();
       if (token !== 'identifier' && !token.match(/^keyword\:/)) {
-        throw new LambdaSyntaxError();
+        return this.lexer.throwSyntaxError('identifier');
       }
       node = new FieldAccessNode(node, this.lexer.expect(token));
       break;
@@ -126,7 +126,7 @@ Parser.prototype.parseTypeClass0 = function () {
     this.lexer.expect('right');
     return type;
   default:
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError();
   }
 };
 
@@ -177,7 +177,7 @@ Parser.prototype.parseLambdaPartial = function (terminators) {
     this.lexer.next();
     return new LambdaNode(name, type, this.parseRoot(terminators));
   default:
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError('comma', 'arrow');
   }
 };
 
@@ -191,7 +191,7 @@ Parser.prototype.parseLetPartial = function (terminators) {
   while ('point' === this.lexer.token()) {
     var token = this.lexer.next();
     if (token !== 'identifier' && !token.match(/^keyword\:/)) {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError('identifier');
     } else {
       names.push(this.lexer.expect(token));
     }
@@ -206,7 +206,7 @@ Parser.prototype.parseLetPartial = function (terminators) {
     this.lexer.next();
     return new LetNode(names, expression, this.parseRoot(terminators));
   default:
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError('comma', 'keyword:in');
   }
 };
 
@@ -242,12 +242,12 @@ Parser.prototype.parseTry = function (terminators) {
     } else if (terminators.contains(this.lexer.token())) {
       return new TryCatchNode(tryExpression, catchExpression);
     }
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError();
   case 'keyword:finally':
     this.lexer.next();
     return new TryFinallyNode(tryExpression, this.parseRoot(terminators));
   default:
-    throw new LambdaSyntaxError();
+    return this.lexer.throwSyntaxError('keyword:catch', 'keyword:finally');
   }
 };
 
@@ -299,7 +299,7 @@ Parser.prototype.parsePrefixPower = function (terminators) {
       var partial = new ApplicationNode(new VariableNode('**'), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };
@@ -335,7 +335,7 @@ Parser.prototype.parsePrefixProduct = function (terminators) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };
@@ -374,7 +374,7 @@ Parser.prototype.parsePrefixSum = function (terminators) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };
@@ -412,7 +412,7 @@ Parser.prototype.parsePrefixComparison = function (terminators) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };
@@ -463,7 +463,7 @@ Parser.prototype.parsePrefixAnd = function (terminators) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };
@@ -499,7 +499,7 @@ Parser.prototype.parsePrefixOr = function (terminators) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
     } else {
-      throw new LambdaSyntaxError();
+      return this.lexer.throwSyntaxError();
     }
   }
 };

@@ -18,8 +18,11 @@ exports.InternalError = LambdaInternalError;
 extend(LambdaError, LambdaInternalError);
 
 
-function LambdaSyntaxError() {
-  LambdaError.call(this, 'syntax error');
+function LambdaSyntaxError(coordinates, message) {
+  var line = coordinates.line + 1;
+  var column = coordinates.column + 1;
+  LambdaError.call(this, 'syntax error at line ' + line + ', col ' + column + ': ' + message);
+  this.coordinates = coordinates;
 }
 
 exports.SyntaxError = LambdaSyntaxError;
