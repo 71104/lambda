@@ -402,9 +402,19 @@ Parser.prototype.parseInfixComparison = function (terminators) {
   }
 };
 
-Parser.prototype.parsePrefixComparison = function () {
-  // TODO
-  throw new LambdaInternalError();
+Parser.prototype.parsePrefixComparison = function (terminators) {
+  var label = this.lexer.label();
+  if (terminators.contains(this.lexer.next())) {
+    return new VariableNode(label);
+  } else {
+    var right = this.parseClass6(terminators.union('equal', 'comparison'));
+    if (terminators.contains(this.lexer.token())) {
+      var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
+      return new LambdaNode('0', null, new ApplicationNode(partial, right));
+    } else {
+      throw new LambdaSyntaxError();
+    }
+  }
 };
 
 Parser.prototype.parseClass7 = function (terminators) {
