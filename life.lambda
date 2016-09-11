@@ -17,7 +17,7 @@ in
 let range = fix fn f, a, b ->
     if a > b
     then {}
-    else {a}.concat (f (a + 1) b)
+    else {a} + (f (a + 1) b)
 in
 
 let sum = fn l ->
@@ -49,13 +49,13 @@ in
 
 let grid.step_column = fn grid -> fix fn f, g, i, j ->
     if in_range j 0 (g[i].length - 1)
-    then {grid.next_state g i j}.concat (f g i (j + 1))
+    then {grid.next_state g i j} + (f g i (j + 1))
     else {}
 in
 
 let grid.step_row = fn grid -> fix fn f, g, i ->
     if in_range i 0 (g.length - 1)
-    then {grid.step_column g i 0}.concat (f g (i + 1))
+    then {grid.step_column g i 0} + (f g (i + 1))
     else {}
 in
 
