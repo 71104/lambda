@@ -431,8 +431,12 @@ Parser.prototype.parseClass8 = function (terminators) {
   if ('keyword:not' !== this.lexer.token()) {
     return this.parseClass7(terminators);
   } else {
-    this.lexer.next();
-    return new ApplicationNode(new VariableNode('not'), this.parseClass8(terminators));
+    var operator = new VariableNode('not');
+    if (terminators.contains(this.lexer.next())) {
+      return operator;
+    } else {
+      return new ApplicationNode(operator, this.parseClass8(terminators));
+    }
   }
 };
 
