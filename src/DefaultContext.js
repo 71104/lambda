@@ -7,6 +7,7 @@ DefaultContext.TYPES = Context.EMPTY.addAll({
   'or': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'xor': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'seq': new LambdaType(UndefinedType.DEFAULT, UnknownType.DEFAULT),
+  'range': new LambdaType(NaturalType.DEFAULT, new ListType(NaturalType.DEFAULT)),
   'JavaScript': UndefinedType.DEFAULT
       .extend('UNDEFINED', JSUndefinedType.DEFAULT)
       .extend('NULL', JSNullType.DEFAULT),
@@ -60,6 +61,17 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
         new LambdaNode('f', null,
           new LambdaNode('x', null,
             new VariableNode('f'))))).evaluate(Context.EMPTY),
+  'range': Closure.fromFunction(function (count) {
+    if (count.is(NaturalValue)) {
+      var values = [];
+      for (var i = 0; i < count; i++) {
+        values.push(new NaturalValue(i));
+      }
+      return new ListValue(values);
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
   'JavaScript': UndefinedValue.DEFAULT
       .extend('UNDEFINED', JSUndefinedValue.DEFAULT)
       .extend('NULL', JSNullValue.DEFAULT),
