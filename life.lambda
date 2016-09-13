@@ -14,12 +14,6 @@ let max = fn a, b ->
     else b
 in
 
-let range = fix fn f, a, b ->
-    if a > b
-    then {}
-    else {a} + (f (a + 1) b)
-in
-
 let sum = fn l ->
     l.reduce 0 (+)
 in
@@ -83,7 +77,7 @@ let m = {{0, 1, 0, 0, 0, 0, 0},
          {0, 0, 0, 0, 0, 0, 0}}
 in
 
-(range 0 10).each fn n ->
+(range 10).each fn n ->
     seq
         (console.log {'Round #' + n.str})
         (console.log {''})
