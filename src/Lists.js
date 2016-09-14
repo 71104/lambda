@@ -12,6 +12,23 @@ ListType.prototype.context = ListType.prototype.context.addAll({
       new ListType(
           new VariableType('T'))),
 
+  append: new LambdaType(
+      new ListType(
+          new VariableType('T')),
+      new LambdaType(
+          new VariableType('T'),
+          new ListType(
+              new VariableType('T')))),
+
+  concat: new LambdaType(
+      new ListType(
+          new VariableType('T')),
+      new LambdaType(
+          new ListType(
+              new VariableType('T')),
+          new ListType(
+              new VariableType('T')))),
+
   reverse: new LambdaType(
     new ListType(
       new VariableType('T')),
@@ -116,6 +133,16 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   tail: Closure.fromFunction(function (list) {
     if (list.values.length) {
       return new ListValue(list.values.slice(1));
+    } else {
+      throw new LambdaRuntimeError();
+    }
+  }),
+  append: Closure.fromFunction(function (list, value) {
+    return new ListValue(list.values.concat(value));
+  }),
+  concat: Closure.fromFunction(function (list, other) {
+    if (other.is(ListValue)) {
+      return new ListValue(list.values.concat(other.values));
     } else {
       throw new LambdaRuntimeError();
     }
