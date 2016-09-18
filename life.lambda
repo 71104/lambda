@@ -2,25 +2,13 @@ let in_range = fn v, a, b ->
     v >= a and v <= b
 in
 
-let min = fn a, b ->
-    if a < b
-    then a
-    else b
-in
-
-let max = fn a, b ->
-    if a > b
-    then a
-    else b
-in
-
 let sum = fn l ->
     l.reduce 0 (+)
 in
 
 let grid.slice_row = fn grid, g, i, j ->
     if in_range i 0 (g.length - 1)
-    then g[i].slice (max (j - 1) 0) (min (j + 2) (g[i].length - 1))
+    then g[i].slice {j - 1, 0}.max {j + 2, g[i].length - 1}.min
     else {}
 in
 
