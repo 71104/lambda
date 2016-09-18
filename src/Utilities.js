@@ -44,10 +44,10 @@ function getGlobalValue(name) {
     try {
       return this[name];
     } catch (error) {
-      throw new LambdaRuntimeError();
+      throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
     }
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
   }
 }
 

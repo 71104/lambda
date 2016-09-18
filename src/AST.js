@@ -110,7 +110,7 @@ ErrorNode.prototype.evaluate = function (context) {
   if (context.has('error')) {
     return context.top('error');
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('\'error\' can be used only within \'catch\' statements');
   }
 };
 
@@ -148,7 +148,7 @@ FieldAccessNode.prototype.evaluate = function (context) {
   if (left.context.has(this.name)) {
     return left.context.top(this.name).bind(left);
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('unknown field \'' + this.name + '\'');
   }
 };
 
@@ -188,7 +188,7 @@ SubscriptNode.prototype.evaluate = function (context) {
   if (value.is(IndexedValue) && index.is(IntegerValue)) {
     return value.lookup(index.value);
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('not a list or string');
   }
 };
 
@@ -251,7 +251,7 @@ ApplicationNode.prototype.evaluate = function (context) {
   if (left.is(Closure)) {
     return left.bind(right);
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('left-hand side of an application must be a closure');
   }
 };
 
@@ -395,7 +395,7 @@ IfNode.prototype.evaluate = function (context) {
       return this.elseExpression.evaluate(context);
     }
   } else {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('\'if\' condition must be boolean');
   }
 };
 

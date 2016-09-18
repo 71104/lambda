@@ -135,15 +135,11 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
     if (list.values.length) {
       return list.values[0];
     } else {
-      throw new LambdaRuntimeError();
+      throw new LambdaRuntimeError('cannot get \'head\' of empty list');
     }
   }),
   tail: Closure.fromFunction(function (list) {
-    if (list.values.length) {
-      return new ListValue(list.values.slice(1));
-    } else {
-      throw new LambdaRuntimeError();
-    }
+    return new ListValue(list.values.slice(1));
   }),
   append: Closure.fromFunction(function (list, value) {
     return new ListValue(list.values.concat(value));
@@ -286,7 +282,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
       }
       return value;
     } else {
-      throw new LambdaRuntimeError();
+      throw new LambdaRuntimeError('cannot retrieve the minimum of an empty list');
     }
   }),
   max: Closure.fromFunction(function (list) {
@@ -300,7 +296,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
       }
       return value;
     } else {
-      throw new LambdaRuntimeError();
+      throw new LambdaRuntimeError('cannot retrieve the maximum of an empty list');
     }
   }),
 });

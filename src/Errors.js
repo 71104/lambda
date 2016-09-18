@@ -37,8 +37,12 @@ exports.TypeError = LambdaTypeError;
 extend(LambdaError, LambdaTypeError);
 
 
-function LambdaRuntimeError() {
-  LambdaError.call(this, 'runtime error');
+function LambdaRuntimeError(message) {
+  if (message) {
+    LambdaError.call(this, 'runtime error: ' + message);
+  } else {
+    LambdaError.call(this, 'runtime error');
+  }
 }
 
 exports.RuntimeError = LambdaRuntimeError;

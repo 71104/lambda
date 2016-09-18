@@ -223,7 +223,15 @@ extend(IndexedValue, StringValue);
 StringValue.prototype.character = Character.STRING;
 
 StringValue.prototype.toString = function () {
-  return this.value;
+  return '\'' + this.value
+      .replace(/\\/g, '\\\\')
+      .replace(/\b/g, '\\b')
+      .replace(/\f/g, '\\f')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+      .replace(/\v/g, '\\v')
+      .replace(/\'/g, '\\\'') + '\'';
 };
 
 StringValue.prototype.extend = function (name, value) {
@@ -240,7 +248,7 @@ StringValue.prototype.getLength = function () {
 
 StringValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.value.length) {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('index ' + index + ' out of bounds for string ' + this.toString());
   }
   return new StringValue(this.value[index]);
 };
@@ -278,7 +286,7 @@ ListValue.prototype.getLength = function () {
 
 ListValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.values.length) {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('index ' + index + ' out of bounds');
   }
   return this.values[index];
 };
@@ -318,7 +326,7 @@ NativeArrayValue.prototype.getLength = function () {
 
 NativeArrayValue.prototype.lookup = function (index) {
   if (index < 0 || index >= this.array.length) {
-    throw new LambdaRuntimeError();
+    throw new LambdaRuntimeError('index ' + index + ' out of bounds');
   }
   return AbstractValue.unmarshal(this.array[index]);
 };
@@ -367,7 +375,7 @@ Closure.prototype.apply = function () {
     if (value.is(Closure)) {
       value = value.bind(arguments[i]);
     } else {
-      throw new LambdaRuntimeError();
+      throw new LambdaRuntimeError('not a closure');
     }
   }
   return value;
