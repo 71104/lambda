@@ -110,9 +110,11 @@ ErrorNode.prototype.evaluate = function (context) {
   if (context.has('error')) {
     return context.top('error');
   } else {
-    throw new LambdaRuntimeError('\'error\' can be used only within \'catch\' statements');
+    throw new LambdaRuntimeError('\'error\' may be used only within \'catch\' statements');
   }
 };
+
+ErrorNode.INSTANCE = new ErrorNode();
 
 
 function FieldAccessNode(left, name) {
@@ -475,8 +477,6 @@ TryFinallyNode.prototype.getType = function () {
 TryFinallyNode.prototype.evaluate = function (context) {
   try {
     return this.tryExpression.evaluate(context);
-  } catch (error) {
-    return UndefinedValue.DEFAULT;
   } finally {
     this.finallyExpression.evaluate(context);
   }

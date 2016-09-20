@@ -4,6 +4,7 @@ var eslint = require('gulp-eslint');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var nodeunit = require('gulp-nodeunit');
 
 gulp.task('default', ['uglify'], function () {
   return gulp.src('src/Main.js').pipe(gulp.dest('bin'));
@@ -92,4 +93,8 @@ gulp.task('lint', function () {
 
 gulp.task('clean', function () {
   return del('bin');
+});
+
+gulp.task('test', ['default'], function () {
+  return gulp.src('test/*.js').pipe(nodeunit());
 });
