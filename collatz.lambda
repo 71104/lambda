@@ -1,0 +1,16 @@
+let f = fn n: natural ->
+  if n % 2 = 0
+  then n / 2
+  else 3 * n + 1
+in
+
+let a = fix fn a, n, i: natural ->
+  if i = 0
+  then n
+  else f (a n (i - 1))
+in
+
+let a_n = a 19 in
+
+(range 21).each fn i ->
+  console.log {i.str + ': ' + (a_n i).str}
