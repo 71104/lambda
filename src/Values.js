@@ -225,12 +225,9 @@ StringValue.prototype.character = Character.STRING;
 StringValue.prototype.toString = function () {
   return '\'' + this.value
       .replace(/\\/g, '\\\\')
-      .replace(/\b/g, '\\b')
-      .replace(/\f/g, '\\f')
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r')
       .replace(/\t/g, '\\t')
-      .replace(/\v/g, '\\v')
       .replace(/\'/g, '\\\'') + '\'';
 };
 
