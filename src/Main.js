@@ -16,11 +16,11 @@ var lambda = (function () {
   var Lambda = require('./lambda.js');
   if (compile) {
     return function (input) {
-      return (new Lambda.Parser(input)).parse().compile();
+      return Lambda.parse(input).compile();
     };
   } else {
     return function (input) {
-      var ast = (new Lambda.Parser(input)).parse();
+      var ast = Lambda.parse(input);
       // var type = ast.getType(Lambda.DefaultContext.TYPES);
       var value = ast.evaluate(Lambda.DefaultContext.VALUES);
       // return value.toString() + ': ' + type.toString();

@@ -521,3 +521,7 @@ Parser.prototype.parseRoot = function (terminators) {
 Parser.prototype.parse = function () {
   return this.parseRoot(['end']);
 };
+
+exports.parse = function (input) {
+  return (new Parser(input)).parse();
+};
