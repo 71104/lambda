@@ -10,6 +10,7 @@ DefaultContext.TYPES = Context.EMPTY.addAll({
   'xor': new LambdaType(BooleanType.DEFAULT, new LambdaType(BooleanType.DEFAULT, BooleanType.DEFAULT)),
   'seq': new LambdaType(UndefinedType.DEFAULT, UnknownType.DEFAULT),
   'range': new LambdaType(NaturalType.DEFAULT, new ListType(NaturalType.DEFAULT)),
+  'new': new LambdaType(new LambdaType(UndefinedType.DEFAULT, new VariableType('T')), new VariableType('T')),
   'JavaScript': UndefinedType.DEFAULT
       .extend('UNDEFINED', JSUndefinedType.DEFAULT)
       .extend('NULL', JSNullType.DEFAULT),
@@ -72,6 +73,13 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
       return new ListValue(values);
     } else {
       throw new LambdaRuntimeError();
+    }
+  }),
+  'new': Closure.fromFunction(function (constructor) {
+    if (constructor.is(Closure)) {
+      return constructor.bind(UndefinedValue.DEFAULT);
+    } else {
+      throw new LambdaRuntimeError('argument of \'new\' must be a closure');
     }
   }),
   'JavaScript': UndefinedValue.DEFAULT
