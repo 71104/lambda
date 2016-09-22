@@ -1,4 +1,4 @@
-var Lambda = require('../bin/lambda.js');
+var Lambda = require('../bin/lambda.min.js');
 
 module.exports.testUndefined = function (test) {
   var ast = Lambda.parse('undefined');

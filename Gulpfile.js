@@ -11,13 +11,15 @@ gulp.task('default', ['uglify'], function () {
 });
 
 gulp.task('uglify', ['concat'], function () {
-  return gulp.src('bin/lambda.js').pipe(uglify({
-    wrap: 'exports',
-  })).pipe(rename('lambda.min.js')).pipe(gulp.dest('bin'));
+  return gulp.src('bin/lambda.js')
+      .pipe(uglify({}))
+      .pipe(rename('lambda.min.js'))
+      .pipe(gulp.dest('bin'));
 });
 
 gulp.task('concat', ['lint'], function () {
   return gulp.src([
+    'src/Prologue.js',
     'src/Utilities.js',
     'src/Errors.js',
     'src/Context.js',
@@ -32,11 +34,12 @@ gulp.task('concat', ['lint'], function () {
     'src/DefaultContext.js',
     'src/Lexer.js',
     'src/Parser.js',
+    'src/Epilogue.js',
   ]).pipe(concat('lambda.js')).pipe(gulp.dest('bin'));
 });
 
 gulp.task('lint', function () {
-  return gulp.src('src/*.js').pipe(eslint({
+  return gulp.src(['src/*.js', '!src/Prologue.js', '!src/Epilogue.js']).pipe(eslint({
     rules: {
       'no-dupe-args': 2,
       'no-dupe-keys': 2,

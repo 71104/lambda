@@ -1,0 +1,2 @@
+(function (exports) {
+  'use strict';

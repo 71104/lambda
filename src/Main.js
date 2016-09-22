@@ -13,7 +13,7 @@ for (var i = 2; i < process.argv.length; i++) {
 }
 
 var lambda = (function () {
-  var Lambda = require('./lambda.js');
+  var Lambda = require('./lambda.min.js');
   if (compile) {
     return function (input) {
       return Lambda.parse(input).compile();

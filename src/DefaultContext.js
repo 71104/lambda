@@ -1,4 +1,6 @@
-exports.DefaultContext = DefaultContext = {};
+var DefaultContext = {};
+
+exports.DefaultContext = DefaultContext;
 
 DefaultContext.TYPES = Context.EMPTY.addAll({
   'typeof': new LambdaType(new VariableType('T'), StringType.DEFAULT),
