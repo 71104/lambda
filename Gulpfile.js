@@ -18,8 +18,8 @@ gulp.task('uglify', ['concat'], function () {
 
 gulp.task('concat', ['lint'], function () {
   return gulp.src([
-    'src/Errors.js',
     'src/Utilities.js',
+    'src/Errors.js',
     'src/Context.js',
     'src/Characters.js',
     'src/Values.js',

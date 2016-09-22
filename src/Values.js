@@ -512,5 +512,15 @@ AbstractValue.unmarshal = function (value) {
 };
 
 AbstractValue.getGlobal = function (name) {
-  return AbstractValue.unmarshal(getGlobalValue(name));
+  return AbstractValue.unmarshal(function () {
+    if (name in this) {
+      try {
+        return this[name];
+      } catch (error) {
+        throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
+      }
+    } else {
+      throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
+    }
+  }());
 };

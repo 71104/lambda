@@ -39,19 +39,6 @@ Array.prototype.intersection = function () {
 };
 
 // eslint-disable-next-line no-unused-vars
-function getGlobalValue(name) {
-  if (name in this) {
-    try {
-      return this[name];
-    } catch (error) {
-      throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
-    }
-  } else {
-    throw new LambdaRuntimeError('unknown variable \'' + name + '\'');
-  }
-}
-
-// eslint-disable-next-line no-unused-vars
 function arity(length, nativeFunction) {
   return (new Function('f', 'return function (' + Array.apply(null, Array(length)).map(function (_, index) {
     return '_' + index;
