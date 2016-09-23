@@ -3,21 +3,22 @@ function Lexer(input) {
   var line = 0;
   var column = 0;
 
+  var rawLabel = '';
   var token, label; // eslint-disable-line init-declarations
 
   function match(re) {
     var result = re.exec(input);
     if (result) {
-      label = result[0];
-      input = input.substr(label.length);
-      offset += label.length;
-      line += (label.match(/\n/g) || []).length;
-      var i = label.lastIndexOf('\n');
+      offset += rawLabel.length;
+      line += (rawLabel.match(/\n/g) || []).length;
+      var i = rawLabel.lastIndexOf('\n');
       if (i < 0) {
-        column += label.length;
+        column += rawLabel.length;
       } else {
-        column = label.length - 1 - i;
+        column = rawLabel.length - 1 - i;
       }
+      rawLabel = label = result[0];
+      input = input.substr(rawLabel.length);
       return true;
     } else {
       return false;
