@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 
 var compile = false;
+var nodejs = false;
 
 for (var i = 2; i < process.argv.length; i++) {
   var arg = process.argv[i];
   if (arg.substr(0, 1) !== '-') {
     process.exit(1);
   }
-  if (arg.contains('c')) {
+  if (arg.indexOf('c') >= 0) {
     compile = true;
+  }
+  if (arg.indexOf('n') >= 0) {
+    nodejs = true;
   }
 }
 
@@ -19,10 +23,14 @@ var lambda = (function () {
       return Lambda.parse(input).compile();
     };
   } else {
+    var context = Lambda.DefaultContext;
+    if (nodejs) {
+      context = Lambda.NodeJSContext;
+    }
     return function (input) {
       var ast = Lambda.parse(input);
-      // var type = ast.getType(Lambda.DefaultContext.TYPES);
-      var value = ast.evaluate(Lambda.DefaultContext.VALUES);
+      // var type = ast.getType(context.TYPES);
+      var value = ast.evaluate(context.VALUES);
       // return value.toString() + ': ' + type.toString();
       return value.toString();
     };
