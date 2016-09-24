@@ -22,7 +22,7 @@ Recall that Hindley-Milner also requires a [let statement](https://en.wikipedia.
 The following Fibonacci implementation gives an idea of several implementation choices:
 
 ```lambda
-let fibonacci = fix fn f, n: integer ->
+let fibonacci = fix fn f, n ->
   if n < 2
   then 1
   else f (n - 1) + f (n - 2) in
