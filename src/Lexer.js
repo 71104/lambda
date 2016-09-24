@@ -6,17 +6,29 @@ function Lexer(input) {
   var rawLabel = '';
   var token, label; // eslint-disable-line init-declarations
 
+  function coordinates() {
+    return {
+      offset: offset,
+      line: line,
+      column: column
+    };
+  }
+
+  function updateCoordinates() {
+    offset += rawLabel.length;
+    line += (rawLabel.match(/\n/g) || []).length;
+    var i = rawLabel.lastIndexOf('\n');
+    if (i < 0) {
+      column += rawLabel.length;
+    } else {
+      column = rawLabel.length - 1 - i;
+    }
+  }
+
   function match(re) {
     var result = re.exec(input);
     if (result) {
-      offset += rawLabel.length;
-      line += (rawLabel.match(/\n/g) || []).length;
-      var i = rawLabel.lastIndexOf('\n');
-      if (i < 0) {
-        column += rawLabel.length;
-      } else {
-        column = rawLabel.length - 1 - i;
-      }
+      updateCoordinates();
       rawLabel = label = result[0];
       input = input.substr(rawLabel.length);
       return true;
@@ -137,11 +149,9 @@ function Lexer(input) {
       return token = 'comparison';
     } else if (match(/^\*/)) {
       return token = 'asterisk';
-    } else if (match(/^\//)) {
-      return token = 'divide';
-    } else if (match(/^\%/)) {
-      return token = 'modulus';
-    } else if (match(/^(\+|\-)/)) {
+    } else if (match(/^(\/|\%|\&)/)) {
+      return token = 'product';
+    } else if (match(/^(\+|\-|\|)/)) {
       return token = 'sum';
     } else if (match(/^\=/)) {
       return token = 'equal';
@@ -149,24 +159,18 @@ function Lexer(input) {
       label = null;
       return token = 'end';
     } else {
-      throw new LambdaSyntaxError(this.coordinates(), 'unrecognized token');
+      updateCoordinates();
+      throw new LambdaSyntaxError(coordinates(), 'unrecognized token');
     }
   }
 
   next();
 
+  this.coordinates = coordinates;
   this.next = next;
 
   this.offset = function () {
     return offset;
-  };
-
-  this.coordinates = function () {
-    return {
-      offset: offset,
-      line: line,
-      column: column
-    };
   };
 
   this.token = function () {

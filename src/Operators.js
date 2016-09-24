@@ -175,6 +175,23 @@ Operators._define('-', Character.NATURAL, Character.NATURAL, Character.INTEGER, 
 });
 
 
+Operators._define('|', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value | y.value);
+});
+
+Operators._define('|', Character.INTEGER, Character.NATURAL, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value | y.value);
+});
+
+Operators._define('|', Character.NATURAL, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value | y.value);
+});
+
+Operators._define('|', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
+  return new NaturalValue(x.value | y.value);
+});
+
+
 Operators._define('*', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
   return new ComplexValue(
     x.real * y.real - x.imaginary * y.imaginary,
@@ -349,6 +366,23 @@ Operators._define('%', Character.NATURAL, Character.INTEGER, Character.NATURAL, 
 
 Operators._define('%', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
   return new NaturalValue(x.value % y.value);
+});
+
+
+Operators._define('&', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value & y.value);
+});
+
+Operators._define('&', Character.INTEGER, Character.NATURAL, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value & y.value);
+});
+
+Operators._define('&', Character.NATURAL, Character.INTEGER, Character.INTEGER, function (x, y) {
+  return new IntegerValue(x.value & y.value);
+});
+
+Operators._define('&', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
+  return new NaturalValue(x.value & y.value);
 });
 
 

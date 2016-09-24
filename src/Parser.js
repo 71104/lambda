@@ -313,13 +313,13 @@ Parser.prototype.parseClass4 = function (terminators) {
 };
 
 Parser.prototype.parseInfixProduct = function (terminators) {
-  var node = this.parseClass4(terminators.union('asterisk', 'divide', 'modulus'));
+  var node = this.parseClass4(terminators.union('asterisk', 'product'));
   while (!terminators.contains(this.lexer.token())) {
-    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('asterisk', 'divide', 'modulus')), node);
+    var partial = new ApplicationNode(new VariableNode(this.lexer.expect('asterisk', 'product')), node);
     if (terminators.contains(this.lexer.token())) {
       return partial;
     } else {
-      node = new ApplicationNode(partial, this.parseClass4(terminators.union('asterisk', 'divide', 'modulus')));
+      node = new ApplicationNode(partial, this.parseClass4(terminators.union('asterisk', 'product')));
     }
   }
   return node;
@@ -330,7 +330,7 @@ Parser.prototype.parsePrefixProduct = function (terminators) {
   if (terminators.contains(this.lexer.next())) {
     return new VariableNode(label);
   } else {
-    var right = this.parseClass4(terminators.union('asterisk', 'divide', 'modulus'));
+    var right = this.parseClass4(terminators.union('asterisk', 'product'));
     if (terminators.contains(this.lexer.token())) {
       var partial = new ApplicationNode(new VariableNode(label), new VariableNode('0'));
       return new LambdaNode('0', null, new ApplicationNode(partial, right));
@@ -343,11 +343,10 @@ Parser.prototype.parsePrefixProduct = function (terminators) {
 Parser.prototype.parseClass5 = function (terminators) {
   switch (this.lexer.token()) {
   case 'asterisk':
-  case 'divide':
-  case 'modulus':
-    return this.parsePrefixProduct(terminators.difference('asterisk', 'divide', 'modulus'));
+  case 'product':
+    return this.parsePrefixProduct(terminators.difference('asterisk', 'product'));
   default:
-    return this.parseInfixProduct(terminators.difference('asterisk', 'divide', 'modulus'));
+    return this.parseInfixProduct(terminators.difference('asterisk', 'product'));
   }
 };
 
