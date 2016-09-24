@@ -127,39 +127,35 @@ ListType.prototype.context = ListType.prototype.context.addAll({
 });
 
 
-ListValue.prototype.context = ListValue.prototype.context.addAll({
+AbstractListValue.prototype.context = AbstractListValue.prototype.context.addAll({
   length: Closure.fromFunction(function (list) {
-    return new NaturalValue(list.values.length);
+    return new NaturalValue(list.getLength());
   }),
   head: Closure.fromFunction(function (list) {
-    if (list.values.length) {
-      return list.values[0];
-    } else {
-      throw new LambdaRuntimeError('cannot get \'head\' of empty list');
-    }
+    return list.lookup(0);
   }),
   tail: Closure.fromFunction(function (list) {
-    return new ListValue(list.values.slice(1));
+    return new ListValue(list.forceList().values.slice(1));
   }),
   append: Closure.fromFunction(function (list, value) {
-    return new ListValue(list.values.concat(value));
+    return new ListValue(list.forceList().values.concat(value));
   }),
   concat: Closure.fromFunction(function (list, other) {
-    if (other.is(ListValue)) {
-      return new ListValue(list.values.concat(other.values));
+    if (other.is(AbstractListValue)) {
+      return new ListValue(list.forceList().values.concat(other.forceList().values));
     } else {
       throw new LambdaRuntimeError();
     }
   }),
   slice: Closure.fromFunction(function (list, begin, end) {
     if (begin.is(IntegerValue) && end.is(IntegerValue)) {
-      return new ListValue(list.values.slice(begin.value, end.value));
+      return new ListValue(list.forceList().values.slice(begin.value, end.value));
     } else {
       throw new LambdaRuntimeError();
     }
   }),
   reverse: Closure.fromFunction(function (list) {
-    return new ListValue(list.values.reverse());
+    return new ListValue(list.forceList().values.reverse());
   }),
   sort: Closure.fromFunction(function (list, lambda) {
     if (!lambda.is(Closure)) {
@@ -173,7 +169,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
         throw new LambdaRuntimeError();
       }
     };
-    return new ListValue(list.values.sort(function (a, b) {
+    return new ListValue(list.forceList().values.sort(function (a, b) {
       if (!compare(a, b)) {
         return 1;
       } else if (!compare(b, a)) {
@@ -185,7 +181,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   each: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
-      list.values.forEach(function (element) {
+      list.forceList().values.forEach(function (element) {
         callback.apply(element);
       });
       return UndefinedValue.DEFAULT;
@@ -195,7 +191,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   some: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
-      return new BooleanValue(list.values.some(function (element) {
+      return new BooleanValue(list.forceList().values.some(function (element) {
         var result = callback.apply(element);
         if (result.is(BooleanValue)) {
           return result.value;
@@ -209,7 +205,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   every: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
-      return new BooleanValue(list.values.every(function (element) {
+      return new BooleanValue(list.forceList().values.every(function (element) {
         var result = callback.apply(element);
         if (result.is(BooleanValue)) {
           return result.value;
@@ -223,7 +219,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   filter: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
-      return new ListValue(list.values.filter(function (element) {
+      return new ListValue(list.forceList().values.filter(function (element) {
         var result = callback.apply(element);
         if (result.is(BooleanValue)) {
           return result.value;
@@ -237,7 +233,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   map: Closure.fromFunction(function (list, callback) {
     if (callback.is(Closure)) {
-      return new ListValue(list.values.map(function (element) {
+      return new ListValue(list.forceList().values.map(function (element) {
         return callback.apply(element);
       }));
     } else {
@@ -246,7 +242,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   reduce: Closure.fromFunction(function (list, initialValue, callback) {
     if (callback.is(Closure)) {
-      return list.values.reduce(function (previousValue, currentValue) {
+      return list.forceList().values.reduce(function (previousValue, currentValue) {
         var partial = callback.apply(previousValue);
         if (partial.is(Closure)) {
           return partial.apply(currentValue);
@@ -260,7 +256,7 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
   }),
   join: Closure.fromFunction(function (list, glue) {
     if (glue.is(StringValue)) {
-      return new StringValue(list.values.map(function (value) {
+      return new StringValue(list.forceList().values.map(function (value) {
         if (value.is(StringValue)) {
           return value.value;
         } else {
@@ -272,12 +268,13 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
     }
   }),
   min: Closure.fromFunction(function (list) {
-    if (list.values.length) {
-      var value = list.values[0];
+    if (list.getLength()) {
+      var value = list.lookup(0);
       for (var i = 1; i < list.values.length; i++) {
-        var operator = Operators.select('<', list.values[i].character, value.character);
-        if (operator.handler(list.values[i], value).value) {
-          value = list.values[i];
+        var current = list.lookup(i);
+        var operator = Operators.select('<', current.character, value.character);
+        if (operator.handler(current, value).value) {
+          value = current;
         }
       }
       return value;
@@ -286,12 +283,13 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
     }
   }),
   max: Closure.fromFunction(function (list) {
-    if (list.values.length) {
-      var value = list.values[0];
+    if (list.getLength()) {
+      var value = list.lookup(0);
       for (var i = 1; i < list.values.length; i++) {
-        var operator = Operators.select('>', list.values[i].character, value.character);
-        if (operator.handler(list.values[i], value).value) {
-          value = list.values[i];
+        var current = list.lookup(i);
+        var operator = Operators.select('>', current.character, value.character);
+        if (operator.handler(current, value).value) {
+          value = current;
         }
       }
       return value;
@@ -300,6 +298,3 @@ ListValue.prototype.context = ListValue.prototype.context.addAll({
     }
   }),
 });
-
-
-// TODO NativeArrayValue prototype (value only, the type is ListType)

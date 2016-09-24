@@ -251,13 +251,21 @@ StringValue.prototype.lookup = function (index) {
 };
 
 
-function ListValue(values) {
+function AbstractListValue() {
   IndexedValue.call(this);
+}
+
+exports.AbstractListValue = AbstractListValue;
+extend(IndexedValue, AbstractListValue);
+
+
+function ListValue(values) {
+  AbstractListValue.call(this);
   this.values = values;
 }
 
 exports.ListValue = ListValue;
-extend(IndexedValue, ListValue);
+extend(AbstractListValue, ListValue);
 
 ListValue.prototype.character = Character.LIST;
 
@@ -294,12 +302,12 @@ ListValue.prototype.forceList = function () {
 
 
 function NativeArrayValue(array) {
-  IndexedValue.call(this);
+  AbstractListValue.call(this);
   this.array = array;
 }
 
 exports.NativeArrayValue = NativeArrayValue;
-extend(IndexedValue, NativeArrayValue);
+extend(AbstractListValue, NativeArrayValue);
 
 NativeArrayValue.prototype.character = Character.LIST;
 

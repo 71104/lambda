@@ -1,4 +1,4 @@
-var Lambda = require('../bin/lambda.min.js');
+var Lambda = require('../bin/lambda.js');
 
 function testTokens(string, tokens) {
   return function (test) {

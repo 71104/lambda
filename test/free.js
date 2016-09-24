@@ -1,4 +1,4 @@
-var Lambda = require('../bin/lambda.min.js');
+var Lambda = require('../bin/lambda.js');
 
 function isSubSet(set1, set2) {
   return set1.every(function (element1) {
