@@ -1,4 +1,4 @@
-let Grid = fix fn Grid, matrix ->
+let Grid = fix fn Grid, this, matrix ->
   let mod = fn n, i -> (i % n + n) % n in
 
   let get = fn array, i -> array[mod array.length i] in
@@ -7,7 +7,7 @@ let Grid = fix fn Grid, matrix ->
     let row.get = get in row,
     matrix.get = get in
 
-  let grid.print = fn grid -> seq
+  let this.print = fn this -> seq
     (matrix.each fn row ->
       console.log {(row.map fn cell ->
         if cell then '*' else ' ').join ''})
@@ -30,8 +30,8 @@ let Grid = fix fn Grid, matrix ->
     }.reduce 0 (+)
   in
 
-  let grid.next = fn grid ->
-    Grid ((range matrix.length).map fn i ->
+  let this.next = fn this ->
+    new Grid ((range matrix.length).map fn i ->
       (range matrix[i].length).map fn j ->
         let live_count = live_neighbors i j in
         if (matrix.get i).get j
@@ -39,12 +39,12 @@ let Grid = fix fn Grid, matrix ->
         else live_count = 3)
   in
 
-  grid
+  this
 in
 
-let loop = fix fn f, grid -> seq
+let loop = fix fn loop, grid -> seq
   (grid.print)
-  (f grid.next)
+  (loop grid.next)
 in
 
 let to_bool = fn matrix ->
@@ -52,7 +52,7 @@ let to_bool = fn matrix ->
     row.map fn cell -> cell > 0
 in
 
-let grid = Grid (to_bool {
+let grid = new Grid (to_bool {
   {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
   {1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
