@@ -391,7 +391,7 @@ Closure.prototype.marshal = function () {
   var context = this.capture;
   var length = this.getLength();
   var hasThis = 'this' === this.lambda.name;
-  return arity(length - !hasThis, function () {
+  return arity(length - !!hasThis, function () {
     var values = [].slice.call(arguments);
     if (hasThis) {
       values.unshift(this);

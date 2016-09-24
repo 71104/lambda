@@ -62,6 +62,7 @@ module.exports.testMarshalClosure1 = function (test) {
   var ast = new Lambda.LambdaNode('x', null, new Lambda.LiteralNode(Lambda.BooleanValue.FALSE));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
+  test.ok(value.length === 1);
   test.ok(value(null) === false);
   test.ok(value(123.456) === false);
   test.done();
@@ -71,10 +72,22 @@ module.exports.testMarshalClosure2 = function (test) {
   var ast = new Lambda.LambdaNode('x', null, new Lambda.VariableNode('x'));
   var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
   test.ok(typeof value === 'function');
+  test.ok(value.length === 1);
   test.ok(value('hello') === 'hello');
-  test.ok(value(123.456) === 123.456);
+  test.ok(value(123) === 123);
   test.done();
 };
+
+module.exports.testMarshalClosure3 = function (test) {
+  var ast = new Lambda.LambdaNode('x', null, new Lambda.LambdaNode('y', null, new Lambda.VariableNode('y')));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(typeof value === 'function');
+  test.ok(value.length === 2);
+  test.ok(value('hello', 123) === 123);
+  test.done();
+};
+
+// TODO test closures with "this"
 
 module.exports.testMarshalEmptyList = function (test) {
   var value = (new Lambda.ListValue([])).marshal();
