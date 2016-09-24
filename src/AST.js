@@ -207,7 +207,7 @@ extend(AbstractNode, LambdaNode);
 
 LambdaNode.prototype.getFreeVariables = function () {
   return this.body.getFreeVariables().filter(function (name) {
-    return name === this.name;
+    return name !== this.name;
   }, this);
 };
 
@@ -274,7 +274,7 @@ extend(AbstractNode, LetNode);
 LetNode.prototype.getFreeVariables = function () {
   return this.body.getFreeVariables().filter(function (name) {
     return name !== this.names[0];
-  }, this);
+  }, this).union(this.expression.getFreeVariables());
 };
 
 LetNode.prototype.getType = function (context) {
@@ -434,7 +434,7 @@ extend(AbstractNode, TryCatchNode);
 
 TryCatchNode.prototype.getFreeVariables = function () {
   return this.tryExpression.getFreeVariables().union(
-      this.catchExpression().getFreeVariables().filter(function (name) {
+      this.catchExpression.getFreeVariables().filter(function (name) {
         return 'error' !== name;
       }));
 };

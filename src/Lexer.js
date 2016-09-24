@@ -34,6 +34,7 @@ function Lexer(input) {
     'or',
     'xor',
     'fix',
+    'typeof',
     'boolean',
     'unknown',
     'natural',
