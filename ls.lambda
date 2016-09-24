@@ -1,0 +1,6 @@
+# run with -n switch
+
+let fs = require 'fs' in
+
+(fs.readdirSync {'.'}).each fn item ->
+  console.log {item}
