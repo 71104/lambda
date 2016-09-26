@@ -87,7 +87,56 @@ module.exports.testMarshalClosure3 = function (test) {
   test.done();
 };
 
-// TODO test closures with "this"
+module.exports.testMarshalMethod1 = function (test) {
+  var ast = new Lambda.LambdaNode('x', null,
+      new Lambda.LiteralNode(
+          new Lambda.NaturalValue(0), Lambda.NaturalType.DEFAULT));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(value.length === 1);
+  test.done();
+};
+
+module.exports.testMarshalMethod2 = function (test) {
+  var ast = new Lambda.LambdaNode('x', null,
+      new Lambda.LambdaNode('y', null,
+        new Lambda.LiteralNode(
+            new Lambda.NaturalValue(0), Lambda.NaturalType.DEFAULT)));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(value.length === 2);
+  test.done();
+};
+
+module.exports.testMarshalMethod3 = function (test) {
+  var ast = new Lambda.LambdaNode('this', null,
+      new Lambda.LiteralNode(
+          new Lambda.NaturalValue(0), Lambda.NaturalType.DEFAULT));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(value.length === 0);
+  test.done();
+};
+
+module.exports.testMarshalMethod4 = function (test) {
+  var ast = new Lambda.LambdaNode('this', null,
+      new Lambda.LambdaNode('x', null,
+        new Lambda.LiteralNode(
+            new Lambda.NaturalValue(0), Lambda.NaturalType.DEFAULT)));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(value.length === 1);
+  test.done();
+};
+
+module.exports.testMarshalMethod5 = function (test) {
+  var ast = new Lambda.LambdaNode('this', null,
+      new Lambda.LambdaNode('x', null,
+        new Lambda.LambdaNode('y', null,
+          new Lambda.LiteralNode(
+              new Lambda.NaturalValue(0), Lambda.NaturalType.DEFAULT))));
+  var value = (new Lambda.Closure(ast, Lambda.Context.EMPTY)).marshal();
+  test.ok(value.length === 2);
+  test.done();
+};
+
+// TODO test more closures with "this"
 
 module.exports.testMarshalEmptyList = function (test) {
   var value = (new Lambda.ListValue([])).marshal();
@@ -107,7 +156,7 @@ module.exports.testMarshalList1 = function (test) {
 module.exports.testMarshalList2 = function (test) {
   var value = (new Lambda.ListValue([
     Lambda.BooleanValue.TRUE,
-    new Lambda.StringValue('hello')
+    new Lambda.StringValue('hello'),
   ])).marshal();
   test.ok(Array.isArray(value));
   test.ok(value.length === 2);
