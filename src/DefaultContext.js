@@ -41,27 +41,9 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
       throw new LambdaRuntimeError();
     }
   }),
-  'and': Closure.fromFunction(function (x, y) {
-    if (x.is(BooleanValue) && y.is(BooleanValue)) {
-      return new BooleanValue(x.value && y.value);
-    } else {
-      throw new LambdaRuntimeError('\'and\' operands must be boolean');
-    }
-  }),
-  'or': Closure.fromFunction(function (x, y) {
-    if (x.is(BooleanValue) && y.is(BooleanValue)) {
-      return new BooleanValue(x.value || y.value);
-    } else {
-      throw new LambdaRuntimeError('\'or\' operands must be boolean');
-    }
-  }),
-  'xor': Closure.fromFunction(function (x, y) {
-    if (x.is(BooleanValue) && y.is(BooleanValue)) {
-      return new BooleanValue(x.value != y.value);
-    } else {
-      throw new LambdaRuntimeError('\'xor\' operands must be boolean');
-    }
-  }),
+  'and': Operators.make('and'),
+  'or': Operators.make('or'),
+  'xor': Operators.make('xor'),
   'seq': (new ApplicationNode(FixNode.INSTANCE,
         new LambdaNode('f', null,
           new LambdaNode('x', null,

@@ -777,3 +777,18 @@ Operators._define('>=', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN,
 Operators._define('>=', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value >= y.value);
 });
+
+
+Operators._define('and', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value && y.value);
+});
+
+
+Operators._define('or', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value || y.value);
+});
+
+
+Operators._define('xor', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
+  return new BooleanValue(x.value != y.value);
+});
