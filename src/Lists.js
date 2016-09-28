@@ -106,10 +106,10 @@ ListType.prototype.context = ListType.prototype.context.addAll({
         new VariableType('B'),
         new LambdaType(
           new LambdaType(
+            new VariableType('B'),
             new LambdaType(
-              new VariableType('B'),
-              new VariableType('A')),
-            new VariableType('B')),
+              new VariableType('A'),
+              new VariableType('B'))),
           new VariableType('B')))),
 
   join: new LambdaType(
