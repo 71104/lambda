@@ -1,6 +1,8 @@
 ListType.prototype.context = ListType.prototype.context.addAll({
   length: NaturalType.DEFAULT,
 
+  empty: BooleanType.DEFAULT,
+
   head: new LambdaType(
       new ListType(
           new VariableType('T')),
@@ -130,6 +132,9 @@ ListType.prototype.context = ListType.prototype.context.addAll({
 AbstractListValue.prototype.context = AbstractListValue.prototype.context.addAll({
   length: Closure.fromFunction(function (list) {
     return new NaturalValue(list.getLength());
+  }),
+  empty: Closure.fromFunction(function (list) {
+    return new BooleanValue(!list.getLength());
   }),
   head: Closure.fromFunction(function (list) {
     return list.lookup(0);
