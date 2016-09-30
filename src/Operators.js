@@ -30,6 +30,19 @@ Operators.select = function (name, left, right) {
   }
 };
 
+Operators._defineForTuples = function (name) {
+  return Operators._define(name, Character.TUPLE, Character.TUPLE, Character.TUPLE, function (x, y) {
+    if (x.values.length !== y.values.length) {
+      throw new LambdaRuntimeError();
+    } else {
+      return new TupleValue(x.values.map(function (left, index) {
+        var right = y.values[index];
+        return Operators.select(name, left.character, right.character).handler(left, right);
+      }));
+    }
+  });
+};
+
 Operators.make = function (name) {
   return Closure.fromFunction(function (x, y) {
     return Operators.select(name, x.character, y.character).handler(x, y);
@@ -109,6 +122,8 @@ Operators._define('+', Character.LIST, Character.LIST, Character.LIST, function 
   return new ListValue(x.forceList().values.concat(y.forceList().values));
 });
 
+Operators._defineForTuples('+');
+
 
 Operators._define('-', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
   return new ComplexValue(x.real - y.real, x.imaginary - y.imaginary);
@@ -174,6 +189,8 @@ Operators._define('-', Character.NATURAL, Character.NATURAL, Character.INTEGER, 
   return new IntegerValue(x.value - y.value);
 });
 
+Operators._defineForTuples('-');
+
 
 Operators._define('|', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
   return new IntegerValue(x.value | y.value);
@@ -191,6 +208,8 @@ Operators._define('|', Character.NATURAL, Character.NATURAL, Character.NATURAL, 
   return new NaturalValue(x.value | y.value);
 });
 
+Operators._defineForTuples('|');
+
 
 Operators._define('^', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
   return new IntegerValue(x.value ^ y.value);
@@ -207,6 +226,8 @@ Operators._define('^', Character.NATURAL, Character.INTEGER, Character.INTEGER, 
 Operators._define('^', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
   return new NaturalValue(x.value ^ y.value);
 });
+
+Operators._defineForTuples('^');
 
 
 Operators._define('*', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
@@ -274,6 +295,8 @@ Operators._define('*', Character.NATURAL, Character.INTEGER, Character.INTEGER, 
 Operators._define('*', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
   return new NaturalValue(x.value * y.value);
 });
+
+Operators._defineForTuples('*');
 
 
 Operators._define('/', Character.COMPLEX, Character.COMPLEX, Character.COMPLEX, function (x, y) {
@@ -348,6 +371,8 @@ Operators._define('/', Character.NATURAL, Character.NATURAL, Character.REAL, fun
   return new RealValue(x.value / y.value);
 });
 
+Operators._defineForTuples('/');
+
 
 Operators._define('%', Character.REAL, Character.REAL, Character.REAL, function (x, y) {
   return new RealValue(x.value % y.value);
@@ -385,6 +410,8 @@ Operators._define('%', Character.NATURAL, Character.NATURAL, Character.NATURAL, 
   return new NaturalValue(x.value % y.value);
 });
 
+Operators._defineForTuples('%');
+
 
 Operators._define('&', Character.INTEGER, Character.INTEGER, Character.INTEGER, function (x, y) {
   return new IntegerValue(x.value & y.value);
@@ -401,6 +428,8 @@ Operators._define('&', Character.NATURAL, Character.INTEGER, Character.INTEGER, 
 Operators._define('&', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
   return new NaturalValue(x.value & y.value);
 });
+
+Operators._defineForTuples('&');
 
 
 Operators._define('**', Character.REAL, Character.REAL, Character.REAL, function (x, y) {
@@ -438,6 +467,8 @@ Operators._define('**', Character.NATURAL, Character.INTEGER, Character.REAL, fu
 Operators._define('**', Character.NATURAL, Character.NATURAL, Character.NATURAL, function (x, y) {
   return new NaturalValue(Math.pow(x.value, y.value));
 });
+
+Operators._defineForTuples('**');
 
 
 Operators._define('=', Character.COMPLEX, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
@@ -527,6 +558,8 @@ Operators._define('=', Character.LIST, Character.LIST, Character.BOOLEAN, functi
   }
 });
 
+Operators._defineForTuples('=');
+
 
 Operators._define('!=', Character.COMPLEX, Character.COMPLEX, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.real !== y.real || x.imaginary !== y.imaginary);
@@ -615,6 +648,8 @@ Operators._define('!=', Character.LIST, Character.LIST, Character.BOOLEAN, funct
   }
 });
 
+Operators._defineForTuples('!=');
+
 
 Operators._define('<', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value < y.value);
@@ -659,6 +694,8 @@ Operators._define('<', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, 
 Operators._define('<', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value < y.value);
 });
+
+Operators._defineForTuples('<');
 
 
 Operators._define('>', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
@@ -705,6 +742,8 @@ Operators._define('>', Character.STRING, Character.STRING, Character.BOOLEAN, fu
   return new BooleanValue(x.value > y.value);
 });
 
+Operators._defineForTuples('>');
+
 
 Operators._define('<=', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value <= y.value);
@@ -749,6 +788,8 @@ Operators._define('<=', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN,
 Operators._define('<=', Character.STRING, Character.STRING, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value <= y.value);
 });
+
+Operators._defineForTuples('<=');
 
 
 Operators._define('>=', Character.REAL, Character.REAL, Character.BOOLEAN, function (x, y) {
@@ -795,17 +836,25 @@ Operators._define('>=', Character.STRING, Character.STRING, Character.BOOLEAN, f
   return new BooleanValue(x.value >= y.value);
 });
 
+Operators._defineForTuples('>=');
+
 
 Operators._define('and', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value && y.value);
 });
+
+Operators._defineForTuples('and');
 
 
 Operators._define('or', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value || y.value);
 });
 
+Operators._defineForTuples('or');
+
 
 Operators._define('xor', Character.BOOLEAN, Character.BOOLEAN, Character.BOOLEAN, function (x, y) {
   return new BooleanValue(x.value != y.value);
 });
+
+Operators._defineForTuples('xor');

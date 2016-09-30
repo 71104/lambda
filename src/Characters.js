@@ -7,11 +7,12 @@ var Character = {
   BOOLEAN: 5,
   STRING: 6,
   LIST: 7,
-  LAMBDA: 8,
-  UNKNOWN: 9,
+  TUPLE: 8,
+  LAMBDA: 9,
+  UNKNOWN: 10,
   JS: {
-    UNDEFINED: 10,
-    NULL: 11,
+    UNDEFINED: 11,
+    NULL: 12,
   },
 };
 
@@ -29,6 +30,7 @@ function characterToString(character) {
     'boolean',
     'string',
     'list',
+    'tuple',
     'lambda',
     'unknown',
     'JavaScript.UNDEFINED',

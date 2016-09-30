@@ -36,11 +36,7 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
   '<=': Operators.make('<='),
   '>=': Operators.make('>='),
   'not': Closure.fromFunction(function (x) {
-    if (x.is(BooleanValue)) {
-      return new BooleanValue(!x.value);
-    } else {
-      throw new LambdaRuntimeError();
-    }
+    return x.isFalsey();
   }),
   'and': Operators.make('and'),
   'or': Operators.make('or'),

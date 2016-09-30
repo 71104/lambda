@@ -10,6 +10,10 @@ AbstractType.prototype.bind = function () {
   return this;
 };
 
+AbstractType.prototype.isBoolean = function () {
+  return false;
+};
+
 
 function PrototypedType() {
   AbstractType.call(this);
@@ -303,6 +307,10 @@ BooleanType.prototype.isSubCharacterOf = function (type) {
     Character.BOOLEAN === type.character;
 };
 
+BooleanType.prototype.isBoolean = function () {
+  return true;
+};
+
 BooleanType.DEFAULT = new BooleanType();
 
 
@@ -368,11 +376,61 @@ ListType.prototype.isSubCharacterOf = function (type) {
 
 ListType.prototype.isSubTypeOf = function (type) {
   return UndefinedType.prototype.isSubTypeOf.call(this, type) &&
-    (!type.is(IndexedType) || this.inner.isSubTypeOf(type.inner));
+      (!type.is(IndexedType) || this.inner.isSubTypeOf(type.inner));
 };
 
 ListType.prototype.instance = function (name, type) {
   return new (this._setContext(this.context))(this.inner.instance(name, type));
+};
+
+
+function TupleType(types) {
+  UndefinedType.call(this);
+  this.types = types;
+}
+
+exports.TupleType = TupleType;
+extend(UndefinedType, TupleType);
+
+TupleType.prototype.character = Character.TUPLE;
+
+TupleType.prototype.toString = function () {
+  return '(' + this.types.map(function (type) {
+    return type.toString();
+  }).join(', ') + ')';
+};
+
+TupleType.prototype.setContext = function (context) {
+  return new (this._setContext(context))(this.types);
+};
+
+TupleType.prototype.extend = function (name, type) {
+  return new (this._extend(name, type))(this.types);
+};
+
+TupleType.prototype.isSubCharacterOf = function (type) {
+  return Character.UNDEFINED === type.character ||
+      Character.TUPLE === type.character;
+};
+
+TupleType.prototype.isSubTypeOf = function (other) {
+  return UndefinedType.prototype.isSubTypeOf.call(this, other) && (
+      !other.is(TupleType) || other.types.length === this.types.length &&
+      this.types.every(function (type, index) {
+        return type.isSubTypeOf(other.types[index]);
+      }));
+};
+
+TupleType.prototype.instance = function (name, type) {
+  return new (this._setContext(this.context))(this.types.map(function (inner) {
+    return inner.instance(name, type);
+  }));
+};
+
+TupleType.prototype.isBoolean = function () {
+  return this.types.every(function (type) {
+    return type.isBoolean();
+  });
 };
 
 

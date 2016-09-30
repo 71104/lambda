@@ -24,6 +24,14 @@ AbstractValue.prototype.bind = function () {
   return this;
 };
 
+AbstractValue.prototype.isTruthy = function () {
+  throw new LambdaRuntimeException();
+};
+
+AbstractValue.prototype.isFalsey = function () {
+  return !this.isTruthy();
+};
+
 
 function UndefinedValue() {
   AbstractValue.call(this);
@@ -199,6 +207,10 @@ BooleanValue.prototype.marshal = function () {
   return this.value;
 };
 
+BooleanValue.prototype.isTruthy = function () {
+  return !!this.value;
+};
+
 BooleanValue.TRUE = new BooleanValue(true);
 BooleanValue.FALSE = new BooleanValue(false);
 
@@ -340,6 +352,39 @@ NativeArrayValue.prototype.forceList = function () {
   return new ListValue(this.array.map(function (value) {
     return AbstractValue.unmarshal(value);
   }));
+};
+
+
+function TupleValue(values) {
+  UndefinedValue.call(this);
+  this.values = values;
+}
+
+exports.TupleValue = TupleValue;
+extend(UndefinedValue, TupleValue);
+
+TupleValue.prototype.character = Character.TUPLE;
+
+TupleValue.prototype.toString = function () {
+  return '(' + this.values.map(function (value) {
+    return value.toString();
+  }).join(', ') + ')';
+};
+
+TupleValue.prototype.extend = function (name, value) {
+  return new (this._extend(name, value))(this.values);
+};
+
+TupleValue.prototype.marshal = function () {
+  return this.values.map(function (value) {
+    return value.marshal();
+  });
+};
+
+TupleValue.prototype.isTruthy = function () {
+  return this.values.every(function (value) {
+    return value.isTruthy();
+  });
 };
 
 

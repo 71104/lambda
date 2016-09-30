@@ -55,10 +55,14 @@ Parser.prototype.parseClass0 = function () {
     this.lexer.next();
     return ErrorNode.INSTANCE;
   case 'left':
-    this.lexer.next();
-    var node = this.parseRoot(['right']);
-    this.lexer.next();
-    return node;
+    if (this.lexer.next() !== 'right') {
+      var node = this.parseRoot(['right']);
+      this.lexer.next();
+      return node;
+    } else {
+      this.lexer.next();
+      return new TupleNode([]);
+    }
   case 'left-curly':
     this.lexer.next();
     var expressions = [];
@@ -122,9 +126,28 @@ Parser.prototype.parseTypeClass0 = function () {
   case 'keyword:unknown':
     return UnknownType.DEFAULT;
   case 'left':
-    var type = this.parseTypeClass2();
-    this.lexer.expect('right');
-    return type;
+    if (this.lexer.token() !== 'right') {
+      var type = this.parseTypeClass2();
+      if (this.lexer.token() !== 'right') {
+        var types = [type];
+        while ('comma' === this.lexer.token()) {
+          if (this.lexer.next() !== 'right') {
+            types.push(this.parseTypeClass2());
+          } else {
+            this.lexer.next();
+            return new TupleType(types);
+          }
+        }
+        this.lexer.expect('right');
+        return new TupleType(types);
+      } else {
+        this.lexer.next();
+        return type;
+      }
+    } else {
+      this.lexer.next();
+      return new TupleType([]);
+    }
   default:
     return this.lexer.throwSyntaxError();
   }
@@ -513,8 +536,29 @@ Parser.prototype.parseClass10 = function (terminators) {
   }
 };
 
+Parser.prototype.parseClass11 = function (terminators) {
+  var nodes = [this.parseClass10(terminators.union('comma'))];
+  while ('comma' === this.lexer.token()) {
+    if (terminators.contains(this.lexer.next())) {
+      this.lexer.next();
+      return new TupleNode(nodes);
+    } else {
+      nodes.push(this.parseClass10(terminators.union('comma')));
+    }
+  }
+  if (nodes.length > 1) {
+    return new TupleNode(nodes);
+  } else {
+    return nodes[0];
+  }
+};
+
 Parser.prototype.parseRoot = function (terminators) {
-  return this.parseClass10(terminators);
+  if (terminators.contains('comma')) {
+    return this.parseClass10(terminators);
+  } else {
+    return this.parseClass11(terminators);
+  }
 };
 
 Parser.prototype.parse = function () {

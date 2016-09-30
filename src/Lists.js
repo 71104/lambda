@@ -126,6 +126,18 @@ ListType.prototype.context = ListType.prototype.context.addAll({
         new VariableType('T')),
       new VariableType('T')),
 
+  zip: new LambdaType(
+      new ListType(
+        new VariableType('A')),
+      new LambdaType(
+        new ListType(
+          new VariableType('B')),
+        new ListType(
+          new TupleType([
+            new VariableType('A'),
+            new VariableType('B')
+          ])))),
+
 });
 
 
@@ -300,6 +312,21 @@ AbstractListValue.prototype.context = AbstractListValue.prototype.context.addAll
       return value;
     } else {
       throw new LambdaRuntimeError('cannot retrieve the maximum of an empty list');
+    }
+  }),
+  zip: Closure.fromFunction(function (list1, list2) {
+    if (list2.is(AbstractListValue)) {
+      if (list1.getLength() === list2.getLength()) {
+        list1 = list1.forceList();
+        list2 = list2.forceList();
+        return new ListValue(list1.values.map(function (element, index) {
+          return new TupleValue([element, list2.values[index]]);
+        }));
+      } else {
+        throw new LambdaRuntimeError('cannot zip lists of different lengths');
+      }
+    } else {
+      throw new LambdaRuntimeError('argument to zip must be a list');
     }
   }),
 });

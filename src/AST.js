@@ -58,6 +58,33 @@ ListLiteralNode.prototype.evaluate = function (context) {
 };
 
 
+function TupleNode(expressions) {
+  AbstractNode.call(this);
+  this.expressions = expressions;
+}
+
+exports.TupleNode = TupleNode;
+extend(AbstractNode, TupleNode);
+
+TupleNode.prototype.getFreeVariables = function () {
+  return this.expressions.reduce(function (names, expression) {
+    return names.union(expression.getFreeVariables());
+  }, []);
+};
+
+TupleNode.prototype.getType = function (context) {
+  return new TupleType(this.expressions.map(function (expression) {
+    return expression.getType(context);
+  }));
+};
+
+TupleNode.prototype.evaluate = function (context) {
+  return new TupleValue(this.expressions.map(function (expression) {
+    return expression.evaluate(context);
+  }));
+};
+
+
 function VariableNode(name) {
   AbstractNode.call(this);
   this.name = name;
@@ -381,7 +408,7 @@ IfNode.prototype.getFreeVariables = function () {
 
 IfNode.prototype.getType = function (context) {
   var condition = this.condition.getType(context);
-  if (condition.isSubTypeOf(BooleanType.DEFAULT)) {
+  if (condition.isBoolean()) {
     return this.thenExpression.getType(context).merge(this.elseExpression.getType(context));
   } else {
     throw new LambdaTypeError();
@@ -390,14 +417,10 @@ IfNode.prototype.getType = function (context) {
 
 IfNode.prototype.evaluate = function (context) {
   var condition = this.condition.evaluate(context);
-  if (condition.is(BooleanValue)) {
-    if (condition.value) {
-      return this.thenExpression.evaluate(context);
-    } else {
-      return this.elseExpression.evaluate(context);
-    }
+  if (condition.isTruthy()) {
+    return this.thenExpression.evaluate(context);
   } else {
-    throw new LambdaRuntimeError('\'if\' condition must be boolean');
+    return this.elseExpression.evaluate(context);
   }
 };
 
@@ -521,7 +544,7 @@ TryCatchFinallyNode.prototype.evaluate = function (context) {
 
 
 function ChainedComparisonNode(expressions, operators) {
-  if (operators.length !== expressions.length - 1) {
+  if (operators.length < 1 || operators.length !== expressions.length - 1) {
     throw new LambdaInternalError();
   }
   AbstractNode.call(this);
@@ -552,7 +575,7 @@ ChainedComparisonNode.prototype.getType = function (context) {
       var partial = operators[i].bind(expressions[i]);
       if (partial.is(LambdaType) || partial.is(UnknownType)) {
         var result = partial.bind(expressions[i + 1]);
-        if (!result.isSubTypeOf(BooleanType.DEFAULT)) {
+        if (!result.isBoolean()) {
           throw new LambdaTypeError();
         }
       } else {
@@ -577,12 +600,8 @@ ChainedComparisonNode.prototype.evaluate = function (context) {
       var partial = operators[i].bind(expressions[i]);
       if (partial.is(Closure)) {
         var result = partial.bind(expressions[i + 1]);
-        if (result.is(BooleanValue)) {
-          if (!result.value) {
-            return BooleanValue.FALSE;
-          }
-        } else {
-          throw new LambdaRuntimeError();
+        if (!result.isTruthy()) {
+          return BooleanValue.FALSE;
         }
       } else {
         throw new LambdaRuntimeError();
