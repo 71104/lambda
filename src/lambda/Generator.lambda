@@ -1,0 +1,9 @@
+# Assumptions:
+# - (IO T).yield: T
+# - (IO T).end:   boolean
+
+fix fn Generator, this, io ->
+
+  # TODO
+
+  this

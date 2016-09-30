@@ -1,0 +1,47 @@
+# Assumptions:
+# - (Generator T).current: T
+# - (Generator T).end:     boolean
+# - (Generator T).next:    Generator T
+
+fix fn Iterator, this, generator ->
+  let this.empty = generator.end in
+
+  let this.head = fn this -> generator.current in
+
+  let this.tail = fn this -> new Iterator generator.next in
+
+  let this.each = fix fn each, this, f ->
+    if this.empty
+    then undefined
+    else let _ = f this.head in each this.tail f
+  in
+
+  let this.some = fix fn some, this, f ->
+    if this.empty
+    then false
+    else if f this.head
+    then true
+    else some this.tail f
+  in
+
+  let this.every = fix fn every, this, f ->
+    if this.empty
+    then true
+    else if not f this.head
+    then false
+    else every this.tail f
+  in
+
+  let this.filter = fn this, f ->
+    let filter = fix fn filter, generator ->
+      if generator.end
+      then generator
+      else if f generator.current
+      then generator
+      else filter generator.next in
+    new Iterator (filter generator)
+  in
+
+  # TODO
+
+  this
