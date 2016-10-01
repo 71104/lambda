@@ -151,7 +151,7 @@ function Lexer(input) {
       return token = 'asterisk';
     } else if (match(/^(\/|\%|\&)/)) {
       return token = 'product';
-    } else if (match(/^(\+|\-|\|)/)) {
+    } else if (match(/^(\+|\-|\||\^)/)) {
       return token = 'sum';
     } else if (match(/^\=/)) {
       return token = 'equal';

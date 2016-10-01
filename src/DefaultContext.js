@@ -23,6 +23,7 @@ DefaultContext.VALUES = Context.EMPTY.addAll({
   '+': Operators.make('+'),
   '-': Operators.make('-'),
   '|': Operators.make('|'),
+  '^': Operators.make('^'),
   '*': Operators.make('*'),
   '/': Operators.make('/'),
   '%': Operators.make('%'),
