@@ -1,0 +1,8 @@
+let Box = fix fn Box, this, s ->
+  let this.value = global.parseInt {s, 10}
+    , this.next = fn this ->
+      new Box (this.value + 1).str
+  in this
+in
+
+(new Box '5').next.next.value
